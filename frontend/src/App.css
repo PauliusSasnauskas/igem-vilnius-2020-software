@@ -1,0 +1,13 @@
+body {
+    background-color: #eee;
+}
+
+span.error { 
+    color: #f44336;
+    font-size: 0.75rem;
+    margin-bottom: 12px;
+}
+
+.MuiLinearProgress-root {
+    border-radius: inherit;
+}
