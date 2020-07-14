@@ -26,7 +26,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { unstable_createMuiStrictModeTheme as createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 import './ProbeSolverMain.css';
 
@@ -172,7 +172,8 @@ export default function ProbeSolverMain() {
     setCurrentTaxid("");
   };
 
-  return (<ThemeProvider theme={customTheme}>
+  return (
+  <ThemeProvider theme={customTheme}>
     <CssBaseline />
     <Container maxWidth="md" style={{marginTop: 32, marginBottom: 32}}>
       <Paper style={{marginBottom: 36, padding: 48, display: "flex", alignItems: "stretch", backgroundColor: customTheme.palette.primary.main, color: "white"}}>
@@ -183,7 +184,7 @@ export default function ProbeSolverMain() {
         <Typography
           variant="h4"
           component="h1"
-          style={{display: "inline-flex", alignItems: "center", justifyContent: "center", flexGrow: 1, minWidth: "10em"}}
+          style={{display: "inline-flex", alignItems: "center", justifyContent: "center", flexGrow: 1}}
         >
           <img alt="DNA icon" src="dna.svg" style={{maxHeight: "1em", maxWidth: "1em", marginRight: "0.3em"}} /><span>{TITLE_NAME}</span>
         </Typography>
@@ -271,7 +272,7 @@ export default function ProbeSolverMain() {
             </FormControl>
           </div>
           <div className="rowOfChips">
-            {taxids.map((value, index)=>(
+            {!classicMode && taxids.map((value, index)=>(
               <li key={index} style={{marginRight: 8}}>
                 <Chip label={value} onDelete={handleTaxidsDelete(index)} />
               </li>
@@ -310,7 +311,7 @@ export default function ProbeSolverMain() {
               </li>
             ))}
           </div>
-          <div class="rowOfChips">
+          <div className="rowOfChips" style={{marginBottom: 0}}>
             <span>Mode - {lastSearch[1] ? "Classic" : "With organism tax IDs:"}</span>
             {!lastSearch[1] && lastSearch[2].map((value, index)=>(
               <li key={index} style={{marginRight: 8}}>
