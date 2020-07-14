@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -ue;
+#generating unique ID for one run
+NEW_UUID=$(cat /dev/urandom | env LC_CTYPE=C tr -dc 'a-zA-Z0-9' |\
+fold -w 32 | head -n 1)
+echo $NEW_UUID;
+#finding the differences between two sequences
+diffseq -asequence $1 -bsequence $2 -wordsize 5 -outfile $NEW_UUID.out -aoutfeat A_$NEW_UUID.out -boutfeat B_$NEW_UUID.out > /dev/null 2> $NEW_UUID.err
+
+#finding suitable probe targets in two sequences
+perl sequences.pl $NEW_UUID.out 2>$NEW_UUID.err
+
+
+#cleanup
+if [ ! -s $NEW_UUID.err ]
+then
+        rm -f A_$NEW_UUID.out B_$NEW_UUID.out  $NEW_UUID.err
+fi
