@@ -15,3 +15,15 @@ span.error {
 .MuiButton-root {
     font-weight: bold;
 }
+
+.rowOfChips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    list-style: none;
+    margin-bottom: 16px;
+}
+
+.rowOfChips > span {
+    margin-right: 8px;
+}

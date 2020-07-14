@@ -32,8 +32,17 @@ import './ProbeSolverMain.css';
 
 const customTheme = createMuiTheme({
   palette: {
+    type: "dark",
     primary: {
-      main: "#131F43",
+      main: "#2E64EC",
+    },
+    secondary: {
+      main: "#FFC43B",
+      dark: "#FFC43B",
+    },
+    background: {
+      // default: "#333",
+      // paper: "#333333",
     },
   },
   typography: {
@@ -67,8 +76,15 @@ export default function ProbeSolverMain() {
   const [results, setResults] = React.useState(["", "", "", "", ""]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
+  const [buttonRaised, setButtonRaised] = React.useState(false);
+
+  const [lastSearch, setLastSearch] = React.useState([[], false, []]);
+
   const handleDialogClickOpen = () => { setDialogOpen(true); };
   const handleDialogClose = () => { setDialogOpen(false); };
+
+  const onMouseOverButton = () => setButtonRaised(true);
+  const onMouseOutButton = () => setButtonRaised(false);
 
   function anyEmpty(array){
     for (let item of array){
@@ -97,6 +113,9 @@ export default function ProbeSolverMain() {
       return;
     }
     setLoading(true);
+
+    setLastSearch([[...inputStrains], classicMode, [...taxids]]);
+    setResults(["", "", "", "", ""]);
     // TODO: search with inputStrains and taxids
     // console.log(inputValue);
     let fakeResult = ["5’GGATAGCCCAGAGAAATTTGGA3’", "5’CAT CTT GTA CCG TTG GAA CTT TAA T3’", "GCCTCATTTGATT(A)20-biotin", "thiol-(A)20TTTCAGATG", "biotin-(A)20CATCTGAAA"];
@@ -156,7 +175,7 @@ export default function ProbeSolverMain() {
   return (<ThemeProvider theme={customTheme}>
     <CssBaseline />
     <Container maxWidth="md" style={{marginTop: 32, marginBottom: 32}}>
-      <Paper style={{marginBottom: 36, padding: 48, display: "flex", alignItems: "stretch", backgroundColor: "#131F43", color: "white"}}>
+      <Paper style={{marginBottom: 36, padding: 48, display: "flex", alignItems: "stretch", backgroundColor: customTheme.palette.primary.main, color: "white"}}>
         <IconButton aria-label="information" style={{visibility: "hidden"}}>
           <IconInfo fontSize="inherit" />
         </IconButton>
@@ -173,7 +192,7 @@ export default function ProbeSolverMain() {
         </IconButton>
       </Paper>
       <Paper style={{padding: 16, display: "flex", flexDirection: "column", marginBottom: 16}}>
-        {errorValue.length > 0 ? <span class="error">{errorValue}</span> : undefined}
+        {errorValue.length > 0 ? <span className="error">{errorValue}</span> : undefined}
         <div style={{display: "flex", flexDirection: "column", flexGrow: 1, marginRight: 6}}>
           <FormControl variant="outlined" style={{marginBottom: 12}}>
             <InputLabel htmlFor={"straininput"}>Strain ID</InputLabel>
@@ -200,7 +219,7 @@ export default function ProbeSolverMain() {
               }
             />
           </FormControl>
-          <div style={{display: "flex", flexWrap: 'wrap', listStyle: 'none', marginBottom: 16,}}>
+          <div className="rowOfChips">
             {inputStrains.map((value, index)=>(
               <li key={index} style={{marginRight: 8}}>
                 <Chip label={value} onDelete={handleInputStrainsDelete(index)} />
@@ -251,7 +270,7 @@ export default function ProbeSolverMain() {
               }/>
             </FormControl>
           </div>
-          <div style={{display: "flex", flexWrap: 'wrap', listStyle: 'none', marginBottom: 16,}}>
+          <div className="rowOfChips">
             {taxids.map((value, index)=>(
               <li key={index} style={{marginRight: 8}}>
                 <Chip label={value} onDelete={handleTaxidsDelete(index)} />
@@ -261,9 +280,11 @@ export default function ProbeSolverMain() {
         </div>
         <Button
           variant="contained"
-          color="primary"
+          color="secondary"
+          onMouseOver={onMouseOverButton}
+          onMouseOut={onMouseOutButton}
           disabled={loading}
-          style={{height: 40}}
+          style={buttonRaised ? {transition: "0.5s", bottom: 1} : {transition: "0.5s", bottom: 0}}
           onClick={search}
         >
           Search
@@ -278,42 +299,65 @@ export default function ProbeSolverMain() {
         unmountOnExit>
         <LinearProgress />
       </Fade></div>
-      {allFull(results) ? <Paper style={{marginTop: 16}}>
-        <Table aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell style={{fontWeight: "bold"}}>Item</TableCell>
-              <TableCell style={{fontWeight: "bold"}} align="left">Sequence</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell>HDA Forward Primer</TableCell>
-              <TableCell>{results[0]}</TableCell>
-            </TableRow>
-            
-            <TableRow>
-              <TableCell>HDA reverse primer</TableCell>
-              <TableCell>{results[1]}</TableCell>
-            </TableRow>
-            
-            <TableRow>
-              <TableCell>Capture Probe</TableCell>
-              <TableCell>{results[2]}</TableCell>
-            </TableRow>
-            
-            <TableRow>
-              <TableCell>Detector Probe</TableCell>
-              <TableCell>{results[3]}</TableCell>
-            </TableRow>
-            
-            <TableRow>
-              <TableCell>Control Probe</TableCell>
-              <TableCell>{results[4]}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </Paper> : undefined}
+      {lastSearch[0].length > 0 ? (
+        <Paper style={{marginTop: 16, padding: 16}}>
+          <Typography variant="h6" component="h2" style={{marginBottom: 8}}>Search query</Typography>
+          <div className="rowOfChips">
+            <span>Strain IDs:</span>
+            {lastSearch[0].map((value, index)=>(
+              <li key={index} style={{marginRight: 8}}>
+                <Chip label={value} />
+              </li>
+            ))}
+          </div>
+          <div class="rowOfChips">
+            <span>Mode - {lastSearch[1] ? "Classic" : "With organism tax IDs:"}</span>
+            {!lastSearch[1] && lastSearch[2].map((value, index)=>(
+              <li key={index} style={{marginRight: 8}}>
+                <Chip label={value} />
+              </li>
+            ))}
+          </div>
+        </Paper>
+      ) : undefined}
+      {allFull(results) ? (
+        <Paper style={{marginTop: 36}}>
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell style={{fontWeight: "bold"}}>Item</TableCell>
+                <TableCell style={{fontWeight: "bold"}} align="left">Sequence</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>HDA Forward Primer</TableCell>
+                <TableCell>{results[0]}</TableCell>
+              </TableRow>
+              
+              <TableRow>
+                <TableCell>HDA reverse primer</TableCell>
+                <TableCell>{results[1]}</TableCell>
+              </TableRow>
+              
+              <TableRow>
+                <TableCell>Capture Probe</TableCell>
+                <TableCell>{results[2]}</TableCell>
+              </TableRow>
+              
+              <TableRow>
+                <TableCell>Detector Probe</TableCell>
+                <TableCell>{results[3]}</TableCell>
+              </TableRow>
+              
+              <TableRow>
+                <TableCell>Control Probe</TableCell>
+                <TableCell>{results[4]}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Paper>
+      ) : undefined}
     </Container>
     <Dialog
       fullWidth={true}
@@ -322,7 +366,7 @@ export default function ProbeSolverMain() {
       onClose={handleDialogClose}
       aria-labelledby="dialog-title"
     >
-      <DialogTitle id="dialog-title">What is <img alt="DNA icon" src="dna-b.svg" style={{maxHeight: "1em", maxWidth: "1em", position: "relative", bottom: -1.5, margin: "0 0.25em", fill: "black"}} />{TITLE_NAME}?</DialogTitle>
+      <DialogTitle id="dialog-title">What is <img alt="DNA icon" src="dna.svg" style={{maxHeight: "1em", maxWidth: "1em", position: "relative", bottom: -1.5, margin: "0 0.25em", fill: "black"}} />{TITLE_NAME}?</DialogTitle>
       <DialogContent>
         <DialogContentText>
           It is a special software developed for the iGEM Vilnius-Lithuania 2020 team project used to identify and receive probe sequences...
