@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
+import Chip from '@material-ui/core/Chip';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Dialog from '@material-ui/core/Dialog';
@@ -12,7 +13,6 @@ import FormControl from '@material-ui/core/FormControl';
 import IconAdd from '@material-ui/icons/AddCircleOutline';
 import IconButton from '@material-ui/core/IconButton';
 import IconInfo from '@material-ui/icons/Info';
-import IconRemove from '@material-ui/icons/RemoveCircleOutline';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -41,6 +41,12 @@ const customTheme = createMuiTheme({
     button: {
       fontWeight: "bold",
     },
+    h6: {
+      fontWeight: "bold",
+    },
+    h4: {
+      fontWeight: "bold",
+    },
   },
 });
 
@@ -48,10 +54,16 @@ const TITLE_NAME = "ProbeSolver";
 
 export default function ProbeSolverMain() {
   const [loading, setLoading] = React.useState(false);
-  const [errorValue, setErrorValue] = React.useState("");
-  const [inputStrains, setInputStrains] = React.useState([""]);
+  const [errorValue, setError] = React.useState("");
+
+  const [currentInputStrain, setCurrentInputStrain] = React.useState("");
+  const [inputStrains, setInputStrains] = React.useState([]);
+
   const [classicMode, setClassicMode] = React.useState(true);
+
+  const [currentTaxid, setCurrentTaxid] = React.useState("");
   const [taxids, setTaxids] = React.useState([]);
+
   const [results, setResults] = React.useState(["", "", "", "", ""]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
@@ -72,13 +84,20 @@ export default function ProbeSolverMain() {
   }
   
   function search(){
-    if (inputStrains === undefined || inputStrains.length === 0 || anyEmpty(inputStrains) ||
-        anyEmpty(taxids)){
-      setErrorValue("Please fill out empty fields");
+    if (inputStrains === undefined || inputStrains.length === 0) {
+      setError("Please add a strain ID to the query (maybe you forgot to click the (+) button?)");
+      return;
+    }
+    if (anyEmpty(inputStrains)){
+      setError("Empty fields cannot be included in the query");
+      return;
+    }
+    if (!classicMode && (anyEmpty(taxids) || taxids.length === 0)){
+      setError("Please add a tax ID to the query (maybe you forgot to click the (+) button?)");
       return;
     }
     setLoading(true);
-    // TODO: search with inputValue
+    // TODO: search with inputStrains and taxids
     // console.log(inputValue);
     let fakeResult = ["5’GGATAGCCCAGAGAAATTTGGA3’", "5’CAT CTT GTA CCG TTG GAA CTT TAA T3’", "GCCTCATTTGATT(A)20-biotin", "thiol-(A)20TTTCAGATG", "biotin-(A)20CATCTGAAA"];
     setTimeout(()=>{
@@ -87,54 +106,51 @@ export default function ProbeSolverMain() {
     }, 2000);
   }
 
-  const handleClickAddMoreStrainIds = (index) => () => {
-    setErrorValue("");
-    if (inputStrains.length-1 === index){
-      if (inputStrains.length >= 3) {
-        setErrorValue("Cannot add more than 3 strain IDs");
-      }else{
-        setInputStrains([...inputStrains, ""]);
-      }
-    }else{
-      let newInputStrains = [...inputStrains];
-      newInputStrains.splice(index, 1);
-      setInputStrains(newInputStrains);
-    }
-  };
-
-  const handleClickAddMoreTaxids = (index) => () => {
-    setErrorValue("");
-    if (taxids.length-1 === index){
-      setTaxids([...taxids, ""]);
-    }else{
-      let newTaxids = [...taxids];
-      newTaxids.splice(index, 1);
-      setTaxids(newTaxids);
-    }
-  }
-
-  const handleInputChange = (index) => (event) => {
-    setErrorValue("");
-    const newInputStrains = [...inputStrains];
-    newInputStrains[index] = event.target.value;
+  const handleInputStrainsDelete = (index) => () => {
+    setError("");
+    let newInputStrains = [...inputStrains];
+    newInputStrains.splice(index, 1);
     setInputStrains(newInputStrains);
   };
 
-  const handleTaxidChange = (index) => (event) => {
-    setErrorValue("");
-    const newTaxids = [...taxids];
-    newTaxids[index] = event.target.value;
+  const handlecurrentInputStrainChange = (event) => {
+    setError("");
+    setCurrentInputStrain(event.target.value);
+  };
+
+  const handleClickAddStrain = () => {
+    if (inputStrains.length >= 3) {
+      setError("Cannot add more than 3 strain IDs");
+      return;
+    }
+    if (currentInputStrain.length === 0) return;
+    setInputStrains([...inputStrains, currentInputStrain]);
+    setCurrentInputStrain("");
+  };
+
+  // Taxids
+  const handleChangeClassicMode = (event) => {
+    setError("");
+    setClassicMode(event.target.value);
+  };
+
+  const handleCurrentTaxidChange = (event) => {
+    setError("");
+    setCurrentTaxid(event.target.value);
+  };
+
+  const handleTaxidsDelete = (index) => () => {
+    setError("");
+    let newTaxids = [...taxids];
+    newTaxids.splice(index, 1);
     setTaxids(newTaxids);
   };
 
-  const handleChangeClassicMode = (event) => {
-    setErrorValue("");
-    setClassicMode(event.target.value);
-    if (event.target.value){
-      setTaxids([]);
-    }else{
-      setTaxids([""]);
-    }
+  const handleClickAddTaxid = () => {
+    setError("");
+    if (currentTaxid.length === 0) return;
+    setTaxids([...taxids, currentTaxid]);
+    setCurrentTaxid("");
   };
 
   return (<ThemeProvider theme={customTheme}>
@@ -150,85 +166,96 @@ export default function ProbeSolverMain() {
           component="h1"
           style={{display: "inline-flex", alignItems: "center", justifyContent: "center", flexGrow: 1, minWidth: "10em"}}
         >
-          <img alt="DNA icon" src="dna.svg" style={{maxHeight: "1em", maxWidth: "1em", marginRight: "0.3em"}} />{TITLE_NAME}
+          <img alt="DNA icon" src="dna.svg" style={{maxHeight: "1em", maxWidth: "1em", marginRight: "0.3em"}} /><span>{TITLE_NAME}</span>
         </Typography>
         <IconButton style={{color: "white"}} aria-label="information" onClick={handleDialogClickOpen}>
           <IconInfo fontSize="inherit" />
         </IconButton>
       </Paper>
-      <Paper style={{padding: 16, display: "flex", flexDirection: "column"}}>
+      <Paper style={{padding: 16, display: "flex", flexDirection: "column", marginBottom: 16}}>
         {errorValue.length > 0 ? <span class="error">{errorValue}</span> : undefined}
-        <div style={{display: "flex", flexDirection: "row"}}>
-          <div style={{display: "flex", flexDirection: "column", flexGrow: 1, marginRight: 6}}>
+        <div style={{display: "flex", flexDirection: "column", flexGrow: 1, marginRight: 6}}>
+          <FormControl variant="outlined" style={{marginBottom: 12}}>
+            <InputLabel htmlFor={"straininput"}>Strain ID</InputLabel>
+            <OutlinedInput
+              value={currentInputStrain}
+              required
+              size="small"
+              variant="outlined"
+              onChange={handlecurrentInputStrainChange}
+              labelWidth={65}
+              inputProps={{
+                id: "straininput"
+              }}
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconButton
+                    aria-label="add strain ID to search"
+                    onClick={handleClickAddStrain}
+                    edge="start"
+                  >
+                    <IconAdd />
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+          <div style={{display: "flex", flexWrap: 'wrap', listStyle: 'none', marginBottom: 16,}}>
             {inputStrains.map((value, index)=>(
-              <FormControl variant="outlined" key={index} style={{marginBottom: 12}}>
-                <InputLabel htmlFor={"straininput" + index}>Strain ID</InputLabel>
-                <OutlinedInput
-                  value={value}
-                  required
-                  size="small"
-                  variant="outlined"
-                  onChange={handleInputChange(index)}
-                  labelWidth={65}
-                  inputProps={{ id: "straininput" + index }}
-                  endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="add additional strain ID"
-                      onClick={handleClickAddMoreStrainIds(index)}
-                      edge="end"
-                    >
-                      { inputStrains.length-1 === index ? <IconAdd /> : <IconRemove /> }
-                    </IconButton>
-                  </InputAdornment>
-                }/>
-              </FormControl>
+              <li key={index} style={{marginRight: 8}}>
+                <Chip label={value} onDelete={handleInputStrainsDelete(index)} />
+              </li>
             ))}
           </div>
 
-          <div style={{display: "flex", flexDirection: "column", flexGrow: 1, marginLeft: 6, minWidth: "calc(50% - 12px)"}}>
+          <div style={{display: "flex", flexDirection: "row"}}>
+            <FormControl variant="outlined" style={{marginRight: 8, width: "50%"}}>
+              <InputLabel htmlFor="modeselect">Mode</InputLabel>
+              <Select
+                value={classicMode}
+                defaultValue={true}
+                style={{marginBottom: 12}}
+                onChange={handleChangeClassicMode}
+                labelWidth={43}
+                inputProps={{
+                  id: 'modeselect',
+                }}
+              >
+                <MenuItem value={true}>Classic</MenuItem>
+                <MenuItem value={false}>Input organism tax IDs</MenuItem>
+              </Select>
+            </FormControl>
 
-          <FormControl variant="outlined">
-            <InputLabel htmlFor="modeselect">Mode</InputLabel>
-            <Select
-              value={classicMode}
-              defaultValue={true}
-              style={{marginBottom: 12}}
-              onChange={handleChangeClassicMode}
-              labelWidth={43}
-              inputProps={{
-                name: 'age',
-                id: 'modeselect',
-              }}
-            >
-              <MenuItem value={true}>Classic</MenuItem>
-              <MenuItem value={false}>Input organism tax IDs</MenuItem>
-            </Select>
-          </FormControl>
-
-            {classicMode ? undefined : taxids.map((value, index)=>(
-              <FormControl variant="outlined" key={index} style={{marginBottom: 12}}>
-                <InputLabel htmlFor={"taxidinput" + index}>Tax ID</InputLabel>
-                <OutlinedInput
-                  value={value}
-                  required
-                  size="small"
-                  variant="outlined"
-                  onChange={handleTaxidChange(index)}
-                  labelWidth={48}
-                  inputProps={{ id: "taxidinput" + index }}
-                  endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="add additional strain ID"
-                      onClick={handleClickAddMoreTaxids(index)}
-                      edge="end"
-                    >
-                      { taxids.length-1 === index ? <IconAdd /> : <IconRemove /> }
-                    </IconButton>
-                  </InputAdornment>
-                }/>
-              </FormControl>
+            <FormControl variant="outlined" style={{marginLeft: 8, width: "50%"}}>
+              <InputLabel htmlFor={"taxidinput"}>Tax ID</InputLabel>
+              <OutlinedInput
+                value={currentTaxid}
+                disabled={classicMode}
+                required
+                size="small"
+                variant="outlined"
+                onChange={handleCurrentTaxidChange}
+                labelWidth={48}
+                inputProps={{ id: "taxidinput" }}
+                startAdornment={
+                <InputAdornment position="start">
+                  <IconButton
+                    disabled={classicMode}
+                    aria-label="add tax ID to search"
+                    onClick={handleClickAddTaxid}
+                    edge="start"
+                  >
+                    <IconAdd />
+                  </IconButton>
+                </InputAdornment>
+              }/>
+            </FormControl>
+          </div>
+          <div style={{display: "flex", flexWrap: 'wrap', listStyle: 'none', marginBottom: 16,}}>
+            {taxids.map((value, index)=>(
+              <li key={index} style={{marginRight: 8}}>
+                <Chip label={value} onDelete={handleTaxidsDelete(index)} />
+              </li>
             ))}
           </div>
         </div>
@@ -242,7 +269,7 @@ export default function ProbeSolverMain() {
           Search
         </Button>
       </Paper>
-      <div style={{marginTop: 16, minHeight: 4, borderRadius: 5}}><Fade
+      <div style={{minHeight: 4, borderRadius: 5}}><Fade
         rowSpan={2}
         in={loading}
         style={{
@@ -255,8 +282,8 @@ export default function ProbeSolverMain() {
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Item</TableCell>
-              <TableCell align="left">Sequence</TableCell>
+              <TableCell style={{fontWeight: "bold"}}>Item</TableCell>
+              <TableCell style={{fontWeight: "bold"}} align="left">Sequence</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
