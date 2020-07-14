@@ -1,5 +1,6 @@
 body {
-    background-color: #eee;
+    background-color: #DCDCDC;
+    font-family: 'Lato', sans-serif;
 }
 
 span.error { 
@@ -10,4 +11,7 @@ span.error {
 
 .MuiLinearProgress-root {
     border-radius: inherit;
+}
+.MuiButton-root {
+    font-weight: bold;
 }

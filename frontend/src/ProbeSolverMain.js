@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -27,26 +28,27 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
-
 import './ProbeSolverMain.css';
 
 const customTheme = createMuiTheme({
   palette: {
     primary: {
-      main: "#2E64EC",
+      main: "#131F43",
+    },
+  },
+  typography: {
+    fontFamily: 'Lato, sans-serif',
+    button: {
+      fontWeight: "bold",
     },
   },
 });
 
-function TitleThing(){
-  return (<>
-      <img alt="DNA icon" src="dna.svg" style={{maxHeight: "1em", maxWidth: "1em", position: "relative", bottom: -1.5, marginRight: "0.35em"}} />{"ProbeSolver 3000"}
-  </>);
-}
+const TITLE_NAME = "ProbeSolver";
 
 export default function ProbeSolverMain() {
   const [loading, setLoading] = React.useState(false);
-  const [errorValue, setErrorValue] = React.useState(false);
+  const [errorValue, setErrorValue] = React.useState("");
   const [inputStrains, setInputStrains] = React.useState([""]);
   const [classicMode, setClassicMode] = React.useState(true);
   const [taxids, setTaxids] = React.useState([]);
@@ -72,7 +74,7 @@ export default function ProbeSolverMain() {
   function search(){
     if (inputStrains === undefined || inputStrains.length === 0 || anyEmpty(inputStrains) ||
         anyEmpty(taxids)){
-      setErrorValue(true);
+      setErrorValue("Please fill out empty fields");
       return;
     }
     setLoading(true);
@@ -86,9 +88,13 @@ export default function ProbeSolverMain() {
   }
 
   const handleClickAddMoreStrainIds = (index) => () => {
-    setErrorValue(false);
+    setErrorValue("");
     if (inputStrains.length-1 === index){
-      setInputStrains([...inputStrains, ""]);
+      if (inputStrains.length >= 3) {
+        setErrorValue("Cannot add more than 3 strain IDs");
+      }else{
+        setInputStrains([...inputStrains, ""]);
+      }
     }else{
       let newInputStrains = [...inputStrains];
       newInputStrains.splice(index, 1);
@@ -97,7 +103,7 @@ export default function ProbeSolverMain() {
   };
 
   const handleClickAddMoreTaxids = (index) => () => {
-    setErrorValue(false);
+    setErrorValue("");
     if (taxids.length-1 === index){
       setTaxids([...taxids, ""]);
     }else{
@@ -108,21 +114,21 @@ export default function ProbeSolverMain() {
   }
 
   const handleInputChange = (index) => (event) => {
-    setErrorValue(false);
+    setErrorValue("");
     const newInputStrains = [...inputStrains];
     newInputStrains[index] = event.target.value;
     setInputStrains(newInputStrains);
   };
 
   const handleTaxidChange = (index) => (event) => {
-    setErrorValue(false);
+    setErrorValue("");
     const newTaxids = [...taxids];
     newTaxids[index] = event.target.value;
     setTaxids(newTaxids);
   };
 
   const handleChangeClassicMode = (event) => {
-    setErrorValue(false);
+    setErrorValue("");
     setClassicMode(event.target.value);
     if (event.target.value){
       setTaxids([]);
@@ -132,30 +138,26 @@ export default function ProbeSolverMain() {
   };
 
   return (<ThemeProvider theme={customTheme}>
+    <CssBaseline />
     <Container maxWidth="md" style={{marginTop: 32, marginBottom: 32}}>
-      <Paper style={{marginBottom: 36, display: "flex", flexDirection: "column", alignItems: "stretch"}}>
-        <div style={{width: "calc(100% - 32)", height: 100, padding: 32, textAlign: "center", backgroundColor: "#131F43", borderRadius: "4px 4px 0 0"}}>
-          <img src="logo-igem-vilnius.png" alt="iGEM Vilnius Logo" style={{maxHeight: 100}} />
-        </div>
-        <div style={{height: 100, padding: 32, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center"}}>
-          <IconButton aria-label="information" style={{visibility: "hidden"}}>
-            <IconInfo fontSize="inherit" />
-          </IconButton>
-          
-          <Typography
-            variant="h4"
-            component="h1"
-            style={{display: "inline-flex", alignItems: "center", justifyContent: "center", flexGrow: 1, minWidth: "10em"}}
-          >
-          <TitleThing/>
-          </Typography>
-          <IconButton aria-label="information" onClick={handleDialogClickOpen}>
-            <IconInfo fontSize="inherit" />
-          </IconButton>
-        </div>
+      <Paper style={{marginBottom: 36, padding: 48, display: "flex", alignItems: "stretch", backgroundColor: "#131F43", color: "white"}}>
+        <IconButton aria-label="information" style={{visibility: "hidden"}}>
+          <IconInfo fontSize="inherit" />
+        </IconButton>
+        
+        <Typography
+          variant="h4"
+          component="h1"
+          style={{display: "inline-flex", alignItems: "center", justifyContent: "center", flexGrow: 1, minWidth: "10em"}}
+        >
+          <img alt="DNA icon" src="dna.svg" style={{maxHeight: "1em", maxWidth: "1em", marginRight: "0.3em"}} />{TITLE_NAME}
+        </Typography>
+        <IconButton style={{color: "white"}} aria-label="information" onClick={handleDialogClickOpen}>
+          <IconInfo fontSize="inherit" />
+        </IconButton>
       </Paper>
       <Paper style={{padding: 16, display: "flex", flexDirection: "column"}}>
-        {errorValue ? <span class="error">Please fill out empty fields</span> : undefined}
+        {errorValue.length > 0 ? <span class="error">{errorValue}</span> : undefined}
         <div style={{display: "flex", flexDirection: "row"}}>
           <div style={{display: "flex", flexDirection: "column", flexGrow: 1, marginRight: 6}}>
             {inputStrains.map((value, index)=>(
@@ -167,7 +169,7 @@ export default function ProbeSolverMain() {
                   size="small"
                   variant="outlined"
                   onChange={handleInputChange(index)}
-                  labelWidth={66}
+                  labelWidth={65}
                   inputProps={{ id: "straininput" + index }}
                   endAdornment={
                   <InputAdornment position="end">
@@ -193,7 +195,7 @@ export default function ProbeSolverMain() {
               defaultValue={true}
               style={{marginBottom: 12}}
               onChange={handleChangeClassicMode}
-              labelWidth={42}
+              labelWidth={43}
               inputProps={{
                 name: 'age',
                 id: 'modeselect',
@@ -213,7 +215,7 @@ export default function ProbeSolverMain() {
                   size="small"
                   variant="outlined"
                   onChange={handleTaxidChange(index)}
-                  labelWidth={66}
+                  labelWidth={48}
                   inputProps={{ id: "taxidinput" + index }}
                   endAdornment={
                   <InputAdornment position="end">
@@ -293,7 +295,7 @@ export default function ProbeSolverMain() {
       onClose={handleDialogClose}
       aria-labelledby="dialog-title"
     >
-      <DialogTitle id="dialog-title">What is <TitleThing />?</DialogTitle>
+      <DialogTitle id="dialog-title">What is <img alt="DNA icon" src="dna-b.svg" style={{maxHeight: "1em", maxWidth: "1em", position: "relative", bottom: -1.5, margin: "0 0.25em", fill: "black"}} />{TITLE_NAME}?</DialogTitle>
       <DialogContent>
         <DialogContentText>
           It is a special software developed for the iGEM Vilnius-Lithuania 2020 team project used to identify and receive probe sequences...
