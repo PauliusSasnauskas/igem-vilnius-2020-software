@@ -1,6 +1,8 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
+import Chip from '@material-ui/core/Chip';
 import Container from '@material-ui/core/Container';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -11,7 +13,6 @@ import FormControl from '@material-ui/core/FormControl';
 import IconAdd from '@material-ui/icons/AddCircleOutline';
 import IconButton from '@material-ui/core/IconButton';
 import IconInfo from '@material-ui/icons/Info';
-import IconRemove from '@material-ui/icons/RemoveCircleOutline';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -25,36 +26,65 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-
+import { unstable_createMuiStrictModeTheme as createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 import './ProbeSolverMain.css';
 
 const customTheme = createMuiTheme({
   palette: {
+    type: "dark",
     primary: {
       main: "#2E64EC",
+    },
+    secondary: {
+      main: "#FFC43B",
+      dark: "#FFC43B",
+    },
+    background: {
+      // default: "#333",
+      // paper: "#333333",
+    },
+  },
+  typography: {
+    fontFamily: 'Lato, sans-serif',
+    button: {
+      fontWeight: "bold",
+    },
+    h6: {
+      fontWeight: "bold",
+    },
+    h4: {
+      fontWeight: "bold",
     },
   },
 });
 
-function TitleThing(){
-  return (<>
-      <img alt="DNA icon" src="dna.svg" style={{maxHeight: "1em", maxWidth: "1em", position: "relative", bottom: -1.5, marginRight: "0.35em"}} />{"ProbeSolver 3000"}
-  </>);
-}
+const TITLE_NAME = "ProbeSolver";
 
 export default function ProbeSolverMain() {
   const [loading, setLoading] = React.useState(false);
-  const [errorValue, setErrorValue] = React.useState(false);
-  const [inputStrains, setInputStrains] = React.useState([""]);
+  const [errorValue, setError] = React.useState("");
+
+  const [currentInputStrain, setCurrentInputStrain] = React.useState("");
+  const [inputStrains, setInputStrains] = React.useState([]);
+
   const [classicMode, setClassicMode] = React.useState(true);
+
+  const [currentTaxid, setCurrentTaxid] = React.useState("");
   const [taxids, setTaxids] = React.useState([]);
+
   const [results, setResults] = React.useState(["", "", "", "", ""]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
+  const [buttonRaised, setButtonRaised] = React.useState(false);
+
+  const [lastSearch, setLastSearch] = React.useState([[], false, []]);
+
   const handleDialogClickOpen = () => { setDialogOpen(true); };
   const handleDialogClose = () => { setDialogOpen(false); };
+
+  const onMouseOverButton = () => setButtonRaised(true);
+  const onMouseOutButton = () => setButtonRaised(false);
 
   function anyEmpty(array){
     for (let item of array){
@@ -70,13 +100,23 @@ export default function ProbeSolverMain() {
   }
   
   function search(){
-    if (inputStrains === undefined || inputStrains.length === 0 || anyEmpty(inputStrains) ||
-        anyEmpty(taxids)){
-      setErrorValue(true);
+    if (inputStrains === undefined || inputStrains.length === 0) {
+      setError("Please add a strain ID to the query (maybe you forgot to click the (+) button?)");
+      return;
+    }
+    if (anyEmpty(inputStrains)){
+      setError("Empty fields cannot be included in the query");
+      return;
+    }
+    if (!classicMode && (anyEmpty(taxids) || taxids.length === 0)){
+      setError("Please add a tax ID to the query (maybe you forgot to click the (+) button?)");
       return;
     }
     setLoading(true);
-    // TODO: search with inputValue
+
+    setLastSearch([[...inputStrains], classicMode, [...taxids]]);
+    setResults(["", "", "", "", ""]);
+    // TODO: search with inputStrains and taxids
     // console.log(inputValue);
     let fakeResult = ["5’GGATAGCCCAGAGAAATTTGGA3’", "5’CAT CTT GTA CCG TTG GAA CTT TAA T3’", "GCCTCATTTGATT(A)20-biotin", "thiol-(A)20TTTCAGATG", "biotin-(A)20CATCTGAAA"];
     setTimeout(()=>{
@@ -85,162 +125,173 @@ export default function ProbeSolverMain() {
     }, 2000);
   }
 
-  const handleClickAddMoreStrainIds = (index) => () => {
-    setErrorValue(false);
-    if (inputStrains.length-1 === index){
-      setInputStrains([...inputStrains, ""]);
-    }else{
-      let newInputStrains = [...inputStrains];
-      newInputStrains.splice(index, 1);
-      setInputStrains(newInputStrains);
-    }
-  };
-
-  const handleClickAddMoreTaxids = (index) => () => {
-    setErrorValue(false);
-    if (taxids.length-1 === index){
-      setTaxids([...taxids, ""]);
-    }else{
-      let newTaxids = [...taxids];
-      newTaxids.splice(index, 1);
-      setTaxids(newTaxids);
-    }
-  }
-
-  const handleInputChange = (index) => (event) => {
-    setErrorValue(false);
-    const newInputStrains = [...inputStrains];
-    newInputStrains[index] = event.target.value;
+  const handleInputStrainsDelete = (index) => () => {
+    setError("");
+    let newInputStrains = [...inputStrains];
+    newInputStrains.splice(index, 1);
     setInputStrains(newInputStrains);
   };
 
-  const handleTaxidChange = (index) => (event) => {
-    setErrorValue(false);
-    const newTaxids = [...taxids];
-    newTaxids[index] = event.target.value;
+  const handlecurrentInputStrainChange = (event) => {
+    setError("");
+    setCurrentInputStrain(event.target.value);
+  };
+
+  const handleClickAddStrain = () => {
+    if (inputStrains.length >= 3) {
+      setError("Cannot add more than 3 strain IDs");
+      return;
+    }
+    if (currentInputStrain.length === 0) return;
+    setInputStrains([...inputStrains, currentInputStrain]);
+    setCurrentInputStrain("");
+  };
+
+  // Taxids
+  const handleChangeClassicMode = (event) => {
+    setError("");
+    setClassicMode(event.target.value);
+  };
+
+  const handleCurrentTaxidChange = (event) => {
+    setError("");
+    setCurrentTaxid(event.target.value);
+  };
+
+  const handleTaxidsDelete = (index) => () => {
+    setError("");
+    let newTaxids = [...taxids];
+    newTaxids.splice(index, 1);
     setTaxids(newTaxids);
   };
 
-  const handleChangeClassicMode = (event) => {
-    setErrorValue(false);
-    setClassicMode(event.target.value);
-    if (event.target.value){
-      setTaxids([]);
-    }else{
-      setTaxids([""]);
-    }
+  const handleClickAddTaxid = () => {
+    setError("");
+    if (currentTaxid.length === 0) return;
+    setTaxids([...taxids, currentTaxid]);
+    setCurrentTaxid("");
   };
 
-  return (<ThemeProvider theme={customTheme}>
+  return (
+  <ThemeProvider theme={customTheme}>
+    <CssBaseline />
     <Container maxWidth="md" style={{marginTop: 32, marginBottom: 32}}>
-      <Paper style={{marginBottom: 36, display: "flex", flexDirection: "column", alignItems: "stretch"}}>
-        <div style={{width: "calc(100% - 32)", height: 100, padding: 32, textAlign: "center", backgroundColor: "#131F43", borderRadius: "4px 4px 0 0"}}>
-          <img src="logo-igem-vilnius.png" alt="iGEM Vilnius Logo" style={{maxHeight: 100}} />
-        </div>
-        <div style={{height: 100, padding: 32, textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center"}}>
-          <IconButton aria-label="information" style={{visibility: "hidden"}}>
-            <IconInfo fontSize="inherit" />
-          </IconButton>
-          
-          <Typography
-            variant="h4"
-            component="h1"
-            style={{display: "inline-flex", alignItems: "center", justifyContent: "center", flexGrow: 1, minWidth: "10em"}}
-          >
-          <TitleThing/>
-          </Typography>
-          <IconButton aria-label="information" onClick={handleDialogClickOpen}>
-            <IconInfo fontSize="inherit" />
-          </IconButton>
-        </div>
+      <Paper style={{marginBottom: 36, padding: 48, display: "flex", alignItems: "stretch", backgroundColor: customTheme.palette.primary.main, color: "white"}}>
+        <IconButton aria-label="information" style={{visibility: "hidden"}}>
+          <IconInfo fontSize="inherit" />
+        </IconButton>
+        
+        <Typography
+          variant="h4"
+          component="h1"
+          style={{display: "inline-flex", alignItems: "center", justifyContent: "center", flexGrow: 1}}
+        >
+          <img alt="DNA icon" src="dna.svg" style={{maxHeight: "1em", maxWidth: "1em", marginRight: "0.3em"}} /><span>{TITLE_NAME}</span>
+        </Typography>
+        <IconButton style={{color: "white"}} aria-label="information" onClick={handleDialogClickOpen}>
+          <IconInfo fontSize="inherit" />
+        </IconButton>
       </Paper>
-      <Paper style={{padding: 16, display: "flex", flexDirection: "column"}}>
-        {errorValue ? <span class="error">Please fill out empty fields</span> : undefined}
-        <div style={{display: "flex", flexDirection: "row"}}>
-          <div style={{display: "flex", flexDirection: "column", flexGrow: 1, marginRight: 6}}>
+      <Paper style={{padding: 16, display: "flex", flexDirection: "column", marginBottom: 16}}>
+        {errorValue.length > 0 ? <span className="error">{errorValue}</span> : undefined}
+        <div style={{display: "flex", flexDirection: "column", flexGrow: 1, marginRight: 6}}>
+          <FormControl variant="outlined" style={{marginBottom: 12}}>
+            <InputLabel htmlFor={"straininput"}>Strain ID</InputLabel>
+            <OutlinedInput
+              value={currentInputStrain}
+              required
+              size="small"
+              variant="outlined"
+              onChange={handlecurrentInputStrainChange}
+              labelWidth={65}
+              inputProps={{
+                id: "straininput"
+              }}
+              startAdornment={
+                <InputAdornment position="start">
+                  <IconButton
+                    aria-label="add strain ID to search"
+                    onClick={handleClickAddStrain}
+                    edge="start"
+                  >
+                    <IconAdd />
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+          <div className="rowOfChips">
             {inputStrains.map((value, index)=>(
-              <FormControl variant="outlined" key={index} style={{marginBottom: 12}}>
-                <InputLabel htmlFor={"straininput" + index}>Strain ID</InputLabel>
-                <OutlinedInput
-                  value={value}
-                  required
-                  size="small"
-                  variant="outlined"
-                  onChange={handleInputChange(index)}
-                  labelWidth={66}
-                  inputProps={{ id: "straininput" + index }}
-                  endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="add additional strain ID"
-                      onClick={handleClickAddMoreStrainIds(index)}
-                      edge="end"
-                    >
-                      { inputStrains.length-1 === index ? <IconAdd /> : <IconRemove /> }
-                    </IconButton>
-                  </InputAdornment>
-                }/>
-              </FormControl>
+              <li key={index} style={{marginRight: 8}}>
+                <Chip label={value} onDelete={handleInputStrainsDelete(index)} />
+              </li>
             ))}
           </div>
 
-          <div style={{display: "flex", flexDirection: "column", flexGrow: 1, marginLeft: 6, minWidth: "calc(50% - 12px)"}}>
+          <div style={{display: "flex", flexDirection: "row"}}>
+            <FormControl variant="outlined" style={{marginRight: 8, width: "50%"}}>
+              <InputLabel htmlFor="modeselect">Mode</InputLabel>
+              <Select
+                value={classicMode}
+                defaultValue={true}
+                style={{marginBottom: 12}}
+                onChange={handleChangeClassicMode}
+                labelWidth={43}
+                inputProps={{
+                  id: 'modeselect',
+                }}
+              >
+                <MenuItem value={true}>Classic</MenuItem>
+                <MenuItem value={false}>Input organism tax IDs</MenuItem>
+              </Select>
+            </FormControl>
 
-          <FormControl variant="outlined">
-            <InputLabel htmlFor="modeselect">Mode</InputLabel>
-            <Select
-              value={classicMode}
-              defaultValue={true}
-              style={{marginBottom: 12}}
-              onChange={handleChangeClassicMode}
-              labelWidth={42}
-              inputProps={{
-                name: 'age',
-                id: 'modeselect',
-              }}
-            >
-              <MenuItem value={true}>Classic</MenuItem>
-              <MenuItem value={false}>Input organism tax IDs</MenuItem>
-            </Select>
-          </FormControl>
-
-            {classicMode ? undefined : taxids.map((value, index)=>(
-              <FormControl variant="outlined" key={index} style={{marginBottom: 12}}>
-                <InputLabel htmlFor={"taxidinput" + index}>Tax ID</InputLabel>
-                <OutlinedInput
-                  value={value}
-                  required
-                  size="small"
-                  variant="outlined"
-                  onChange={handleTaxidChange(index)}
-                  labelWidth={66}
-                  inputProps={{ id: "taxidinput" + index }}
-                  endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="add additional strain ID"
-                      onClick={handleClickAddMoreTaxids(index)}
-                      edge="end"
-                    >
-                      { taxids.length-1 === index ? <IconAdd /> : <IconRemove /> }
-                    </IconButton>
-                  </InputAdornment>
-                }/>
-              </FormControl>
+            <FormControl variant="outlined" style={{marginLeft: 8, width: "50%"}}>
+              <InputLabel htmlFor={"taxidinput"}>Tax ID</InputLabel>
+              <OutlinedInput
+                value={currentTaxid}
+                disabled={classicMode}
+                required
+                size="small"
+                variant="outlined"
+                onChange={handleCurrentTaxidChange}
+                labelWidth={48}
+                inputProps={{ id: "taxidinput" }}
+                startAdornment={
+                <InputAdornment position="start">
+                  <IconButton
+                    disabled={classicMode}
+                    aria-label="add tax ID to search"
+                    onClick={handleClickAddTaxid}
+                    edge="start"
+                  >
+                    <IconAdd />
+                  </IconButton>
+                </InputAdornment>
+              }/>
+            </FormControl>
+          </div>
+          <div className="rowOfChips">
+            {!classicMode && taxids.map((value, index)=>(
+              <li key={index} style={{marginRight: 8}}>
+                <Chip label={value} onDelete={handleTaxidsDelete(index)} />
+              </li>
             ))}
           </div>
         </div>
         <Button
           variant="contained"
-          color="primary"
+          color="secondary"
+          onMouseOver={onMouseOverButton}
+          onMouseOut={onMouseOutButton}
           disabled={loading}
-          style={{height: 40}}
+          style={buttonRaised ? {transition: "0.5s", bottom: 1} : {transition: "0.5s", bottom: 0}}
           onClick={search}
         >
           Search
         </Button>
       </Paper>
-      <div style={{marginTop: 16, minHeight: 4, borderRadius: 5}}><Fade
+      <div style={{minHeight: 4, borderRadius: 5}}><Fade
         rowSpan={2}
         in={loading}
         style={{
@@ -249,42 +300,65 @@ export default function ProbeSolverMain() {
         unmountOnExit>
         <LinearProgress />
       </Fade></div>
-      {allFull(results) ? <Paper style={{marginTop: 16}}>
-        <Table aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Item</TableCell>
-              <TableCell align="left">Sequence</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell>HDA Forward Primer</TableCell>
-              <TableCell>{results[0]}</TableCell>
-            </TableRow>
-            
-            <TableRow>
-              <TableCell>HDA reverse primer</TableCell>
-              <TableCell>{results[1]}</TableCell>
-            </TableRow>
-            
-            <TableRow>
-              <TableCell>Capture Probe</TableCell>
-              <TableCell>{results[2]}</TableCell>
-            </TableRow>
-            
-            <TableRow>
-              <TableCell>Detector Probe</TableCell>
-              <TableCell>{results[3]}</TableCell>
-            </TableRow>
-            
-            <TableRow>
-              <TableCell>Control Probe</TableCell>
-              <TableCell>{results[4]}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </Paper> : undefined}
+      {lastSearch[0].length > 0 ? (
+        <Paper style={{marginTop: 16, padding: 16}}>
+          <Typography variant="h6" component="h2" style={{marginBottom: 8}}>Search query</Typography>
+          <div className="rowOfChips">
+            <span>Strain IDs:</span>
+            {lastSearch[0].map((value, index)=>(
+              <li key={index} style={{marginRight: 8}}>
+                <Chip label={value} />
+              </li>
+            ))}
+          </div>
+          <div className="rowOfChips" style={{marginBottom: 0}}>
+            <span>Mode - {lastSearch[1] ? "Classic" : "With organism tax IDs:"}</span>
+            {!lastSearch[1] && lastSearch[2].map((value, index)=>(
+              <li key={index} style={{marginRight: 8}}>
+                <Chip label={value} />
+              </li>
+            ))}
+          </div>
+        </Paper>
+      ) : undefined}
+      {allFull(results) ? (
+        <Paper style={{marginTop: 36}}>
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell style={{fontWeight: "bold"}}>Item</TableCell>
+                <TableCell style={{fontWeight: "bold"}} align="left">Sequence</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>HDA Forward Primer</TableCell>
+                <TableCell>{results[0]}</TableCell>
+              </TableRow>
+              
+              <TableRow>
+                <TableCell>HDA reverse primer</TableCell>
+                <TableCell>{results[1]}</TableCell>
+              </TableRow>
+              
+              <TableRow>
+                <TableCell>Capture Probe</TableCell>
+                <TableCell>{results[2]}</TableCell>
+              </TableRow>
+              
+              <TableRow>
+                <TableCell>Detector Probe</TableCell>
+                <TableCell>{results[3]}</TableCell>
+              </TableRow>
+              
+              <TableRow>
+                <TableCell>Control Probe</TableCell>
+                <TableCell>{results[4]}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Paper>
+      ) : undefined}
     </Container>
     <Dialog
       fullWidth={true}
@@ -293,7 +367,7 @@ export default function ProbeSolverMain() {
       onClose={handleDialogClose}
       aria-labelledby="dialog-title"
     >
-      <DialogTitle id="dialog-title">What is <TitleThing />?</DialogTitle>
+      <DialogTitle id="dialog-title">What is <img alt="DNA icon" src="dna.svg" style={{maxHeight: "1em", maxWidth: "1em", position: "relative", bottom: -1.5, margin: "0 0.25em", fill: "black"}} />{TITLE_NAME}?</DialogTitle>
       <DialogContent>
         <DialogContentText>
           It is a special software developed for the iGEM Vilnius-Lithuania 2020 team project used to identify and receive probe sequences...
