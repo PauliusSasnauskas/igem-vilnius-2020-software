@@ -7,40 +7,61 @@ import requests
 from requests.auth import HTTPBasicAuth
 import json
 import sys
-import analyzeJSON
+from analyzeJSON import JSONAnalyzer
 from config import Configuration
+from databaseDriver import DatabaseDriver
 
 class BacdiveClient(object):
-
-	headers = {'Accept': 'application/json'}
-	#reading authorization details from file
-	conf = Configuration('bacdive')
-	params = conf.getParams()
-	USERNAME = params.get('username')
-	PASSWORD = params.get('password')
-	credentials = HTTPBasicAuth(USERNAME, PASSWORD)
-	
-	def getLinkByCultureno(self,culturecolnumber):
-		response = requests.get('https://bacdive.dsmz.de/api/bacdive/culturecollectionno/%s/' % (culturecolnumber), headers=self.headers,auth=self.credentials)
-		if response.status_code == 200:
-			#if url found by the culture number, get api link
-			culture_url = response.json();
-			results_response = requests.get(url = culture_url[0].get('url'), headers=self.headers,auth=self.credentials);
-			results = results_response.json();
-			return results
-	def run(self):
-		cultureno = self.getLinkByCultureno(culture_id) #returns full json file with culture information
-		org_results = analyzeJSON.getFullInfo(cultureno) #returns marker sequences available for further analysis
-		for x, y in org_results.items():
-			print(x)		#returns species name
-			for i in range(len(y)):
-				print(y[i]) #returns available marker sequences for the species
+    headers = {'Accept': 'application/json'}
+    #reading authorization details from file
+    conf = Configuration('bacdive')
+    params = conf.getParams()
+    USERNAME = params.get('username')
+    PASSWORD = params.get('password')
+    credentials = HTTPBasicAuth(USERNAME, PASSWORD)
+        
+    def __init__(self, culturecolnumber, jid, db_cursor):
+        self.culturecolnumber = culturecolnumber
+        self.jid = jid
+        self.db_cursor = db_cursor
+        
+    def getLinkByCultureno(self):
+        response = requests.get('https://bacdive.dsmz.de/api/bacdive/culturecollectionno/%s/' % (self.culturecolnumber), headers=self.headers,auth=self.credentials)
+        if response.status_code == 200:
+            #if url found by the culture number, get api link
+            culture_url = response.json()
+            return culture_url[0].get('url')
+            #TODO: catch errors
+                    
+    def getJSONByBacdiveID(self):
+        #check if culture no is found in database table "strains". If yes, access bacdive DB with bacdive ID. If no, search by Culture No.
+        #if no:
+        #culturenoURL = getLinkByCultureno()
+        #if yes:
+        #culturenoURL = 'https://bacdive.dsmz.de/api/bacdive/bacdive_id/' + #get bacdive ID from database
+        culturenoURL = 'https://bacdive.dsmz.de/api/bacdive/bacdive_id/' + '5552'
+        results_response = requests.get(url = culturenoURL, headers=self.headers,auth=self.credentials);
+        if results_response.status_code == 200:
+            results = results_response.json()
+            return results
+    #TODO: catch errors
+        
+    def run(self):
+        org_results = JSONAnalyzer(getJSONByBacdiveID(), self.jid).getFullInfo() #returns marker sequences available for further analysis
+        #TODO: put results to markerResults table
+        for x, y in org_results.items():
+            print(x)		#returns species name
+            for i in range(len(y)):
+                print(y[i]) #returns available marker sequences for the species
 
 if __name__ == '__main__':
-	#command line parameters (culture ID) for query
-	#TODO: take parameters from database with JID key
-    arguments = sys.argv[1:]
+    #command line parameters (culture ID) for query
+    #TODO: take parameters from database with JID key
+    arguments = sys.argv[2:]
+    jid = sys.argv[1]
+    db_driver = DatabaseDriver()
+    db_driver.connect()
+    db_cursor = db_driver.getCursor()
     for i in range(len(arguments)):
-        culture_id = arguments[i]
-        BacdiveClient().run()
+        BacdiveClient(arguments[i], jid, db_cursor).run()
 
