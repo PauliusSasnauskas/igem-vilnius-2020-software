@@ -29,12 +29,18 @@ export default function MultipleInput(props){
         onChange(newData);
     };
 
-    const textInput = (<input placeholder={hint} type="text" value={currentValue} onChange={changeCurrentValue} onKeyUp={pressedEnter} />);
+    const textInput = (<input list="browsers" placeholder={hint} value={currentValue} onChange={changeCurrentValue} onKeyUp={pressedEnter} />);
 
-    return (<div className="multipleInput" {...other}>
-        {textInput}
-        <button onClick={changeFunc}>+</button>
-        <br />
+    return (<div className="multipleInputDropdown" {...other}>
+        <div>
+            {textInput}
+            <datalist id="browsers">
+                <option value="16S rRNA" />
+                <option value="23S rRNA" />
+                <option value="5S rRNA" />
+            </datalist>
+            <button onClick={changeFunc}>+</button>
+        </div>
         {data.map((item, index) => (
             <span key={index}>{item}<button onClick={()=>remove(index)}>✕</button></span>
         ))}
