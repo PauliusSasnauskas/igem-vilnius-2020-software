@@ -16,14 +16,15 @@ class JSONAnalyzer(object):
 		self.sequence_type = None
 		self.sequence_length_min = None
 		self.sequence_length_max = None
+		self.intergenic = None
 		
 	def getBacteriaName(self):
 		return self.data.get("taxonomy_name").get("strains")[0].get("species")
 	
 	def getMarkerProperties(self):
 		m_properties = self.db_driver.getMarkerProperties(self.jid)
-		print(m_properties)
-
+		(self.sequence_type, self.sequence_length_min, self.sequence_length_max, self.intergenic) = m_properties[0]
+		#TODO: use multiple marker properties
 	def getMarkerSequences(self):
 		self.getMarkerProperties()
 		sequenceList = []
@@ -33,7 +34,7 @@ class JSONAnalyzer(object):
 			accession_title = sequences[i].get("Sequence_accession_title");
 			sequence_length = sequences[i].get("sequence_length")
 			evaluation = 0;
-			if(self.sequence_type in accession_title):
+			if(self.sequence_type.lower() in accession_title.lower()):
 				evaluation += 1
 			if(sequence_length is not None):
 				if(self.sequence_length_min <= sequence_length <= self.sequence_length_max):

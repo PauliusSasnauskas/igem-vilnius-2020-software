@@ -11,7 +11,7 @@ class DatabaseDriver(object):
 	params = conf.getParams()
 	def __init__(self):
 		self.cur = None
-	
+
 	def connect(self):
 		try:
 			conn = psycopg2.connect(**DatabaseDriver.params)
@@ -20,20 +20,25 @@ class DatabaseDriver(object):
 			#cur.close()
 		except (Exception, psycopg2.DatabaseError) as error:
 			print(error)
-	
-	def getBacDiveID(self, culturecolnumber):
-                cultureNr = culturecolnumber.split()
-                idName = "strain_"+cultureNr[0].lower()
-                idNr = cultureNr[1]
-                query = sql.SQL("select bacdive_id from strains where {name} = %s").format(name=sql.Identifier(idName))
-                self.cur.execute(query, (idNr,))
-                result = self.cur.fetchone()
-                return result[0]
 
-    def getMarkerProperties(self, jid):
-                self.cur.execute("select type, min_length, max_length, intergenic from markers where jid = %s", (jid,))
-                result = self.cur.fetchall()
-                return result
+	def getBacDiveID(self, culturecolnumber):
+		cultureNr = culturecolnumber.split()
+		idName = "strain_"+cultureNr[0].lower()
+		idNr = cultureNr[1]
+		query = sql.SQL("select bacdive_id from strains where {name} = %s").format(name=sql.Identifier(idName))
+		self.cur.execute(query, (idNr,))
+		result = self.cur.fetchone()
+		#TODO: add error handling if for some reason more than 1 row is returned
+		if(result is None):
+			return result
+		else:
+			return result[0]
+
+	def getMarkerProperties(self, jid):
+		self.cur.execute("select type, min_length, max_length, intergenic from markers where jid = %s", (jid,))
+		result = self.cur.fetchall()
+		return result
+
 	def close():
 		if conn is not None:
 			conn.close()

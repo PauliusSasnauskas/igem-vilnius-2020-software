@@ -36,7 +36,6 @@ class BacdiveClient(object):
     def getJSONByBacdiveID(self):
 	    #check if culture no is found in database table "strains". If yes, access bacdive DB with bacdive ID. If no, search by Culture No.
         bacdive_id = self.db_driver.getBacDiveID(self.culturecolnumber)
-        print(type(bacdive_id))
         culturenoURL = ""
         if(bacdive_id is None):
               culturenoURL = self.getLinkByCultureno()
