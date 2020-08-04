@@ -1,4 +1,5 @@
 import React from 'react';
+import Alert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
 import Container from '@material-ui/core/Container';
@@ -25,24 +26,27 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import Typography from '@material-ui/core/Typography';
 import { unstable_createMuiStrictModeTheme as createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 import './ProbeSolverMain.css';
+import { FormControlLabel, Switch } from '@material-ui/core';
 
 const customTheme = createMuiTheme({
   palette: {
     type: "dark",
     primary: {
-      main: "#2E64EC",
+      main: "#6281EF",
     },
     secondary: {
       main: "#FFC43B",
       dark: "#FFC43B",
     },
     background: {
-      // default: "#333",
-      // paper: "#333333",
+      default: "#121212",
+      paper: "#232323",
     },
   },
   typography: {
@@ -62,29 +66,32 @@ const customTheme = createMuiTheme({
 const TITLE_NAME = "ProbeSolver";
 
 export default function ProbeSolverMain() {
+  // VISUAL
   const [loading, setLoading] = React.useState(false);
-  const [errorValue, setError] = React.useState("");
-
-  const [currentInputStrain, setCurrentInputStrain] = React.useState("");
-  const [inputStrains, setInputStrains] = React.useState([]);
-
-  const [classicMode, setClassicMode] = React.useState(true);
-
-  const [currentTaxid, setCurrentTaxid] = React.useState("");
-  const [taxids, setTaxids] = React.useState([]);
-
-  const [results, setResults] = React.useState(["", "", "", "", ""]);
-  const [dialogOpen, setDialogOpen] = React.useState(false);
-
   const [buttonRaised, setButtonRaised] = React.useState(false);
-
-  const [lastSearch, setLastSearch] = React.useState([[], false, []]);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
 
   const handleDialogClickOpen = () => { setDialogOpen(true); };
   const handleDialogClose = () => { setDialogOpen(false); };
 
   const onMouseOverButton = () => setButtonRaised(true);
   const onMouseOutButton = () => setButtonRaised(false);
+
+  // DATA MAIN
+  const [currentInputStrain, setCurrentInputStrain] = React.useState("");
+  const [inputStrains, setInputStrains] = React.useState([]);
+  
+  const [currentTaxid, setCurrentTaxid] = React.useState("");
+  const [taxids, setTaxids] = React.useState([]);
+
+  const [classicMode, setClassicMode] = React.useState(true);
+
+  const [results, setResults] = React.useState(["", "", "", "", ""]);
+
+  // DATA SECONDARY
+  const [errorValue, setError] = React.useState("");
+  const [lastSearch, setLastSearch] = React.useState([[], false, []]);
+  
 
   function anyEmpty(array){
     for (let item of array){
@@ -101,7 +108,7 @@ export default function ProbeSolverMain() {
   
   function search(){
     if (inputStrains === undefined || inputStrains.length === 0) {
-      setError("Please add a strain ID to the query (maybe you forgot to click the (+) button?)");
+      setError("Please add a strain ID to the query (maybe you forgot to click the plus button?)");
       return;
     }
     if (anyEmpty(inputStrains)){
@@ -109,7 +116,7 @@ export default function ProbeSolverMain() {
       return;
     }
     if (!classicMode && (anyEmpty(taxids) || taxids.length === 0)){
-      setError("Please add a tax ID to the query (maybe you forgot to click the (+) button?)");
+      setError("Please add a tax ID to the query (maybe you forgot to click the plus button?)");
       return;
     }
     setLoading(true);
@@ -193,8 +200,36 @@ export default function ProbeSolverMain() {
         </IconButton>
       </Paper>
       <Paper style={{padding: 16, display: "flex", flexDirection: "column", marginBottom: 16}}>
-        {errorValue.length > 0 ? <span className="error">{errorValue}</span> : undefined}
-        <div style={{display: "flex", flexDirection: "column", flexGrow: 1, marginRight: 6}}>
+        {errorValue.length > 0 ? <Alert severity="warning">{errorValue}</Alert> : undefined}
+        <FlexRow>
+          <FormControlLabel
+            style={{minWidth: 200}}
+            control={
+              <Switch
+                checked={true}
+                // onChange={handleChange}
+                color="primary"
+              />
+            }
+            label="Advanced options"
+          />
+
+          <ToggleButtonGroup
+            value={"probes"}
+            exclusive
+            // onChange={handleAlignment}
+            aria-label="text alignment"
+          >
+            <ToggleButton value="probes" aria-label="probes">
+              Probes
+            </ToggleButton>
+            <ToggleButton value="primers" aria-label="primers">
+              Primers
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </FlexRow>
+        
+        <div style={{display: "flex", flexDirection: "column", flexGrow: 1, marginRight: 6, marginTop: 16}}>
           <FormControl variant="outlined" style={{marginBottom: 12}}>
             <InputLabel htmlFor={"straininput"}>Strain ID</InputLabel>
             <OutlinedInput
@@ -285,7 +320,7 @@ export default function ProbeSolverMain() {
           onMouseOver={onMouseOverButton}
           onMouseOut={onMouseOutButton}
           disabled={loading}
-          style={buttonRaised ? {transition: "0.5s", bottom: 1} : {transition: "0.5s", bottom: 0}}
+          style={{transition: "0.5s", bottom: (buttonRaised ? 1 : 0)}}
           onClick={search}
         >
           Search
@@ -323,7 +358,7 @@ export default function ProbeSolverMain() {
       ) : undefined}
       {allFull(results) ? (
         <Paper style={{marginTop: 36}}>
-          <Table aria-label="simple table">
+          <Table aria-label="results">
             <TableHead>
               <TableRow>
                 <TableCell style={{fontWeight: "bold"}}>Item</TableCell>
@@ -381,3 +416,9 @@ export default function ProbeSolverMain() {
     </Dialog>
   </ThemeProvider>);
 };
+
+function FlexRow(props) {
+  return (<div className="flexRow" {...props}>
+    {props.children}
+  </div>);
+}

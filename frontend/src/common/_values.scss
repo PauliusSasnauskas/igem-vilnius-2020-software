@@ -1,0 +1,78 @@
+$black: #121212;
+$dark-gray: #222222;
+$dark-blue: #131F43;
+$main-blue: #2E64EC;
+$white: #FAFAFC;
+$light-gray: #DDDDDD;
+$purple-blue: #6281EF;
+
+@font-face {
+    font-family: 'lato-light';
+    src: url(../fonts/Lato-Light.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'lato-regular';
+    src: url(../fonts/Lato-Regular.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'lato-medium';
+    src: url(../fonts/Lato-Medium.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'lato-heavy';
+    src: url(../fonts/Lato-Heavy.ttf) format('truetype');
+}
+
+@mixin glow_text($color: $white) {
+    text-shadow: 0 0 6px $color;
+}
+
+@mixin outlined_text($color: $white) {
+    color: transparent;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: $color;
+}
+
+@mixin shadow($color: $white) {
+    box-shadow: 0px 0px 10px adjust-color($color, $alpha: 0.5);
+}
+
+$scrollbarColor: #444444;
+@mixin gray_scrollbar {
+    &::-webkit-scrollbar {
+        background-color: transparent;
+        border-radius: 10px;
+        height: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: $scrollbarColor;
+        -webkit-box-shadow: 0px 0px 10px 0px $scrollbarColor;
+        -moz-box-shadow: 0px 0px 10px 0px $scrollbarColor;
+        box-shadow: 0px 0px 10px 0px $scrollbarColor;
+        border-radius: 10px;
+    }
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+
+    font-family: 'lato-light';
+}
+
+div.flexColumn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+div.flexRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
