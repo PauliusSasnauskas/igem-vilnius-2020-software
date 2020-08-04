@@ -3,6 +3,7 @@
 
 import psycopg2
 from config import Configuration
+from psycopg2 import sql
 
 class DatabaseDriver(object):
 	conn = None
@@ -11,17 +12,23 @@ class DatabaseDriver(object):
 	def __init__(self):
 		self.cur = None
 	
-	def connect():
+	def connect(self):
 		try:
-			conn = psycopg2.connect(**params)
+			conn = psycopg2.connect(**DatabaseDriver.params)
 			# create a cursor
 			self.cur = conn.cursor()
 			#cur.close()
 		except (Exception, psycopg2.DatabaseError) as error:
 			print(error)
-			
-	def getCursor(self):
-		return self.cur
+	
+	def findBacDiveID(self, culturecolnumber):
+                cultureNr = culturecolnumber.split()
+                idName = "strain_"+cultureNr[0].lower()
+                idNr = cultureNr[1]
+                query = sql.SQL("select bacdive_id from strains where {name} = %s").format(name=sql.Identifier(idName))
+                self.cur.execute(query, (idNr,))
+                result = self.cur.fetchone()
+                return result[0]
 
 	def close():
 		if conn is not None:

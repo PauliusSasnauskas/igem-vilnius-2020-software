@@ -16,13 +16,13 @@ class JSONAnalyzer(object):
 		self.sequence_length_min = None
 		self.sequence_length_max = None
 		
-	def getBacteriaName():
+	def getBacteriaName(self):
 		return self.data.get("taxonomy_name").get("strains")[0].get("species")
 	
 	#def getMarkerProperties():
 		
 
-	def getMarkerSequences():
+	def getMarkerSequences(self):
 		sequenceList = []
 		sequences = self.data.get("molecular_biology").get("sequence")
 		for i in range(len(sequences)):
@@ -43,8 +43,8 @@ class JSONAnalyzer(object):
 			sequenceList.append(sequenceInfo)
 		return sorted(sequenceList, key=itemgetter('seq_eval'), reverse=True)
 
-	def getFullInfo():
-		return {getBacteriaName(): getMarkerSequences()}
+	def getFullInfo(self):
+		return {self.getBacteriaName(): self.getMarkerSequences()}
 
 	#server = "http://www.ebi.ac.uk/ena/data/view/"
 	#display_type = "&display=fasta"

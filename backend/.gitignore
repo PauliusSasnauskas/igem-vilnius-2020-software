@@ -1,3 +1,4 @@
 *.out
 authorization.ini
 .DS_Store
+__pycache__/

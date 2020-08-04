@@ -20,10 +20,10 @@ class BacdiveClient(object):
     PASSWORD = params.get('password')
     credentials = HTTPBasicAuth(USERNAME, PASSWORD)
         
-    def __init__(self, culturecolnumber, jid, db_cursor):
+    def __init__(self, culturecolnumber, jid, db_driver):
         self.culturecolnumber = culturecolnumber
         self.jid = jid
-        self.db_cursor = db_cursor
+        self.db_driver = db_driver
         
     def getLinkByCultureno(self):
         response = requests.get('https://bacdive.dsmz.de/api/bacdive/culturecollectionno/%s/' % (self.culturecolnumber), headers=self.headers,auth=self.credentials)
@@ -34,12 +34,14 @@ class BacdiveClient(object):
             #TODO: catch errors
                     
     def getJSONByBacdiveID(self):
-        #check if culture no is found in database table "strains". If yes, access bacdive DB with bacdive ID. If no, search by Culture No.
-        #if no:
-        #culturenoURL = getLinkByCultureno()
-        #if yes:
-        #culturenoURL = 'https://bacdive.dsmz.de/api/bacdive/bacdive_id/' + #get bacdive ID from database
-        culturenoURL = 'https://bacdive.dsmz.de/api/bacdive/bacdive_id/' + '5552'
+	#check if culture no is found in database table "strains". If yes, access bacdive DB with bacdive ID. If no, search by Culture No.
+        bacdive_id = db_driver.findBacDiveID(self.culturecolnumber)
+        print(type(bacdive_id))
+        culturenoURL = ""
+        if(bacdive_id is None):
+              culturenoURL = self.getLinkByCultureno()
+        else:
+              culturenoURL = 'https://bacdive.dsmz.de/api/bacdive/bacdive_id/' + str(bacdive_id)
         results_response = requests.get(url = culturenoURL, headers=self.headers,auth=self.credentials);
         if results_response.status_code == 200:
             results = results_response.json()
@@ -47,7 +49,7 @@ class BacdiveClient(object):
     #TODO: catch errors
         
     def run(self):
-        org_results = JSONAnalyzer(getJSONByBacdiveID(), self.jid).getFullInfo() #returns marker sequences available for further analysis
+        org_results = JSONAnalyzer(self.getJSONByBacdiveID(), self.jid).getFullInfo() #returns marker sequences available for further analysis
         #TODO: put results to markerResults table
         for x, y in org_results.items():
             print(x)		#returns species name
@@ -61,7 +63,6 @@ if __name__ == '__main__':
     jid = sys.argv[1]
     db_driver = DatabaseDriver()
     db_driver.connect()
-    db_cursor = db_driver.getCursor()
     for i in range(len(arguments)):
-        BacdiveClient(arguments[i], jid, db_cursor).run()
+        BacdiveClient(arguments[i], jid, db_driver).run()
 
