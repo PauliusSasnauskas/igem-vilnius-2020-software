@@ -21,7 +21,7 @@ class DatabaseDriver(object):
 		except (Exception, psycopg2.DatabaseError) as error:
 			print(error)
 	
-	def findBacDiveID(self, culturecolnumber):
+	def getBacDiveID(self, culturecolnumber):
                 cultureNr = culturecolnumber.split()
                 idName = "strain_"+cultureNr[0].lower()
                 idNr = cultureNr[1]
@@ -30,6 +30,10 @@ class DatabaseDriver(object):
                 result = self.cur.fetchone()
                 return result[0]
 
+    def getMarkerProperties(self, jid):
+                self.cur.execute("select type, min_length, max_length, intergenic from markers where jid = %s", (jid,))
+                result = self.cur.fetchall()
+                return result
 	def close():
 		if conn is not None:
 			conn.close()

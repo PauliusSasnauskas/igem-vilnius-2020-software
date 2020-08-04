@@ -9,9 +9,10 @@ from databaseDriver import DatabaseDriver
 
 class JSONAnalyzer(object):
 	#TODO: get parameters from database with JID key
-	def __init__(self, data,jid):
+	def __init__(self, data, jid, db_driver):
 		self.data = data
 		self.jid = jid
+		self.db_driver = db_driver
 		self.sequence_type = None
 		self.sequence_length_min = None
 		self.sequence_length_max = None
@@ -19,10 +20,12 @@ class JSONAnalyzer(object):
 	def getBacteriaName(self):
 		return self.data.get("taxonomy_name").get("strains")[0].get("species")
 	
-	#def getMarkerProperties():
-		
+	def getMarkerProperties(self):
+		m_properties = self.db_driver.getMarkerProperties(self.jid)
+		print(m_properties)
 
 	def getMarkerSequences(self):
+		self.getMarkerProperties()
 		sequenceList = []
 		sequences = self.data.get("molecular_biology").get("sequence")
 		for i in range(len(sequences)):

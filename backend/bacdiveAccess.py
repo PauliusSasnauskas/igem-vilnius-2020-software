@@ -34,8 +34,8 @@ class BacdiveClient(object):
             #TODO: catch errors
                     
     def getJSONByBacdiveID(self):
-	#check if culture no is found in database table "strains". If yes, access bacdive DB with bacdive ID. If no, search by Culture No.
-        bacdive_id = db_driver.findBacDiveID(self.culturecolnumber)
+	    #check if culture no is found in database table "strains". If yes, access bacdive DB with bacdive ID. If no, search by Culture No.
+        bacdive_id = self.db_driver.getBacDiveID(self.culturecolnumber)
         print(type(bacdive_id))
         culturenoURL = ""
         if(bacdive_id is None):
@@ -46,10 +46,10 @@ class BacdiveClient(object):
         if results_response.status_code == 200:
             results = results_response.json()
             return results
-    #TODO: catch errors
+        #TODO: catch errors
         
     def run(self):
-        org_results = JSONAnalyzer(self.getJSONByBacdiveID(), self.jid).getFullInfo() #returns marker sequences available for further analysis
+        org_results = JSONAnalyzer(self.getJSONByBacdiveID(), self.jid, self.db_driver).getFullInfo() #returns marker sequences available for further analysis
         #TODO: put results to markerResults table
         for x, y in org_results.items():
             print(x)		#returns species name
