@@ -2,8 +2,36 @@
 
 $border-radius: 32px;
 
-button {
+button, input {
     font-family: 'lato-light';
+}
+
+body {
+    overflow-y: scroll;
+}
+
+%roundButton {
+    height: 28px;
+    border: 0;
+    width: 28px;
+    padding: 0;
+    border-radius: $border-radius;
+    font-size: 2em;
+    cursor: pointer;
+    outline: none;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+%insetInput {
+    height: 40px;
+    border-radius: $border-radius;
+    border: unset;
+    padding: 4px 10px;
+    box-sizing: border-box;
+    font-size: 1em;
 }
 
 body { // Representation (without color)
@@ -13,7 +41,8 @@ body { // Representation (without color)
     align-items: center;
 
     .number {
-        font-size: 2.5em;
+        font-size: 3em;
+        font-family: 'lato-medium';
     }
 
     .container {
@@ -118,7 +147,128 @@ body { // Representation (without color)
             }
         }
     }
-      
+    
+    .multipleInput {
+        width: 100%;
+        input {
+            width: 100%;
+            margin: 8px 0 16px;
+        }
+        & > button {
+            position: relative;
+            z-index: 2;
+            margin-top: -50px;
+            float: right;
+            margin-right: 8px;
+        }
+    }
+    
+    .multipleInput, .multipleInputDropdown {
+        input {
+            @extend %insetInput;
+        }
+        & > button, & > div > button {
+            @extend %roundButton;
+        }
+        span {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: $border-radius;
+            margin-bottom: 6px;
+            button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid;
+                border-radius: $border-radius;
+                margin-left: 6px;
+                font-size: 0.6em;
+                outline: none;
+                background-color: unset;
+                cursor: pointer;
+                width: 16px;
+                height: 16px;
+            }
+            & + span {
+                margin-left: 6px;
+            }
+        }
+    }
+    .multipleInputDropdown {
+        width: 100%;
+        input {
+            flex-grow: 1;
+            outline: unset;
+        }
+        div {
+            width: 100%;
+            margin: 8px 0 16px;
+            display: flex;
+            align-items: center;
+        }
+        button {
+            margin-left: 8px;
+        }
+    }
+    .advancedButton {
+        padding: 12px;
+        font-size: 1.5em;
+        border: 1px solid;
+        border-radius: $border-radius;
+        cursor: pointer;
+        border-color: $purple-blue;
+        outline: none;
+        @include shadow($purple-blue);
+        transition: 0.2s;
+        &.enabled {
+            background-color: $purple-blue;
+            color: $white;
+        }
+    }
+    .numberInput {
+        label {
+            display: flex;
+            align-items: baseline;
+            width: 100%;
+        }
+        span {
+            margin-right: 12px;
+        }
+        input {
+            @extend %insetInput;
+            flex-grow: 1;
+        }
+    }
+    .checkbox {
+        cursor: pointer;
+        span {
+            display: inline-flex;
+            align-items: center;
+            font-size: 1.2em;
+        }
+
+        input {
+            width: 0;
+            height: 0;
+            margin: 0;
+            padding: 0;
+            opacity: 0;
+
+            & + span::before {
+                display: inline-block;
+                content: '';
+                border-radius: $border-radius;
+                width: 24px;
+                height: 24px;
+                margin-right: 6px;
+                transition: 0.2s;
+            }
+            &:checked + span::before {
+                background-color: $purple-blue;
+            }
+        }
+    }
 }
 
 body { // Dark mode
@@ -148,6 +298,31 @@ body { // Dark mode
             box-shadow: inset 0 0 8px $black;
         }
     }
+    .multipleInput span, .multipleInputDropdown span {
+        background-color: $white;
+        color: $black;
+        button {
+            border-color: $black;
+            color: $black;
+        }
+    }
+    %roundButton {
+        background-color: $purple-blue;
+        color: $white;
+        box-shadow: inset 0 0 8px $black;
+    }
+    %insetInput {
+        background-color: $dark-gray;
+        color: $white;
+        box-shadow: inset 0 0 8px $black;
+    }
+    .advancedButton {
+        background-color: $dark-gray;
+        color: $white;
+    }
+    .checkbox input + span::before {
+        box-shadow: inset 0 0 8px $black;
+    }
 }
 
 body.light { // Light mode
@@ -155,14 +330,16 @@ body.light { // Light mode
     color: $dark-gray;
     .number {
         @include outlined_text($black);
-        @include glow_text($light-gray);
+        // @include glow_text(#BBBBBB);
     }
-
+    .switch span.checked {
+        text-shadow: unset;
+    }
     .container {
         @include shadow($light-gray);
     }
     .modeSwitch {
-        background-color: $black;
+        background-color: $dark-gray;
         color: $white;
         @include shadow($light-gray);
     }
@@ -177,5 +354,35 @@ body.light { // Light mode
         &::before {
             box-shadow: inset 0 0 8px $white;
         }
+    }
+    .multipleInput span {
+        background-color: $purple-blue;
+        color: $white;
+        button {
+            border-color: $white;
+            color: $white;
+        }
+    }
+    %roundButton {
+        background-color: $purple-blue;
+        color: $white;
+        box-shadow: unset; //inset 0 0 8px $white;
+    }
+    %insetInput {
+        background-color: $white;
+        color: $black;
+        box-shadow: inset 0 0 8px $light-gray;
+    }
+    .advancedButton {
+        box-shadow: unset;
+        background-color: $white;
+        color: $black;
+        &.enabled {
+            background-color: $purple-blue;
+            color: $white;
+        }
+    }
+    .checkbox input + span::before {
+        box-shadow: inset 0 0 8px adjust-color($light-gray, $lightness: -10);
     }
 }
