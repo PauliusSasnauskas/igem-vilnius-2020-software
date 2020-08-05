@@ -1,22 +1,10 @@
 import React from 'react';
-import { Container, Switch, Label, Number, MultipleInput, NumberInput, Checkbox, MultipleInputDropdown } from './common';
+import { Container, Switch, Label, Number, MultipleInput, NumberInput, Checkbox, MultipleInputDropdown, Column } from './common';
 
-import './ProbeSolverIndex.scss';
-
-
-const Column = (props) => <div className="flexColumn" {...props}>{props.children}</div>;
 const Row = (props) => <div className="flexRow" {...props}>{props.children}</div>;
 
 export default function ProbeSolverIndex(props){
-
-    const switchLightDarkMode = (e) => {
-        document.body.classList.toggle("light");
-        if (document.body.classList.contains("light")){
-            e.target.innerText = "Dark mode";
-        }else{
-            e.target.innerText = "Light mode";
-        }
-    }
+    const { increaseWindowState } = props;
 
     const [advancedOption, setAdvancedOption] = React.useState(false);
     const [probesPrimers, setProbesPrimers] = React.useState(false);
@@ -33,12 +21,11 @@ export default function ProbeSolverIndex(props){
         if (value) setAdvancedSectionEnabled(true);
     };
 
+    const submitQuery = () => {
+        increaseWindowState();
+    };
+
     return (<>
-        <button className="modeSwitch" onClick={switchLightDarkMode}>Light mode</button>
-        <a href="docs.html" className="docsButton">Docs</a>
-        <h1 className="title">
-            ProbeSolver
-        </h1>
         <Container>
             <Number number={1} />
             <Column>
@@ -106,5 +93,6 @@ export default function ProbeSolverIndex(props){
                     onChange={setSequenceTypes} />
             </Column>
         </Container>
+        <button onClick={submitQuery} className="searchButton"><span>Search</span></button>
     </>);
 };

@@ -8,6 +8,7 @@ button, input {
 
 body {
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 %roundButton {
@@ -269,6 +270,38 @@ body { // Representation (without color)
             }
         }
     }
+    .searchButton {
+        position: fixed;
+        right: 0;
+        width: 30vw;
+        height: 30vw;
+        top: 50vh;
+        border-radius: 1000px;
+        padding-right: 7vw;
+        transform: translateY(-50%) translateX(12vw);
+        font-family: 'lato-heavy';
+        font-size: 2em;
+        text-transform: uppercase;
+        cursor: pointer;
+        border: unset;
+        outline: unset;
+        color: white;
+        background-color: $purple-blue;
+        & span {
+            padding: 0 4px 2px 6px;
+            transition: box-shadow 0.3s;
+            box-shadow: inset 0 0 0 darken($color: $purple-blue, $amount: 15);
+        }
+        &:hover span {
+            box-shadow: inset 0 -0.4em 0 darken($color: $purple-blue, $amount: 15);
+        }
+    }
+    hr {
+        min-width: 100%;
+        background-color: $purple-blue;
+        border: unset;
+        height: 2px;
+    }
 }
 
 body { // Dark mode
@@ -322,6 +355,10 @@ body { // Dark mode
     }
     .checkbox input + span::before {
         box-shadow: inset 0 0 8px $black;
+    }
+    
+    .searchButton {
+        @include shadow($purple-blue);
     }
 }
 
@@ -384,5 +421,9 @@ body.light { // Light mode
     }
     .checkbox input + span::before {
         box-shadow: inset 0 0 8px adjust-color($light-gray, $lightness: -10);
+    }
+
+    .searchButton {
+        box-shadow: unset;
     }
 }
