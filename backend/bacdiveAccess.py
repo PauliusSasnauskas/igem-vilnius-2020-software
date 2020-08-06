@@ -45,16 +45,12 @@ class BacdiveClient(object):
         if results_response.status_code == 200:
             results = results_response.json()
             return results
-        #TODO: catch errors
+        #TODO: catch errors		
         
     def run(self):
         org_results = JSONAnalyzer(self.getJSONByBacdiveID(), self.jid, self.db_driver).getFullInfo() #returns marker sequences available for further analysis
-        #TODO: put results to markerResults table
-        for x, y in org_results.items():
-            print(x)		#returns species name
-            for i in range(len(y)):
-                print(y[i]) #returns available marker sequences for the species
-
+		self.db_driver.setMarkerSequencesResults(org_results)
+		
 if __name__ == '__main__':
     #command line parameters (culture ID) for query
     #TODO: take parameters from database with JID key

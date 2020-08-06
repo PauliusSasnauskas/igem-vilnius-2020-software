@@ -38,6 +38,10 @@ class DatabaseDriver(object):
 		self.cur.execute("select type, min_length, max_length, intergenic from markers where jid = %s", (jid,))
 		result = self.cur.fetchall()
 		return result
+	
+	def setMarkerSequencesResults(self, seqList):
+		for i in seqList:
+			self.cur.execute("INSERT INTO MarkersResults VALUES(%s,%s,%s,%s)", (i.get('seq_eval'), i.get('id'), i.get('length'), i.get('title'),))
 
 	def close():
 		if conn is not None:

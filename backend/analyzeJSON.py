@@ -25,7 +25,8 @@ class JSONAnalyzer(object):
 		m_properties = self.db_driver.getMarkerProperties(self.jid)
 		(self.sequence_type, self.sequence_length_min, self.sequence_length_max, self.intergenic) = m_properties[0]
 		#TODO: use multiple marker properties
-	def getMarkerSequences(self):
+		
+	def evaluateSequences(self):
 		self.getMarkerProperties()
 		sequenceList = []
 		sequences = self.data.get("molecular_biology").get("sequence")
@@ -48,7 +49,7 @@ class JSONAnalyzer(object):
 		return sorted(sequenceList, key=itemgetter('seq_eval'), reverse=True)
 
 	def getFullInfo(self):
-		return {self.getBacteriaName(): self.getMarkerSequences()}
+		return {self.getBacteriaName(): self.evaluateSequences()}
 
 	#server = "http://www.ebi.ac.uk/ena/data/view/"
 	#display_type = "&display=fasta"
