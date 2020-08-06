@@ -48,11 +48,24 @@ class JSONAnalyzer(object):
                         sequenceList.append(sequenceInfo)
                 return sorted(sequenceList, key=itemgetter('seq_eval'), reverse=True)
 
-        def extractStrainIDs(self):
+        def extractStrainIDs(self, bacdive_id):
                 strains = self.data.get("strain_availability").get("strains")[0].get("strain_number")
                 d = dict(x.split(" ") for x in strains.split(", "))
-                print(d)
-                        
+                self.db_driver.setStrainIDs(d, bacdive_id)
+
+				
+#   bacdive_id int PRIMARY KEY,
+#	atcc int UNIQUE,
+#	dsm int UNIQUE,
+#	nctc int UNIQUE,
+#	bccm int UNIQUE,
+#	cip int UNIQUE,
+#	jcm int UNIQUE,
+#	nccb int UNIQUE,
+#	ncimb int UNIQUE,
+#	icmp int UNIQUE,
+#	cect int UNIQUE,
+#	ccug int UNIQUE                
         #server = "http://www.ebi.ac.uk/ena/data/view/"
         #display_type = "&display=fasta"
         #        r = requests.get(server+accession_id+display_type, headers={ "Content-Type" : "text/x-fasta"})

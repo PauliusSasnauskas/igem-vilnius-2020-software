@@ -25,6 +25,7 @@ class BacdiveClient(object):
         self.jid = jid
         self.db_driver = db_driver
         self.addedToDB = True
+		self.bacdive_id = None
         
     def getLinkByCultureno(self):
         response = requests.get('https://bacdive.dsmz.de/api/bacdive/culturecollectionno/%s/' % (self.culturecolnumber), headers=self.headers,auth=self.credentials)
@@ -36,13 +37,13 @@ class BacdiveClient(object):
                     
     def getJSONByBacdiveID(self):
             #check if culture no is found in database table "strains". If yes, access bacdive DB with bacdive ID. If no, search by Culture No.
-        bacdive_id = self.db_driver.getBacDiveID(self.culturecolnumber)
+        self.bacdive_id = self.db_driver.getBacDiveID(self.culturecolnumber)
         culturenoURL = ""
-        if(bacdive_id is None):
+        if(self.bacdive_id is None):
 			culturenoURL = self.getLinkByCultureno()
 			self.addedToDB = False
         else:
-			culturenoURL = 'https://bacdive.dsmz.de/api/bacdive/bacdive_id/' + str(bacdive_id)
+			culturenoURL = 'https://bacdive.dsmz.de/api/bacdive/bacdive_id/' + str(self.bacdive_id)
         results_response = requests.get(url = culturenoURL, headers=self.headers,auth=self.credentials);
         if results_response.status_code == 200:
             results = results_response.json()
@@ -54,7 +55,7 @@ class BacdiveClient(object):
         org_results = json_analyzer.evaluateSequences() #returns marker sequences available for further analysis
         self.db_driver.setMarkerSequencesResults(self.jid, org_results)
         if(self.addedToDB == False):
-            json_analyzer.extractStrainIDs()
+            json_analyzer.extractStrainIDs(self.bacdive_id)
                 
 if __name__ == '__main__':
     #command line parameters (culture ID) for query
