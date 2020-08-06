@@ -24,6 +24,7 @@ class BacdiveClient(object):
         self.culturecolnumber = culturecolnumber
         self.jid = jid
         self.db_driver = db_driver
+        self.addedToDB = True
         
     def getLinkByCultureno(self):
         response = requests.get('https://bacdive.dsmz.de/api/bacdive/culturecollectionno/%s/' % (self.culturecolnumber), headers=self.headers,auth=self.credentials)
@@ -34,23 +35,27 @@ class BacdiveClient(object):
             #TODO: catch errors
                     
     def getJSONByBacdiveID(self):
-	    #check if culture no is found in database table "strains". If yes, access bacdive DB with bacdive ID. If no, search by Culture No.
+            #check if culture no is found in database table "strains". If yes, access bacdive DB with bacdive ID. If no, search by Culture No.
         bacdive_id = self.db_driver.getBacDiveID(self.culturecolnumber)
         culturenoURL = ""
         if(bacdive_id is None):
-              culturenoURL = self.getLinkByCultureno()
+			culturenoURL = self.getLinkByCultureno()
+			self.addedToDB = False
         else:
-              culturenoURL = 'https://bacdive.dsmz.de/api/bacdive/bacdive_id/' + str(bacdive_id)
+			culturenoURL = 'https://bacdive.dsmz.de/api/bacdive/bacdive_id/' + str(bacdive_id)
         results_response = requests.get(url = culturenoURL, headers=self.headers,auth=self.credentials);
         if results_response.status_code == 200:
             results = results_response.json()
             return results
-        #TODO: catch errors		
+        #TODO: catch errors             
         
     def run(self):
-        org_results = JSONAnalyzer(self.getJSONByBacdiveID(), self.jid, self.db_driver).evaluateSequences() #returns marker sequences available for further analysis
+        json_analyzer = JSONAnalyzer(self.getJSONByBacdiveID(), self.jid, self.db_driver)
+        org_results = json_analyzer.evaluateSequences() #returns marker sequences available for further analysis
         self.db_driver.setMarkerSequencesResults(self.jid, org_results)
-		
+        if(self.addedToDB == False):
+            json_analyzer.extractStrainIDs()
+                
 if __name__ == '__main__':
     #command line parameters (culture ID) for query
     #TODO: take parameters from database with JID key
@@ -59,4 +64,3 @@ if __name__ == '__main__':
     db_driver = DatabaseDriver()
     for i in range(len(arguments)):
         BacdiveClient(arguments[i], jid, db_driver).run()
-

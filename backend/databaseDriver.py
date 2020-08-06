@@ -14,9 +14,8 @@ class DatabaseDriver(object):
 
 	def getBacDiveID(self, culturecolnumber):
 		cultureNr = culturecolnumber.split()
-		idName = "strain_"+cultureNr[0].lower()
 		idNr = cultureNr[1]
-		query = sql.SQL("select bacdive_id from strains where {name} = %s").format(name=sql.Identifier(idName))
+		query = sql.SQL("select bacdive_id from strains where {name} = %s").format(name=sql.Identifier(cultureNr[0].lower()))
 		with self.conn.cursor() as cur:
 			cur.execute(query, (idNr,))
 			result = cur.fetchone()
