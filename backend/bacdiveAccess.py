@@ -48,8 +48,8 @@ class BacdiveClient(object):
         #TODO: catch errors		
         
     def run(self):
-        org_results = JSONAnalyzer(self.getJSONByBacdiveID(), self.jid, self.db_driver).getFullInfo() #returns marker sequences available for further analysis
-		self.db_driver.setMarkerSequencesResults(org_results)
+        org_results = JSONAnalyzer(self.getJSONByBacdiveID(), self.jid, self.db_driver).evaluateSequences() #returns marker sequences available for further analysis
+        self.db_driver.setMarkerSequencesResults(self.jid, org_results)
 		
 if __name__ == '__main__':
     #command line parameters (culture ID) for query
@@ -57,7 +57,6 @@ if __name__ == '__main__':
     arguments = sys.argv[2:]
     jid = sys.argv[1]
     db_driver = DatabaseDriver()
-    db_driver.connect()
     for i in range(len(arguments)):
         BacdiveClient(arguments[i], jid, db_driver).run()
 

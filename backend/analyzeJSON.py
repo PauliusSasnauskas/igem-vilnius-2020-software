@@ -48,9 +48,6 @@ class JSONAnalyzer(object):
 			sequenceList.append(sequenceInfo)
 		return sorted(sequenceList, key=itemgetter('seq_eval'), reverse=True)
 
-	def getFullInfo(self):
-		return {self.getBacteriaName(): self.evaluateSequences()}
-
 	#server = "http://www.ebi.ac.uk/ena/data/view/"
 	#display_type = "&display=fasta"
 	#        r = requests.get(server+accession_id+display_type, headers={ "Content-Type" : "text/x-fasta"})
