@@ -8,17 +8,17 @@ CREATE TABLE Query (
 
 CREATE TABLE Strains (
 	bacdive_id int PRIMARY KEY,
-	strain_atcc int UNIQUE,
-	strain_dsm int UNIQUE,
-	strain_nctc int UNIQUE,
-	strain_bccm int UNIQUE,
-	strain_cip int UNIQUE,
-	strain_jcm int UNIQUE,
-	strain_nccb int UNIQUE,
-	strain_ncimb int UNIQUE,
-	strain_icmp int UNIQUE,
-	strain_cect int UNIQUE,
-	strain_ccug int UNIQUE
+	atcc int UNIQUE,
+	dsm int UNIQUE,
+	nctc int UNIQUE,
+	bccm int UNIQUE,
+	cip int UNIQUE,
+	jcm int UNIQUE,
+	nccb int UNIQUE,
+	ncimb int UNIQUE,
+	icmp int UNIQUE,
+	cect int UNIQUE,
+	ccug int UNIQUE
 );
 
 CREATE TABLE Taxonomy (
