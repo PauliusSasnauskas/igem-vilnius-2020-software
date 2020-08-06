@@ -47,7 +47,10 @@ class DatabaseDriver(object):
 				query = sql.SQL("UPDATE Strains SET {name} = %s WHERE bacdive_id = %s").format(name=sql.Identifier(key.lower()))
 				cur.execute(query, (idDict.get(key), bacdive_id))
 				self.conn.commit()
-	
+	def setQueryStrains(self,jid,bacdive_id):
+		with self.conn.cursor() as cur:
+			cur.execute("INSERT INTO QueryStrains VALUES(%s, %s) ON CONFLICT DO NOTHING", (jid, bacdive_id,))
+				
 	def close():
 		if conn is not None:
 			conn.close()
