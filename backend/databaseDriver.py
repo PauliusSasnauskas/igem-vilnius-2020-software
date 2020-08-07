@@ -36,6 +36,21 @@ class DatabaseDriver(object):
 			for i in seqList:
 				cur.execute("INSERT INTO MarkersResults(jid,  seq_eval, embl_id, length, title) VALUES(%s, %s,%s,%s,%s)", (jid, i.get('seq_eval'), i.get('id'), i.get('length'), i.get('title'),))
 				self.conn.commit()
+				
+	def setStrainIDs(self, idDict, bacdive_id):
+		with self.conn.cursor() as cur:
+			cur.execute("select exists(select 1 from strains where bacdive_id=%s);", (bacdive_id,))
+			result = cur.fetchone()
+			if(result[0] is False):
+				cur.execute("INSERT INTO Strains(bacdive_id) VALUES(%s)", (bacdive_id,))
+			for key in idDict:
+				query = sql.SQL("UPDATE Strains SET {name} = %s WHERE bacdive_id = %s").format(name=sql.Identifier(key.lower()))
+				cur.execute(query, (idDict.get(key), bacdive_id))
+				self.conn.commit()
+	def setQueryStrains(self,jid,bacdive_id):
+		with self.conn.cursor() as cur:
+			cur.execute("INSERT INTO QueryStrains VALUES(%s, %s) ON CONFLICT DO NOTHING", (jid, bacdive_id,))
+				
 	def close():
 		if conn is not None:
 			conn.close()

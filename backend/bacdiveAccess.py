@@ -24,7 +24,6 @@ class BacdiveClient(object):
         self.culturecolnumber = culturecolnumber
         self.jid = jid
         self.db_driver = db_driver
-        self.addedToDB = True
         
     def getLinkByCultureno(self):
         response = requests.get('https://bacdive.dsmz.de/api/bacdive/culturecollectionno/%s/' % (self.culturecolnumber), headers=self.headers,auth=self.credentials)
@@ -35,17 +34,19 @@ class BacdiveClient(object):
             #TODO: catch errors
                     
     def getJSONByBacdiveID(self):
-            #check if culture no is found in database table "strains". If yes, access bacdive DB with bacdive ID. If no, search by Culture No.
+        #check if culture no is found in database table "strains". If yes, access bacdive DB with bacdive ID. If no, search by Culture No.
         bacdive_id = self.db_driver.getBacDiveID(self.culturecolnumber)
+        self.db_driver.setQueryStrains(self.jid, bacdive_id)
         culturenoURL = ""
         if(bacdive_id is None):
-			culturenoURL = self.getLinkByCultureno()
-			self.addedToDB = False
+            culturenoURL = self.getLinkByCultureno()
+            bacdive_id = culturenoURL.split('/')[-2]
         else:
-			culturenoURL = 'https://bacdive.dsmz.de/api/bacdive/bacdive_id/' + str(bacdive_id)
+            culturenoURL = 'https://bacdive.dsmz.de/api/bacdive/bacdive_id/' + str(bacdive_id)
         results_response = requests.get(url = culturenoURL, headers=self.headers,auth=self.credentials);
         if results_response.status_code == 200:
             results = results_response.json()
+            JSONAnalyzer(results, self.jid, self.db_driver).extractStrainIDs(bacdive_id)
             return results
         #TODO: catch errors             
         
@@ -53,8 +54,6 @@ class BacdiveClient(object):
         json_analyzer = JSONAnalyzer(self.getJSONByBacdiveID(), self.jid, self.db_driver)
         org_results = json_analyzer.evaluateSequences() #returns marker sequences available for further analysis
         self.db_driver.setMarkerSequencesResults(self.jid, org_results)
-        if(self.addedToDB == False):
-            json_analyzer.extractStrainIDs()
                 
 if __name__ == '__main__':
     #command line parameters (culture ID) for query

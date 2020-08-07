@@ -9,7 +9,7 @@ from databaseDriver import DatabaseDriver
 
 class JSONAnalyzer(object):
         #TODO: get parameters from database with JID key
-        def __init__(self, data, jid, db_driver):
+	def __init__(self, data, jid, db_driver):
                 self.data = data
                 self.jid = jid
                 self.db_driver = db_driver
@@ -18,15 +18,15 @@ class JSONAnalyzer(object):
                 self.sequence_length_max = None
                 self.intergenic = None
                 
-        def getBacteriaName(self):
+	def getBacteriaName(self):
                 return self.data.get("taxonomy_name").get("strains")[0].get("species")
         
-        def getMarkerProperties(self):
+	def getMarkerProperties(self):
                 m_properties = self.db_driver.getMarkerProperties(self.jid)
                 (self.sequence_type, self.sequence_length_min, self.sequence_length_max, self.intergenic) = m_properties[0]
                 #TODO: use multiple marker properties
                 
-        def evaluateSequences(self):
+	def evaluateSequences(self):
                 self.getMarkerProperties()
                 sequenceList = []
                 sequences = self.data.get("molecular_biology").get("sequence")
@@ -48,11 +48,26 @@ class JSONAnalyzer(object):
                         sequenceList.append(sequenceInfo)
                 return sorted(sequenceList, key=itemgetter('seq_eval'), reverse=True)
 
-        def extractStrainIDs(self):
-                strains = self.data.get("strain_availability").get("strains")[0].get("strain_number")
-                d = dict(x.split(" ") for x in strains.split(", "))
-                print(d)
-                        
+	def extractStrainIDs(self, bacdive_id):
+		strains = self.data.get("strain_availability").get("strains")[0].get("strain_number")
+		d = dict(x.split(" ") for x in strains.split(", "))
+		keyVals = ('ATCC', 'DSM', 'NCTC', 'BCCM', 'CIP', 'JCM', 'NCCB', 'NCIMB', 'ICMP', 'CECT', 'CCUG')
+		newdict = {k: d[k] for k in d if k in keyVals}
+		self.db_driver.setStrainIDs(newdict, bacdive_id)
+
+				
+#   bacdive_id int PRIMARY KEY,
+#	atcc int UNIQUE,
+#	dsm int UNIQUE,
+#	nctc int UNIQUE,
+#	bccm int UNIQUE,
+#	cip int UNIQUE,
+#	jcm int UNIQUE,
+#	nccb int UNIQUE,
+#	ncimb int UNIQUE,
+#	icmp int UNIQUE,
+#	cect int UNIQUE,
+#	ccug int UNIQUE                
         #server = "http://www.ebi.ac.uk/ena/data/view/"
         #display_type = "&display=fasta"
         #        r = requests.get(server+accession_id+display_type, headers={ "Content-Type" : "text/x-fasta"})
