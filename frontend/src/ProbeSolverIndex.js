@@ -22,7 +22,31 @@ export default function ProbeSolverIndex(props){
     };
 
     const submitQuery = () => {
-        increaseWindowState();
+        const request = {
+            thing: "what"
+            // actual request data
+        };
+
+        const requestParams = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            mode: "cors",
+            cache: 'default',
+            body: JSON.stringify(request),
+        };
+        
+        fetch("http://127.0.0.1:5000/api/createJob", requestParams)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                increaseWindowState();
+            }).catch((reason)=>{
+                // cope with failiure
+                console.log(reason);
+            });
     };
 
     return (<>
