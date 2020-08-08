@@ -4,6 +4,9 @@
 import psycopg2
 from config import Configuration
 from psycopg2 import sql
+import random # generate job id
+import string # get letter characters
+from bacdiveAccess import BacdiveClient
 
 class DatabaseDriver(object):
 	conf = Configuration('postgresql')
@@ -51,7 +54,46 @@ class DatabaseDriver(object):
 		with self.conn.cursor() as cur:
 			cur.execute("INSERT INTO QueryStrains VALUES(%s, %s) ON CONFLICT DO NOTHING", (jid, bacdive_id,))
 				
-	def close():
-		if conn is not None:
-			conn.close()
+	def close(self):
+		if self.conn is not None:
+			self.conn.close()
+	
+	def generateJobId(self):
+		letters = string.ascii_letters + string.digits
+		result_str = ''.join(random.choice(letters) for i in range(10))
+		return result_str
 
+	def createQuery(self, data):
+		jid = 'unset'
+		with self.conn.cursor() as cur:
+			jid = self.generateJobId()
+			# {
+			#   'isProbe': False,
+			#   'strainIds': ['ATC68463', 'IGEM-5-11-6'],
+			#   'taxIds': [111, 322],
+			#   'excludeIntergenic': True,
+			#   'sequenceTypes': [
+			#       { 'val': '23S rRNA', 'min': 10, 'max': 1500 },
+			#       { 'val': '16S rRNA', 'min': 10, 'max': 1200 }
+			#   ]
+			# }
+
+			
+			cur.execute("INSERT INTO Query(jid, query_type) VALUES(%s, %s)", (jid, data['isProbe'])) # insert query
+
+			for item in data['strainIds']:
+				pass # do magic
+
+			for item in data['taxIds']:	# insert taxids
+				cur.execute("INSERT INTO QueryTaxonomy(JID, tax_id) VALUES(%s, %s)", (jid, item))
+			if 'sequenceTypes' in data:
+				for item in data['sequenceTypes']:
+					min = 10
+					if 'min' in item:
+						min = item['min']
+					if 'max' in item:
+						cur.execute("INSERT INTO Markers(JID, type, min_length, max_length, intergenic) VALUES(%s,%s,%s,%s,%s)", (jid, item['val'], min, item['max'], not data['excludeIntergenic'],))
+					else:
+						cur.execute("INSERT INTO Markers(JID, type, min_length, intergenic) VALUES(%s,%s,%s,%s)", (jid, item['val'], min, not data['excludeIntergenic'],))
+			self.conn.commit()
+		return jid
