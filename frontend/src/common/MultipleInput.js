@@ -7,12 +7,25 @@ export default function MultipleInput(props){
         setCurrentValue(e.target.value);
     };
 
-    const {hint, data, onChange, ...other} = props;
+    const {numbersOnly, hint, data, onChange, ...other} = props;
 
     const changeFunc = () => {
-        if (currentValue.trim() === "" ||
-            data.includes(currentValue)) return;
-        const newData = [...data, currentValue];
+        let value;
+        if (numbersOnly){
+            try {
+                value = parseInt(currentValue);
+            } catch (e) {
+                return;
+            }
+            if (Number.isNaN(value)){
+                return;
+            }
+        }else{
+            value = currentValue;
+        }
+
+        if (data.includes(value)) return;
+        const newData = [...data, value];
         onChange(newData);
         setCurrentValue("");
     };
@@ -29,7 +42,7 @@ export default function MultipleInput(props){
         onChange(newData);
     };
 
-    const textInput = (<input placeholder={hint} type="text" value={currentValue} onChange={changeCurrentValue} onKeyUp={pressedEnter} />);
+    const textInput = (<input placeholder={hint} type={numbersOnly ? "number" : "text"} value={currentValue} onChange={changeCurrentValue} onKeyUp={pressedEnter} />);
 
     return (<div className="multipleInput" {...other}>
         {textInput}

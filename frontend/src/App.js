@@ -7,11 +7,12 @@ import './style.scss';
 function App() {
 
     const [windowState, setWindowState] = React.useState(0);
-    const increaseWindowState = () => {
+    const setJobIdFromIndex = (newJobId) => {
+        setJobId(newJobId)
         setWindowState(windowState+1);
     };
-
-    const [queryId, setQueryId] = React.useState("j48dnj291bcskf");
+	
+    const [jobId, setJobId] = React.useState(undefined);
 
     const switchLightDarkMode = (e) => {
         document.body.classList.toggle("light");
@@ -30,8 +31,8 @@ function App() {
         </h1>
         {
             /* switch(windowState) */{ 
-                0: <ProbeSolverIndex increaseWindowState={increaseWindowState} />,
-                1: <ProbeSolverSubselect queryId={queryId} />
+                0: <ProbeSolverIndex setJobId={setJobIdFromIndex} />,
+                1: <ProbeSolverSubselect jobId={jobId} />
             }[windowState]
         }
     </>);

@@ -7,3 +7,4 @@ export { default as NumberInput } from './NumberInput';
 export { default as Checkbox } from './Checkbox';
 export { default as MultipleInputDropdown } from './MultipleInputDropdown';
 export { default as Column } from './Column';
+export { default as Alert } from './Alert';
