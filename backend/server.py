@@ -1,4 +1,4 @@
-# ! /usr/bin/env python
+# !/usr/bin/env python
 # -*- coding: utf-8 -*-
 #IMPORTANT: Before running, install flask and waitress modules with commands
 #                  `python -m pip install flask`
@@ -29,8 +29,35 @@ def createJob():
 
     data = request.json
     print("got request of:", data)
+    # data object interface:
+    # {
+    #   isProbe : boolean,
+    #   strainIds : Array<string>,
+    #   taxIds : Array<number>,
+    #   minLength : number?,
+    #   maxLength : number?,
+    #   excludeIntergenic : boolean,
+    #   sequenceTypes : Array<string>?
+    # }
 
-    return _corsify_actual_response(jsonify(data))
+    # testData = {
+    #     'isProbe':	 	   True,
+    #     'strainIds':		   ['ATCC 7195', 'IGEM 11-5-6'],
+    #     'taxIds':			   [322, 111],
+    #     'minLength':		   100,
+    #     'maxLength':		   1000,
+    #     'excludeIntergenic': True,
+    #     'sequenceTypes':	   ['5S rRNA', '16S rRNA']
+    # }
+    # jobId = magicBackendFunction(testData)
+
+    jobId = "f8e52URc74" # magicBackendFunction(data) # swap out for this function
+
+    response = {
+        "jobId": jobId
+    }
+
+    return _corsify_actual_response(jsonify(response))
 
 @app.route('/api/checkJob', methods=['POST', 'OPTIONS'])
 def checkJob():
@@ -38,7 +65,7 @@ def checkJob():
 
     print("api checkJob")
     return 'Hello earth!'
-
+'''
 # Serve static React app
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
@@ -50,7 +77,7 @@ def sserve(path):
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, 'index.html')
-
+'''
 
 if __name__ == "__main__":
     app.run(use_reloader=True, port=5000, threaded=True) # debug only
