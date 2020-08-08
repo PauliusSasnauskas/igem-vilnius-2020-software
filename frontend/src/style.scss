@@ -312,6 +312,25 @@ body { // Representation (without color)
         border: unset;
         height: 2px;
     }
+    .screenCurtain {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+    }
+    .loader {
+        width: 96px;
+        height: 96px;
+        background-size: cover;
+        border-radius: $border-radius;
+    }
 }
 
 body { // Dark mode
@@ -369,6 +388,13 @@ body { // Dark mode
     
     .searchButton {
         @include shadow($purple-blue);
+    }
+    .loader {
+        background-color: $dark-gray;
+        background-image: url(./assets/loadDark.gif);
+    }
+    .screenCurtain .loader {
+        @include shadow($black);
     }
 }
 
@@ -435,5 +461,13 @@ body.light { // Light mode
 
     .searchButton {
         box-shadow: unset;
+    }
+    
+    .loader {
+        background-color: $white;
+        background-image: url(./assets/loadLight.gif);
+    }
+    .screenCurtain .loader {
+        @include shadow($light-gray);
     }
 }
