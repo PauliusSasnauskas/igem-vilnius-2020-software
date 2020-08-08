@@ -40,6 +40,7 @@ body { // Representation (without color)
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding-bottom: 16px;
 
     .number {
         font-size: 3em;
@@ -57,6 +58,14 @@ body { // Representation (without color)
         border-radius: $border-radius;
         & > *:nth-child(2) {
             flex-grow: 1;
+        }
+        &.warning {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 20px;
+            justify-content: start;
+            background-color: $yellow;
+            z-index: 3;
         }
     }
     .label {
@@ -287,7 +296,7 @@ body { // Representation (without color)
         outline: unset;
         color: $white;
         background-color: $purple-blue;
-        z-index: 2;
+        z-index: 4;
         & span {
             padding: 0 4px 2px 6px;
             transition: box-shadow 0.3s;
