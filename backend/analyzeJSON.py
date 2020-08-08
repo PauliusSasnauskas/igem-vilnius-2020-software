@@ -9,10 +9,9 @@ from databaseDriver import DatabaseDriver
 
 class JSONAnalyzer(object):
         #TODO: get parameters from database with JID key
-	def __init__(self, data, jid, db_driver):
+	def __init__(self, data, jid):
                 self.data = data
                 self.jid = jid
-                self.db_driver = db_driver
                 self.sequence_type = None
                 self.sequence_length_min = None
                 self.sequence_length_max = None
@@ -20,14 +19,9 @@ class JSONAnalyzer(object):
                 
 	def getBacteriaName(self):
                 return self.data.get("taxonomy_name").get("strains")[0].get("species")
-        
-	def getMarkerProperties(self):
-                m_properties = self.db_driver.getMarkerProperties(self.jid)
-                (self.sequence_type, self.sequence_length_min, self.sequence_length_max, self.intergenic) = m_properties[0]
-                #TODO: use multiple marker properties
                 
 	def evaluateSequences(self):
-                self.getMarkerProperties()
+                
                 sequenceList = []
                 sequences = self.data.get("molecular_biology").get("sequence")
                 for i in range(len(sequences)):
@@ -53,7 +47,7 @@ class JSONAnalyzer(object):
 		d = dict(x.split(" ") for x in strains.split(", "))
 		keyVals = ('ATCC', 'DSM', 'NCTC', 'BCCM', 'CIP', 'JCM', 'NCCB', 'NCIMB', 'ICMP', 'CECT', 'CCUG')
 		newdict = {k: d[k] for k in d if k in keyVals}
-		self.db_driver.setStrainIDs(newdict, bacdive_id)
+		return newdict
              
         #server = "http://www.ebi.ac.uk/ena/data/view/"
         #display_type = "&display=fasta"
