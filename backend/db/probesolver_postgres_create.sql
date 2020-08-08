@@ -38,11 +38,12 @@ CREATE TABLE Markers (
 
 CREATE TABLE MarkersResults(
 	JID varchar(10) REFERENCES Query (JID) ON UPDATE CASCADE ON DELETE CASCADE,
-	marker_id serial,
 	seq_eval int,
 	embl_id varchar(8),
+	bac_name varchar,
 	length int,
-	title varchar
+	title varchar,
+	CONSTRAINT MarkersResults_pk PRIMARY KEY (JID,embl_id)
 );
 
 CREATE TABLE Results (

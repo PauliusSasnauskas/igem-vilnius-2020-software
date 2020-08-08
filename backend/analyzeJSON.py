@@ -54,20 +54,7 @@ class JSONAnalyzer(object):
 		keyVals = ('ATCC', 'DSM', 'NCTC', 'BCCM', 'CIP', 'JCM', 'NCCB', 'NCIMB', 'ICMP', 'CECT', 'CCUG')
 		newdict = {k: d[k] for k in d if k in keyVals}
 		self.db_driver.setStrainIDs(newdict, bacdive_id)
-
-				
-#   bacdive_id int PRIMARY KEY,
-#	atcc int UNIQUE,
-#	dsm int UNIQUE,
-#	nctc int UNIQUE,
-#	bccm int UNIQUE,
-#	cip int UNIQUE,
-#	jcm int UNIQUE,
-#	nccb int UNIQUE,
-#	ncimb int UNIQUE,
-#	icmp int UNIQUE,
-#	cect int UNIQUE,
-#	ccug int UNIQUE                
+             
         #server = "http://www.ebi.ac.uk/ena/data/view/"
         #display_type = "&display=fasta"
         #        r = requests.get(server+accession_id+display_type, headers={ "Content-Type" : "text/x-fasta"})
