@@ -4,7 +4,14 @@ export default function NumberInput(props){
 
     const [currentValue, setCurrentValue] = React.useState("");
     const changeCurrentValue = (e) => {
-        setCurrentValue(e.target.value);
+        let value;
+        try {
+            value = parseInt(e.target.value);
+        } catch (e) {
+            return;
+        }
+        setCurrentValue(value);
+        onChange(value);
     };
 
     const {label, value, onChange, ...other} = props;
