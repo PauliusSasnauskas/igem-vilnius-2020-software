@@ -7,6 +7,7 @@ from psycopg2 import sql
 import random # generate job id
 import string # get letter characters
 from bacdiveAccess import BacdiveClient
+from analyzeJSON import JSONAnalyzer
 
 class DatabaseDriver(object):
 	conf = Configuration('postgresql')
@@ -83,7 +84,16 @@ class DatabaseDriver(object):
 			cur.execute("INSERT INTO Query(jid, query_type) VALUES(%s, %s)", (jid, data['isProbe'])) # insert query
 
 			for item in data['strainIds']:
-				pass # do magic
+				bacdive_id = self.getBacDiveID(item)
+				bacd = BacdiveClient(jid, bacdive_id)
+				self.setQueryStrains(jid, bacd.bacdive_id)
+				json_analyzer = JSONAnalyzer(bacd.getJSONByBacdiveID(), jid)
+				markerProperties = self.getMarkerProperties(jid)
+				json_analyzer.setMarkerProperties(markerProperties[0])
+				json_results = json_analyzer.evaluateSequences() #returns marker sequences available for further analysis
+				strain_dict = json_analyzer.extractStrainIDs(bacd.bacdive_id)
+				self.setStrainIDs(strain_dict, bacd.bacdive_id)
+				self.setMarkerSequencesResults(jid, json_results)
 
 			for item in data['taxIds']:	# insert taxids
 				cur.execute("INSERT INTO QueryTaxonomy(JID, tax_id) VALUES(%s, %s)", (jid, item))

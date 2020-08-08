@@ -1,5 +1,3 @@
-# !/usr/bin/env python
-# -*- coding: utf-8 -*-
 #IMPORTANT: Before running, install flask and waitress modules with commands
 #                  `python -m pip install flask`
 #                  `python -m pip install waitress`
@@ -8,6 +6,8 @@ import os
 from flask import Flask, send_from_directory, request, jsonify, make_response
 from waitress import serve
 
+from databaseDriver import DatabaseDriver
+
 app = Flask(__name__, static_folder='public')
 
 def _corsify_actual_response(response):
@@ -15,7 +15,7 @@ def _corsify_actual_response(response):
     return response
 
 def build_cors_preflight():
-    print("building cors preflight")
+    # print("building cors preflight")
     response = make_response()
     response.headers.add("Access-Control-Allow-Origin", "*")
     response.headers.add('Access-Control-Allow-Headers', "*")
@@ -28,34 +28,37 @@ def createJob():
     if request.method == 'OPTIONS': return build_cors_preflight()
 
     data = request.json
-    print("got request of:", data)
+    print("got request of:", data) 
+    
     # data object interface:
     # {
     #   isProbe : boolean,
     #   strainIds : Array<string>,
     #   taxIds : Array<number>,
-    #   minLength : number?,
-    #   maxLength : number?,
     #   excludeIntergenic : boolean,
-    #   sequenceTypes : Array<string>?
+    #   sequenceTypes : Array<(string, number, number)>?
     # }
 
     # testData = {
-    #     'isProbe':	 	   True,
-    #     'strainIds':		   ['ATCC 7195', 'IGEM 11-5-6'],
-    #     'taxIds':			   [322, 111],
-    #     'minLength':		   100,
-    #     'maxLength':		   1000,
-    #     'excludeIntergenic': True,
-    #     'sequenceTypes':	   ['5S rRNA', '16S rRNA']
+    #   'isProbe': False,
+    #   'strainIds': ['ATC68463', 'IGEM-5-11-6'],
+    #   'taxIds': [111, 322],
+    #   'excludeIntergenic': True,
+    #   'sequenceTypes': [
+    #       { 'val': '23S rRNA', 'min': 10, 'max': 1500 },
+    #       { 'val': '16S rRNA', 'min': 10, 'max': 1200 }
+    #   ]
     # }
-    # jobId = magicBackendFunction(testData)
 
-    jobId = "f8e52URc74" # magicBackendFunction(data) # swap out for this function
+    jobId = db_driver.createQuery(data)
+
+    
 
     response = {
         "jobId": jobId
     }
+
+    # TODO: start actual work
 
     return _corsify_actual_response(jsonify(response))
 
@@ -63,9 +66,35 @@ def createJob():
 def checkJob():
     if request.method == 'OPTIONS': return build_cors_preflight()
 
-    print("api checkJob")
-    return 'Hello earth!'
-'''
+    data = request.json
+    print("got request to check job:", data)
+
+    #response = magicBackendFunctionToCheckJob(data.jobId)
+    response = {
+        "status": "searchSequences"     # 1
+    }
+    response = {
+        "status": "selectSequences",    # 2
+        "sequences": [
+            {
+                "marker_id": "",
+	            "seq_eval": 3,
+	            "embl_id": "",
+	            "length": 845,
+	            "title": ""
+            }
+        ]
+    }
+    response = {
+        "status": "searchPs"            # 3
+    }
+    response = {
+        "status": "complete",           # 4
+        "results": ["5’GGATAGCCCAGAGAAATTTGGA3’", "5’CAT CTT GTA CCG TTG GAA CTT TAA T3’", "GCCTCATTTGATT(A)20-biotin", "thiol-(A)20TTTCAGATG", "biotin-(A)20CATCTGAAA"]
+    }
+    
+    return _corsify_actual_response(jsonify(response))
+
 # Serve static React app
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
@@ -77,8 +106,8 @@ def sserve(path):
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, 'index.html')
-'''
 
 if __name__ == "__main__":
+    db_driver = DatabaseDriver()
     app.run(use_reloader=True, port=5000, threaded=True) # debug only
     # serve(app, host='0.0.0.0', port=8000) # production

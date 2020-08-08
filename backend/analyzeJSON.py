@@ -17,6 +17,9 @@ class JSONAnalyzer(object):
                 self.sequence_length_max = None
                 self.intergenic = None
                 
+        def setMarkerProperties(self, properties):
+                (self.sequence_type, self.sequence_length_min, self.sequence_length_max, self.intergenic) = properties
+
 	def getBacteriaName(self):
                 return self.data.get("taxonomy_name").get("strains")[0].get("species")
                 
