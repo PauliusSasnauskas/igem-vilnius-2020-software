@@ -38,7 +38,7 @@ class DatabaseDriver(object):
 	def setMarkerSequencesResults(self, jid, seqList):
 		with self.conn.cursor() as cur:
 			for i in seqList:
-				cur.execute("INSERT INTO MarkersResults(jid,  seq_eval, embl_id, length, title) VALUES(%s, %s,%s,%s,%s)", (jid, i.get('seq_eval'), i.get('id'), i.get('length'), i.get('title'),))
+				cur.execute("INSERT INTO MarkersResults(jid, seq_eval, embl_id, length, title) VALUES(%s, %s,%s,%s,%s)", (jid, i.get('seq_eval'), i.get('id'), i.get('length'), i.get('title'),))
 				self.conn.commit()
 				
 	def setStrainIDs(self, idDict, bacdive_id):
@@ -82,19 +82,6 @@ class DatabaseDriver(object):
 
 			
 			cur.execute("INSERT INTO Query(jid, query_type) VALUES(%s, %s)", (jid, data['isProbe'])) # insert query
-
-			for item in data['strainIds']:
-				bacdive_id = self.getBacDiveID(item)
-				bacd = BacdiveClient(jid, bacdive_id)
-				self.setQueryStrains(jid, bacd.bacdive_id)
-				json_analyzer = JSONAnalyzer(bacd.getJSONByBacdiveID(), jid)
-				markerProperties = self.getMarkerProperties(jid)
-				json_analyzer.setMarkerProperties(markerProperties[0])
-				json_results = json_analyzer.evaluateSequences() #returns marker sequences available for further analysis
-				strain_dict = json_analyzer.extractStrainIDs(bacd.bacdive_id)
-				self.setStrainIDs(strain_dict, bacd.bacdive_id)
-				self.setMarkerSequencesResults(jid, json_results)
-
 			for item in data['taxIds']:	# insert taxids
 				cur.execute("INSERT INTO QueryTaxonomy(JID, tax_id) VALUES(%s, %s)", (jid, item))
 			if 'sequenceTypes' in data:
@@ -106,5 +93,16 @@ class DatabaseDriver(object):
 						cur.execute("INSERT INTO Markers(JID, type, min_length, max_length, intergenic) VALUES(%s,%s,%s,%s,%s)", (jid, item['val'], min, item['max'], not data['excludeIntergenic'],))
 					else:
 						cur.execute("INSERT INTO Markers(JID, type, min_length, intergenic) VALUES(%s,%s,%s,%s)", (jid, item['val'], min, not data['excludeIntergenic'],))
+			for item in data['strainIds']:
+				bacdive_id = self.getBacDiveID(item) # get bacdive id
+				bacd = BacdiveClient(jid, bacdive_id) # bacdive connection
+				self.setQueryStrains(jid, bacd.bacdive_id) # set bacdive ids
+				json_analyzer = JSONAnalyzer(bacd.getJSONByBacdiveID(item), jid) # initialize jsonanalyzer
+				markerProperties = self.getMarkerProperties(jid) # get marker properties?
+				json_analyzer.setMarkerProperties(markerProperties[0])
+				json_results = json_analyzer.evaluateSequences() # get marker sequences available for further analysis
+				strain_dict = json_analyzer.extractStrainIDs(bacd.bacdive_id) # get specific strain ids (ATCC, BCCM, etc.)
+				self.setStrainIDs(strain_dict, bacd.bacdive_id)
+				self.setMarkerSequencesResults(jid, json_results)
 			self.conn.commit()
 		return jid

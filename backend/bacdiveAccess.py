@@ -23,19 +23,19 @@ class BacdiveClient(object):
 		self.jid = jid
 		self.bacdive_id = bacdive_id
 		
-	def getLinkByCultureno(self):
-		response = requests.get('https://bacdive.dsmz.de/api/bacdive/culturecollectionno/%s/' % (self.culturecolnumber), headers=self.headers,auth=self.credentials)
+	def getLinkByCultureno(self, culturecolnumber):
+		response = requests.get('https://bacdive.dsmz.de/api/bacdive/culturecollectionno/%s/' % (culturecolnumber), headers=self.headers,auth=self.credentials)
 		if response.status_code == 200:
 			#if url found by the culture number, get api link
 			culture_url = response.json()
 			return culture_url[0].get('url')
 			#TODO: catch errors
 					
-	def getJSONByBacdiveID(self):
+	def getJSONByBacdiveID(self, culturecolnumber):
 		#check if culture no is found in database table "strains". If yes, access bacdive DB with bacdive ID. If no, search by Culture No.
 		culturenoURL = ""
 		if(self.bacdive_id is None):
-			culturenoURL = self.getLinkByCultureno()
+			culturenoURL = self.getLinkByCultureno(culturecolnumber)
 			self.bacdive_id = culturenoURL.split('/')[-2]
 		else:
 			culturenoURL = 'https://bacdive.dsmz.de/api/bacdive/bacdive_id/' + str(self.bacdive_id)

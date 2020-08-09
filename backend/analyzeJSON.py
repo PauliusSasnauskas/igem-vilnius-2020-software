@@ -29,9 +29,9 @@ class JSONAnalyzer(object):
 		sequences = self.data.get("molecular_biology").get("sequence")
 		for i in range(len(sequences)):
 			accession_id = sequences[i].get("seq_acc_num")
-			accession_title = sequences[i].get("Sequence_accession_title");
+			accession_title = sequences[i].get("Sequence_accession_title")
 			sequence_length = sequences[i].get("sequence_length")
-			evaluation = 0;
+			evaluation = 0
 			if(self.sequence_type.lower() in accession_title.lower()):
 				evaluation += 1
 			if(sequence_length is not None):

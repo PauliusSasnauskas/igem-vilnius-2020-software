@@ -3,3 +3,4 @@ authorization.ini
 .DS_Store
 __pycache__/
 public/
+.vscode/

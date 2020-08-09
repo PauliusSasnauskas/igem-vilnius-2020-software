@@ -36,7 +36,7 @@ def createJob():
     #   strainIds : Array<string>,
     #   taxIds : Array<number>,
     #   excludeIntergenic : boolean,
-    #   sequenceTypes : Array<(string, number, number)>?
+    #   sequenceTypes : Array<{val : string, min : number, max : number}>?
     # }
 
     # testData = {
@@ -51,8 +51,6 @@ def createJob():
     # }
 
     jobId = db_driver.createQuery(data)
-
-    
 
     response = {
         "jobId": jobId
