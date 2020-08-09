@@ -10,7 +10,7 @@ import sys
 from analyzeJSON import JSONAnalyzer
 from config import Configuration
 
-class BacdiveClient(object):
+class BacdiveClient:
 	headers = {'Accept': 'application/json'}
 	#reading authorization details from file
 	conf = Configuration('bacdive')

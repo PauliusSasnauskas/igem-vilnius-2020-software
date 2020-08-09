@@ -9,7 +9,7 @@ import string # get letter characters
 from bacdiveAccess import BacdiveClient
 from analyzeJSON import JSONAnalyzer
 
-class DatabaseDriver(object):
+class DatabaseDriver:
 	conf = Configuration('postgresql')
 	params = conf.getParams()
 	conn = psycopg2.connect(** params)
@@ -17,7 +17,8 @@ class DatabaseDriver(object):
 	#	print(error)
 
 	def getBacDiveID(self, culturecolnumber):
-		cultureNr = culturecolnumber.split()
+		cultureNr = culturecolnumber.split(" ", 1)
+		print(cultureNr) # TODO: remove
 		idNr = cultureNr[1]
 		query = sql.SQL("select bacdive_id from strains where {name} = %s").format(name=sql.Identifier(cultureNr[0].lower()))
 		with self.conn.cursor() as cur:
@@ -38,12 +39,12 @@ class DatabaseDriver(object):
 	def setMarkerSequencesResults(self, jid, seqList):
 		with self.conn.cursor() as cur:
 			for i in seqList:
-				cur.execute("INSERT INTO MarkersResults(jid, seq_eval, embl_id, length, title) VALUES(%s, %s,%s,%s,%s)", (jid, i.get('seq_eval'), i.get('id'), i.get('length'), i.get('title'),))
+				cur.execute("INSERT INTO MarkersResults(jid, seq_eval, embl_id, length, title) VALUES(%s,%s,%s,%s,%s)", (jid, i.get('seq_eval'), i.get('id'), i.get('length'), i.get('title'),))
 				self.conn.commit()
 				
 	def setStrainIDs(self, idDict, bacdive_id):
 		with self.conn.cursor() as cur:
-			cur.execute("select exists(select 1 from strains where bacdive_id=%s);", (bacdive_id,))
+			cur.execute("select exists(select 1 from strains where bacdive_id=%s)", (bacdive_id,))
 			result = cur.fetchone()
 			if(result[0] is False):
 				cur.execute("INSERT INTO Strains(bacdive_id) VALUES(%s)", (bacdive_id,))
@@ -54,7 +55,8 @@ class DatabaseDriver(object):
 				
 	def setQueryStrains(self,jid,bacdive_id):
 		with self.conn.cursor() as cur:
-			cur.execute("INSERT INTO QueryStrains VALUES(%s, %s) ON CONFLICT DO NOTHING", (jid, bacdive_id,))
+			cur.execute("INSERT INTO Strains(bacdive_id) VALUES(%s) ON CONFLICT DO NOTHING", (bacdive_id,))
+			cur.execute("INSERT INTO QueryStrains(JID, bacdive_id) VALUES(%s, %s) ON CONFLICT DO NOTHING", (jid, bacdive_id,))
 				
 	def close(self):
 		if self.conn is not None:
@@ -80,25 +82,26 @@ class DatabaseDriver(object):
 			#   ]
 			# }
 
-			
-			cur.execute("INSERT INTO Query(jid, query_type) VALUES(%s, %s)", (jid, data['isProbe'])) # insert query
-			for item in data['taxIds']:	# insert taxids
+			cur.execute("INSERT INTO Query(jid, query_type) VALUES(%s, %s)", (jid, data.get('isProbe'))) # insert query
+			for item in data.get('taxIds'):	# insert taxids
+				cur.execute("INSERT INTO Taxonomy(tax_id, species_name) VALUES(%s, %s) ON CONFLICT DO NOTHING", (item, "N/A"))
 				cur.execute("INSERT INTO QueryTaxonomy(JID, tax_id) VALUES(%s, %s)", (jid, item))
 			if 'sequenceTypes' in data:
-				for item in data['sequenceTypes']:
+				for item in data.get('sequenceTypes'):
 					min = 10
 					if 'min' in item:
-						min = item['min']
+						min = item.get('min')
 					if 'max' in item:
-						cur.execute("INSERT INTO Markers(JID, type, min_length, max_length, intergenic) VALUES(%s,%s,%s,%s,%s)", (jid, item['val'], min, item['max'], not data['excludeIntergenic'],))
+						cur.execute("INSERT INTO Markers(JID, type, min_length, max_length, intergenic) VALUES(%s,%s,%s,%s,%s)", (jid, item.get('val'), min, item.get('max'), not data.get('excludeIntergenic'),))
 					else:
-						cur.execute("INSERT INTO Markers(JID, type, min_length, intergenic) VALUES(%s,%s,%s,%s)", (jid, item['val'], min, not data['excludeIntergenic'],))
+						cur.execute("INSERT INTO Markers(JID, type, min_length, intergenic) VALUES(%s,%s,%s,%s)", (jid, item.get('val'), min, not data.get('excludeIntergenic'),))
 			for item in data['strainIds']:
-				bacdive_id = self.getBacDiveID(item) # get bacdive id
+				bacdive_id = self.getBacDiveID(item) # check if bacdive id exists
 				bacd = BacdiveClient(jid, bacdive_id) # bacdive connection
-				self.setQueryStrains(jid, bacd.bacdive_id) # set bacdive ids
 				json_analyzer = JSONAnalyzer(bacd.getJSONByBacdiveID(item), jid) # initialize jsonanalyzer
+				self.setQueryStrains(jid, bacd.bacdive_id) # set bacdive ids
 				markerProperties = self.getMarkerProperties(jid) # get marker properties?
+				print("got markerProperties", markerProperties)
 				json_analyzer.setMarkerProperties(markerProperties[0])
 				json_results = json_analyzer.evaluateSequences() # get marker sequences available for further analysis
 				strain_dict = json_analyzer.extractStrainIDs(bacd.bacdive_id) # get specific strain ids (ATCC, BCCM, etc.)

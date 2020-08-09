@@ -4,10 +4,9 @@
 import json
 import sys, requests
 from operator import itemgetter
-from databaseDriver import DatabaseDriver
 
 
-class JSONAnalyzer(object):
+class JSONAnalyzer:
 	#TODO: get parameters from database with JID key
 	def __init__(self, data, jid):
 		self.data = data
@@ -27,10 +26,11 @@ class JSONAnalyzer(object):
 		
 		sequenceList = []
 		sequences = self.data.get("molecular_biology").get("sequence")
-		for i in range(len(sequences)):
-			accession_id = sequences[i].get("seq_acc_num")
-			accession_title = sequences[i].get("Sequence_accession_title")
-			sequence_length = sequences[i].get("sequence_length")
+		if sequences is None: return sequenceList
+		for sequence in sequences:
+			accession_id = sequence.get("seq_acc_num")
+			accession_title = sequence.get("Sequence_accession_title")
+			sequence_length = sequence.get("sequence_length")
 			evaluation = 0
 			if(self.sequence_type.lower() in accession_title.lower()):
 				evaluation += 1
