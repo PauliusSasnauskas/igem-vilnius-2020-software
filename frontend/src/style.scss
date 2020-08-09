@@ -331,6 +331,51 @@ body { // Representation (without color)
         background-size: cover;
         border-radius: $border-radius;
     }
+    .selectResult {
+        border-radius: $border-radius;
+        overflow: hidden;
+        margin-top: 24px;
+        width: 100%;
+        cursor: pointer;
+
+        $padding: 20px;
+        $border: 3px;
+        
+        border: $border solid transparent;
+        transition: border 0.5s, box-shadow 0.5s;
+
+        &.active {
+            border: $border solid $purple-blue;
+            @include shadow($purple-blue)
+            // div:first-child {
+            //     padding: ($padding - $border) $padding $padding $padding;
+            // }
+            // div:last-child {
+            //     padding: $padding $padding ($padding - $border) $padding;
+            // }
+        }
+        
+        div {
+            padding: $padding;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            background-color: $purple-blue;
+            transition: padding 0.5s;
+            & > * {
+                flex-grow: 3;
+            }
+        }
+        .eval::before {
+            display: inline-block;
+            content: '';
+            border-radius: 1000px;
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+        }
+    }
 }
 
 body { // Dark mode
@@ -395,6 +440,15 @@ body { // Dark mode
     }
     .screenCurtain .loader {
         @include shadow($black);
+    }
+    .selectResult {
+        @include shadow($black);
+        .title {
+            background-color: $dark-gray;
+        }
+        .eval::before {
+            background-color: $dark-gray;
+        }
     }
 }
 
@@ -469,5 +523,14 @@ body.light { // Light mode
     }
     .screenCurtain .loader {
         @include shadow($light-gray);
+    }
+    .selectResult {
+        @include shadow($light-gray);
+        .title {
+            background-color: $white;
+        }
+        .eval::before {
+            background-color: $dark-gray;
+        }
     }
 }

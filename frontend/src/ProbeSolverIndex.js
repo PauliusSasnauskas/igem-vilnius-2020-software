@@ -3,7 +3,7 @@ import { Container, Switch, Label, Number, MultipleInput, Checkbox, MultipleInpu
 import textVals from './common/textVals';
 
 export default function ProbeSolverIndex(props){
-    const { setJobId } = props;
+    const { setSubResults } = props;
 
     const [errorValue, setErrorValue] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(false);
@@ -61,7 +61,7 @@ export default function ProbeSolverIndex(props){
             .then((response) => response.json())
             .then((data) => {
                 if (data === undefined) return;
-                setJobId(data.jobId);
+                setSubResults(data);
             })
             .catch((reason) => {
                 console.log(reason);
