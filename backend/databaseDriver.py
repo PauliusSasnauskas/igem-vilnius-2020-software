@@ -18,7 +18,6 @@ class DatabaseDriver:
 
 	def getBacDiveID(self, culturecolnumber):
 		cultureNr = culturecolnumber.split(" ", 1)
-		print(cultureNr) # TODO: remove
 		idNr = cultureNr[1]
 		query = sql.SQL("select bacdive_id from strains where {name} = %s").format(name=sql.Identifier(cultureNr[0].lower()))
 		with self.conn.cursor() as cur:
@@ -39,6 +38,7 @@ class DatabaseDriver:
 	def setMarkerSequencesResults(self, jid, seqList):
 		with self.conn.cursor() as cur:
 			for i in seqList:
+				# TODO: get bac_name
 				cur.execute("INSERT INTO MarkersResults(jid, seq_eval, embl_id, length, title) VALUES(%s,%s,%s,%s,%s)", (jid, i.get('seq_eval'), i.get('id'), i.get('length'), i.get('title'),))
 				self.conn.commit()
 				
@@ -101,11 +101,11 @@ class DatabaseDriver:
 				json_analyzer = JSONAnalyzer(bacd.getJSONByBacdiveID(item), jid) # initialize jsonanalyzer
 				self.setQueryStrains(jid, bacd.bacdive_id) # set bacdive ids
 				markerProperties = self.getMarkerProperties(jid) # get marker properties?
-				print("got markerProperties", markerProperties)
+				print("got markerProperties", markerProperties) # TODO: remove
 				json_analyzer.setMarkerProperties(markerProperties[0])
 				json_results = json_analyzer.evaluateSequences() # get marker sequences available for further analysis
 				strain_dict = json_analyzer.extractStrainIDs(bacd.bacdive_id) # get specific strain ids (ATCC, BCCM, etc.)
 				self.setStrainIDs(strain_dict, bacd.bacdive_id)
 				self.setMarkerSequencesResults(jid, json_results)
 			self.conn.commit()
-		return jid
+		return {"jid": jid, "subSelect": json_results}

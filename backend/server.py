@@ -50,12 +50,9 @@ def createJob():
     #   ]
     # }
 
-    jobId = db_driver.createQuery(data)
+    response = db_driver.createQuery(data)
 
-    response = {
-        "jobId": jobId
-    }
-
+    print(response)
     # TODO: start actual work
 
     return _corsify_actual_response(jsonify(response))
