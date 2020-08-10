@@ -1,49 +1,79 @@
 import React, { useEffect } from 'react';
-import { Container, Label, Column, Loader } from './common';
+import { Container, Label, Column, Row, Loader, Alert } from './common';
 
 export default function ProbeSolverSubselect(props) {
 
-    const { subResults } = props;
+    const { processData } = props;
 
-    const [mySubResults, setMySubResults] = React.useState(undefined);
+    const [errorValue, setErrorValue] = React.useState("");
+    const [isLoading, setIsLoading] = React.useState(false);
+
+    const [data, setData] = React.useState(undefined);
+    const [showMores, setShowMores] = React.useState([]);
+
+    const submitQuery = () => {
+        if (isLoading) return;
+        setErrorValue("");
+        
+        setIsLoading(true);
+    }
 
     useEffect(() => {
-        setMySubResults(subResults.subResults)
-    }, [subResults]);
+        setData(processData)
+        const newShowMores = Array(processData.subSelect.length).fill(false); // array of subSelect length filled with false
+        setShowMores(newShowMores);
+    }, [processData]);
 
-    const toggleSelect = (index) => {
-        const newResults = [...mySubResults];
-        newResults.forEach((item)=>item.active = false);
-        newResults[index].active = true;
+    const toggleSelect = (strain, index) => {
+        if (isLoading) return;
+        const newResults = {...data};
+        newResults.subSelect[strain].forEach((item)=>item.active = false);
+        newResults.subSelect[strain][index].active = true;
 
-        setMySubResults(newResults);
+        setData(newResults);
     };
 
-    if (mySubResults === undefined){
+    const showMore = (strain) => {
+        const newShowMores = [...showMores];
+        newShowMores[strain] = true;
+        setShowMores(newShowMores);
+    };
+
+    if (data === undefined || data.subSelect === undefined){
         return (<Container style={{boxShadow: "unset", justifyContent: "start"}}>
             <Column style={{flexGrow: 1}}>
                 <Loader inline />
                 <br />
                 <Label>Your request is being processed...</Label>
                 <hr />
-                <Label>Job ID: {subResults.jobId}</Label>
+                <Label>Job ID: {processData.jid && "undefined"}</Label>
             </Column>
         </Container>);
     }else{
-        console.log(mySubResults);
-        return (<Container>
-            <Column style={{flexGrow: 1}}>
-                <Label>Select marker sequences</Label>
-                {mySubResults.map((item, index)=>(
-                    <div key={index} className={"selectResult" + (item.active ? " active" : "")} onClick={()=>toggleSelect(index)}>
-                        <div className="title">{item.title}</div>
-                        <div className={"eval eval" + item.seq_eval}>
-                            <span>{item.embl_id}</span><span>{item.bac_name}</span><span>{item.length}bp</span>
-                        </div>
-                    </div>
-                ))}
-            </Column>
-        </Container>)
+        return data.subSelect.map((strain, indexS) => (<>
+            {errorValue.trim().length === 0 ? undefined : (<Alert>
+                {errorValue}
+            </Alert>)}
+            <Loader visible={isLoading} />
+            <Container key={indexS}>
+                <Column style={{flexGrow: 1}}>
+                    <Label>Strain {indexS}</Label>
+                    {strain.length === 0 ? (<span style={{alignSelf: "start"}}>No marker sequences found.</span>) : undefined}
+                    {(showMores[indexS] ? strain : strain.slice(0, 3)).map((item, indexI)=>(
+                        <Row key={indexI} className={"resultRow" + (item.active ? " active" : "")}>
+                            <div className={"selectResult" + (item.active ? " active" : "")} onClick={()=>toggleSelect(indexS, indexI)}>
+                                <div className="title">{item.title}</div>
+                                <div className={"eval eval" + item.seq_eval}>
+                                    <span>{item.id}</span><span>{item.bac_name}</span><span>{item.length}bp</span>
+                                </div>
+                            </div>
+                        </Row>
+                    ))}
+                    {(showMores[indexS] || strain.length <= 3) ? undefined : <button className="buttonBase" onClick={()=>showMore(indexS)}>Show more...</button>}
+                </Column>
+            </Container>
+            <button disabled={isLoading} onClick={submitQuery} className="searchButton"><span>Search</span></button>
+        </>));
     }
 }
 

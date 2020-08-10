@@ -3,7 +3,7 @@ import { Container, Switch, Label, Number, MultipleInput, Checkbox, MultipleInpu
 import textVals from './common/textVals';
 
 export default function ProbeSolverIndex(props){
-    const { setSubResults } = props;
+    const { setData } = props;
 
     const [errorValue, setErrorValue] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(false);
@@ -45,6 +45,7 @@ export default function ProbeSolverIndex(props){
             excludeIntergenic,
             sequenceTypes,
         };
+        
         const requestParams = {
             method: 'POST',
             headers: {
@@ -61,7 +62,8 @@ export default function ProbeSolverIndex(props){
             .then((response) => response.json())
             .then((data) => {
                 if (data === undefined) return;
-                setSubResults(data);
+                data.request = request;
+                setData(data);
             })
             .catch((reason) => {
                 console.log(reason);
@@ -111,7 +113,7 @@ export default function ProbeSolverIndex(props){
         </Container>
         <div style={{textAlign: "center"}}><button
             onClick={()=>setAdvancedSectionEnabled(!advancedSectionEnabled)}
-            className={"advancedButton " + (advancedSectionEnabled ? "enabled" : "")}>
+            className={"buttonBase advancedButton " + (advancedSectionEnabled ? "enabled" : "")}>
             Advanced settings
         </button></div>
         <Container style={!advancedSectionEnabled ? {display: "none"} : undefined}>
