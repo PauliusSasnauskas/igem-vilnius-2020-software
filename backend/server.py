@@ -28,7 +28,7 @@ def createJob():
     if request.method == 'OPTIONS': return build_cors_preflight()
 
     data = request.json
-    print("got request of:", data) 
+    # print("got request of:", data) 
     
     # data object interface:
     # {
@@ -39,20 +39,8 @@ def createJob():
     #   sequenceTypes : Array<{val : string, min : number, max : number}>?
     # }
 
-    # testData = {
-    #   'isProbe': False,
-    #   'strainIds': ['ATC68463', 'IGEM-5-11-6'],
-    #   'taxIds': [111, 322],
-    #   'excludeIntergenic': True,
-    #   'sequenceTypes': [
-    #       { 'val': '23S rRNA', 'min': 10, 'max': 1500 },
-    #       { 'val': '16S rRNA', 'min': 10, 'max': 1200 }
-    #   ]
-    # }
-
     response = db_driver.createQuery(data)
 
-    print(response)
     # TODO: start actual work
 
     return _corsify_actual_response(jsonify(response))

@@ -95,17 +95,18 @@ class DatabaseDriver:
 						cur.execute("INSERT INTO Markers(JID, type, min_length, max_length, intergenic) VALUES(%s,%s,%s,%s,%s)", (jid, item.get('val'), min, item.get('max'), not data.get('excludeIntergenic'),))
 					else:
 						cur.execute("INSERT INTO Markers(JID, type, min_length, intergenic) VALUES(%s,%s,%s,%s)", (jid, item.get('val'), min, not data.get('excludeIntergenic'),))
+			markerResults = []
 			for item in data['strainIds']:
 				bacdive_id = self.getBacDiveID(item) # check if bacdive id exists
 				bacd = BacdiveClient(jid, bacdive_id) # bacdive connection
 				json_analyzer = JSONAnalyzer(bacd.getJSONByBacdiveID(item), jid) # initialize jsonanalyzer
 				self.setQueryStrains(jid, bacd.bacdive_id) # set bacdive ids
 				markerProperties = self.getMarkerProperties(jid) # get marker properties?
-				print("got markerProperties", markerProperties) # TODO: remove
 				json_analyzer.setMarkerProperties(markerProperties[0])
 				json_results = json_analyzer.evaluateSequences() # get marker sequences available for further analysis
 				strain_dict = json_analyzer.extractStrainIDs(bacd.bacdive_id) # get specific strain ids (ATCC, BCCM, etc.)
 				self.setStrainIDs(strain_dict, bacd.bacdive_id)
 				self.setMarkerSequencesResults(jid, json_results)
+				markerResults += [json_results]
 			self.conn.commit()
-		return {"jid": jid, "subSelect": json_results}
+		return {"jid": jid, "subSelect": markerResults}
