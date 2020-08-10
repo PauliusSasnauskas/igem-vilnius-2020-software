@@ -82,9 +82,12 @@ export default function MultipleInput(props){
                 </datalist>
                 <button onClick={changeFunc}>+</button>
             </div>
-            {data.map((item, index) => (
-                <span key={index}>{item.val} [{item.min}, {item.max}]<button onClick={()=>remove(index)}>✕</button></span>
-            ))}
+            {data.map((item, index) => {
+                let maxDisplay = item.max;
+                if (item.min === undefined) item.min = 10;
+                if (maxDisplay === undefined) maxDisplay = "∞";
+                return (<span key={index}>{item.val} [{item.min}, {maxDisplay}]<button onClick={()=>remove(index)}>✕</button></span>)
+            })}
         </div>
     </>);
 }
