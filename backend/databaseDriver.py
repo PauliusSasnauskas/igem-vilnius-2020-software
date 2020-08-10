@@ -38,7 +38,7 @@ class DatabaseDriver:
 	def setMarkerSequencesResults(self, jid, seqList):
 		with self.conn.cursor() as cur:
 			for i in seqList:
-				# TODO: get bac_name
+				# TODO: get bac_name?
 				cur.execute("INSERT INTO MarkersResults(jid, seq_eval, embl_id, length, title) VALUES(%s,%s,%s,%s,%s)", (jid, i.get('seq_eval'), i.get('id'), i.get('length'), i.get('title'),))
 				self.conn.commit()
 				
@@ -71,19 +71,10 @@ class DatabaseDriver:
 		jid = 'unset'
 		with self.conn.cursor() as cur:
 			jid = self.generateJobId()
-			# {
-			#   'isProbe': False,
-			#   'strainIds': ['ATC68463', 'IGEM-5-11-6'],
-			#   'taxIds': [111, 322],
-			#   'excludeIntergenic': True,
-			#   'sequenceTypes': [
-			#       { 'val': '23S rRNA', 'min': 10, 'max': 1500 },
-			#       { 'val': '16S rRNA', 'min': 10, 'max': 1200 }
-			#   ]
-			# }
 
 			cur.execute("INSERT INTO Query(jid, query_type) VALUES(%s, %s)", (jid, data.get('isProbe'))) # insert query
 			for item in data.get('taxIds'):	# insert taxids
+				# TODO: get species_name?
 				cur.execute("INSERT INTO Taxonomy(tax_id, species_name) VALUES(%s, %s) ON CONFLICT DO NOTHING", (item, "N/A"))
 				cur.execute("INSERT INTO QueryTaxonomy(JID, tax_id) VALUES(%s, %s)", (jid, item))
 			if 'sequenceTypes' in data:
