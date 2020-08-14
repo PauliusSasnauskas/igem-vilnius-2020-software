@@ -42,9 +42,11 @@ export default function ProbeSolverIndex(props){
             isProbe,
             strainIds,
             taxIds,
-            excludeIntergenic,
-            sequenceTypes,
         };
+        if (advancedOption) {
+            request.excludeIntergenic = excludeIntergenic;
+            if (sequenceTypes.length > 0) request.sequenceTypes = sequenceTypes;
+        }
         
         const requestParams = {
             method: 'POST',
