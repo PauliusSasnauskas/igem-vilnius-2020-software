@@ -11,15 +11,14 @@ from databaseDriver import DatabaseDriver
 app = Flask(__name__, static_folder='public')
 
 def _corsify_actual_response(response):
-    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 def build_cors_preflight():
-    # print("building cors preflight")
     response = make_response()
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    response.headers.add('Access-Control-Allow-Headers', "*")
-    response.headers.add('Access-Control-Allow-Methods', "*")
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', '*')
+    response.headers.add('Access-Control-Allow-Methods', '*')
     return response
 
 # API urls
@@ -28,20 +27,43 @@ def createJob():
     if request.method == 'OPTIONS': return build_cors_preflight()
 
     data = request.json
-    # print("got request of:", data) 
+    # print('got request of:', data) 
     
     # data object interface:
     # {
     #   isProbe : boolean,
     #   strainIds : Array<string>,
     #   taxIds : Array<number>,
-    #   excludeIntergenic : boolean,
+    #   excludeIntergenic : boolean?,
     #   sequenceTypes : Array<{val : string, min : number, max : number}>?
     # }
 
+    data.setdefault('excludeIntergenic', True)
+    data.setdefault('sequenceTypes', [{'val': '16s', 'min': 10, 'max': 1700}])
+    
     response = db_driver.createQuery(data)
 
     # TODO: start actual work
+    print(response) # TODO: remove
+
+    return _corsify_actual_response(jsonify(response))
+
+
+@app.route('/api/setJobMarkers', methods=['POST', 'OPTIONS'])
+def setJobMarkers():
+    if request.method == 'OPTIONS': return build_cors_preflight()
+    
+    data = request.json
+
+    # data object interface:
+    # {
+    #   jid : string,
+    #   selection : Array<{marker : string}>
+    # }
+
+    db_driver.setJobMarkers(data.jid, data.selection)
+
+    response = {'status': 'ok'}
 
     return _corsify_actual_response(jsonify(response))
 
@@ -50,30 +72,14 @@ def checkJob():
     if request.method == 'OPTIONS': return build_cors_preflight()
 
     data = request.json
-    print("got request to check job:", data)
+    print('got request to check job:', data)
 
-    #response = magicBackendFunctionToCheckJob(data.jobId)
     response = {
-        "status": "searchSequences"     # 1
+        'status': 'searchPs'            # 3
     }
     response = {
-        "status": "selectSequences",    # 2
-        "sequences": [
-            {
-                "marker_id": "",
-	            "seq_eval": 3,
-	            "embl_id": "",
-	            "length": 845,
-	            "title": ""
-            }
-        ]
-    }
-    response = {
-        "status": "searchPs"            # 3
-    }
-    response = {
-        "status": "complete",           # 4
-        "results": ["5’GGATAGCCCAGAGAAATTTGGA3’", "5’CAT CTT GTA CCG TTG GAA CTT TAA T3’", "GCCTCATTTGATT(A)20-biotin", "thiol-(A)20TTTCAGATG", "biotin-(A)20CATCTGAAA"]
+        'status': 'complete',           # 4
+        'results': ['5’GGATAGCCCAGAGAAATTTGGA3’', '5’CAT CTT GTA CCG TTG GAA CTT TAA T3’', 'GCCTCATTTGATT(A)20-biotin', 'thiol-(A)20TTTCAGATG', 'biotin-(A)20CATCTGAAA']
     }
     
     return _corsify_actual_response(jsonify(response))
@@ -83,14 +89,14 @@ def checkJob():
 @app.route('/<path:path>')
 def sserve(path):
     if path.startswith('/api/'):
-        print("wrong!")
+        raise Exception()
         return None
-    if path != "" and os.path.exists(app.static_folder + '/' + path):
+    if path != '' and os.path.exists(app.static_folder + '/' + path):
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, 'index.html')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     db_driver = DatabaseDriver()
     app.run(use_reloader=True, port=5000, threaded=True) # debug only
     # serve(app, host='0.0.0.0', port=8000) # production

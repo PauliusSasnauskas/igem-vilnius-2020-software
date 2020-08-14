@@ -10,4 +10,4 @@ ALTER TABLE MarkersResults
 		ON UPDATE CASCADE;
 
 ALTER TABLE Strains
-    ADD COLUMN bac_name VARCHAR NOT NULL;
+    ADD COLUMN bac_name VARCHAR;

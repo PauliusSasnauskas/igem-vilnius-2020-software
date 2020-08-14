@@ -35,23 +35,22 @@ class DatabaseDriver:
 			result = cur.fetchall()
 			return result
 	
-	def setMarkerSequencesResults(self, jid, seqList):
+	def setMarkerSequencesResults(self, jid, seqList, bacdive_id):
 		with self.conn.cursor() as cur:
 			for i in seqList:
-				# TODO: get bac_name?
-				cur.execute("INSERT INTO MarkersResults(jid, seq_eval, embl_id, length, title) VALUES(%s,%s,%s,%s,%s)", (jid, i.get('seq_eval'), i.get('id'), i.get('length'), i.get('title'),))
+				cur.execute("INSERT INTO MarkersResults(jid, seq_eval, embl_id, length, title, strain_id) VALUES(%s,%s,%s,%s,%s,%s)", (jid, i.get('seq_eval'), i.get('id'), i.get('length'), i.get('title'),bacdive_id,))
 				self.conn.commit()
 				
-	def setStrainIDs(self, idDict, bacdive_id):
+	def setStrainIDs(self, idDict, bacdive_id, bac_name):
 		with self.conn.cursor() as cur:
 			cur.execute("select exists(select 1 from strains where bacdive_id=%s)", (bacdive_id,))
 			result = cur.fetchone()
 			if(result[0] is False):
-				cur.execute("INSERT INTO Strains(bacdive_id) VALUES(%s)", (bacdive_id,))
+				cur.execute("INSERT INTO Strains(bacdive_id, bac_name) VALUES(%s,%s)", (bacdive_id, bac_name,))
 			for key in idDict:
 				query = sql.SQL("UPDATE Strains SET {name} = %s WHERE bacdive_id = %s").format(name=sql.Identifier(key.lower()))
 				cur.execute(query, (idDict.get(key), bacdive_id))
-				self.conn.commit()
+			self.conn.commit()
 				
 	def setQueryStrains(self,jid,bacdive_id):
 		with self.conn.cursor() as cur:
@@ -73,31 +72,37 @@ class DatabaseDriver:
 			jid = self.generateJobId()
 
 			cur.execute("INSERT INTO Query(jid, query_type) VALUES(%s, %s)", (jid, data.get('isProbe'))) # insert query
-			for item in data.get('taxIds'):	# insert taxids
+			for strain in data['taxIds']:	# insert taxids
 				# TODO: get species_name?
-				cur.execute("INSERT INTO Taxonomy(tax_id, species_name) VALUES(%s, %s) ON CONFLICT DO NOTHING", (item, "N/A"))
-				cur.execute("INSERT INTO QueryTaxonomy(JID, tax_id) VALUES(%s, %s)", (jid, item))
-			if 'sequenceTypes' in data:
-				for item in data.get('sequenceTypes'):
-					min = 10
-					if 'min' in item:
-						min = item.get('min')
-					if 'max' in item:
-						cur.execute("INSERT INTO Markers(JID, type, min_length, max_length, intergenic) VALUES(%s,%s,%s,%s,%s)", (jid, item.get('val'), min, item.get('max'), not data.get('excludeIntergenic'),))
-					else:
-						cur.execute("INSERT INTO Markers(JID, type, min_length, intergenic) VALUES(%s,%s,%s,%s)", (jid, item.get('val'), min, not data.get('excludeIntergenic'),))
+				cur.execute("INSERT INTO Taxonomy(tax_id, species_name) VALUES(%s, %s) ON CONFLICT DO NOTHING", (strain, "N/A"))
+				cur.execute("INSERT INTO QueryTaxonomy(JID, tax_id) VALUES(%s, %s)", (jid, strain))
+			for strain in data['sequenceTypes']:
+				min = strain.get('min', 10)
+				if 'max' in strain:
+					cur.execute("INSERT INTO Markers(JID, type, min_length, max_length, intergenic) VALUES(%s,%s,%s,%s,%s)", (jid, strain['val'], min, strain['max'], not data['excludeIntergenic'],))
+				else:
+					cur.execute("INSERT INTO Markers(JID, type, min_length, intergenic) VALUES(%s,%s,%s,%s)", (jid, strain['val'], min, not data['excludeIntergenic'],))
 			markerResults = []
-			for item in data['strainIds']:
-				bacdive_id = self.getBacDiveID(item) # check if bacdive id exists
-				bacd = BacdiveClient(jid, bacdive_id) # bacdive connection
-				json_analyzer = JSONAnalyzer(bacd.getJSONByBacdiveID(item), jid) # initialize jsonanalyzer
-				self.setQueryStrains(jid, bacd.bacdive_id) # set bacdive ids
-				markerProperties = self.getMarkerProperties(jid) # get marker properties?
-				json_analyzer.setMarkerProperties(markerProperties[0])
-				json_results = json_analyzer.evaluateSequences() # get marker sequences available for further analysis
-				strain_dict = json_analyzer.extractStrainIDs(bacd.bacdive_id) # get specific strain ids (ATCC, BCCM, etc.)
-				self.setStrainIDs(strain_dict, bacd.bacdive_id)
-				self.setMarkerSequencesResults(jid, json_results)
-				markerResults += [json_results]
+			for strain in data['strainIds']:
+				bacdiveClient = BacdiveClient(jid, self.getBacDiveID(strain))
+				bacdiveData = bacdiveClient.getDataByBacdiveId(strain)
+				bacdive_id = bacdiveClient.bacdive_id
+				self.setQueryStrains(jid, bacdive_id) # set query strains with bacdive_id
+
+				markerProperties = data['sequenceTypes']
+				json_analyzer = JSONAnalyzer(bacdiveData, jid)
+				json_analyzer.setMarkerProperties(markerProperties[0], data['excludeIntergenic']) # TODO: markerProperties[1..n]
+				sequenceList = json_analyzer.evaluateSequences() # get marker sequences available for further analysis
+				bac_name = json_analyzer.getBacteriaName()
+				self.setStrainIDs(json_analyzer.extractStrainIDs(bacdive_id), bacdive_id, bac_name) # set strain alternative ids
+				self.setMarkerSequencesResults(jid, sequenceList, bacdive_id)
+				markerResults += [{"for": bacdive_id, "name": bac_name, "sequenceList": sequenceList}]
 			self.conn.commit()
 		return {"jid": jid, "subSelect": markerResults}
+	
+	def setJobMarkers(self, jid, selection):
+		with self.conn.cursor() as cur:
+			for item in selection:
+				cur.execute("UPDATE markersresults SET selected = TRUE WHERE jid = %s AND embl_id = %s;", (jid, item,))
+			self.conn.commit()
+		

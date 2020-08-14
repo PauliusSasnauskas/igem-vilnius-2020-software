@@ -7,7 +7,6 @@ from operator import itemgetter
 
 
 class JSONAnalyzer:
-	#TODO: get parameters from database with JID key
 	def __init__(self, data, jid):
 		self.data = data
 		self.jid = jid
@@ -16,14 +15,16 @@ class JSONAnalyzer:
 		self.sequence_length_max = None
 		self.intergenic = None
 		
-	def setMarkerProperties(self, properties):
-		(self.sequence_type, self.sequence_length_min, self.sequence_length_max, self.intergenic) = properties
+	def setMarkerProperties(self, properties, excludeIntergenic):
+		self.sequence_type = properties['val']
+		self.sequence_length_min = properties['min']
+		self.sequence_length_max = properties['max']
+		self.intergenic = not excludeIntergenic
 
 	def getBacteriaName(self):
 		return self.data.get("taxonomy_name").get("strains")[0].get("species")
 		
 	def evaluateSequences(self):
-		
 		sequenceList = []
 		sequences = self.data.get("molecular_biology").get("sequence")
 		if sequences is None: return sequenceList
