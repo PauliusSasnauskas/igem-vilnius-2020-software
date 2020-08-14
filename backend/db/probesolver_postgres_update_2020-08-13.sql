@@ -5,7 +5,9 @@ ALTER TABLE MarkersResults
     DROP COLUMN bac_name;
 
 ALTER TABLE MarkersResults 
-    ADD COLUMN strain_id;
+    ADD COLUMN strain_id integer REFERENCES Strains(bacdive_id)
+		ON DELETE CASCADE
+		ON UPDATE CASCADE;
 
 ALTER TABLE Strains
     ADD COLUMN bac_name VARCHAR NOT NULL;
