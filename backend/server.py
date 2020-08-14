@@ -90,7 +90,6 @@ def checkJob():
 def sserve(path):
     if path.startswith('/api/'):
         raise Exception()
-        return None
     if path != '' and os.path.exists(app.static_folder + '/' + path):
         return send_from_directory(app.static_folder, path)
     else:

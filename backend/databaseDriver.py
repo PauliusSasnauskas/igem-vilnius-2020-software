@@ -47,6 +47,8 @@ class DatabaseDriver:
 			result = cur.fetchone()
 			if(result[0] is False):
 				cur.execute("INSERT INTO Strains(bacdive_id, bac_name) VALUES(%s,%s)", (bacdive_id, bac_name,))
+			else:
+				cur.execute("UPDATE Strains SET bac_name = %s WHERE bacdive_id = %s", (bac_name, bacdive_id,))
 			for key in idDict:
 				query = sql.SQL("UPDATE Strains SET {name} = %s WHERE bacdive_id = %s").format(name=sql.Identifier(key.lower()))
 				cur.execute(query, (idDict.get(key), bacdive_id))
