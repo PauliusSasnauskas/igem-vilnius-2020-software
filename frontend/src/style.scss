@@ -62,10 +62,23 @@ body { // Representation (without color)
         &.warning {
             position: -webkit-sticky;
             position: sticky;
+            flex-direction: column;
+            justify-content: start;
+            align-items: start;
             top: 20px;
             justify-content: start;
             background-color: $yellow;
             z-index: 3;
+            p {
+                margin: 0;
+                & + p {
+                    margin-top: 12px;
+                }
+            }
+            &.red {
+                position: initial;
+                background-color: $red;
+            }
         }
     }
     .label {
