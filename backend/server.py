@@ -43,9 +43,6 @@ def createJob():
     
     response = db_driver.createQuery(data)
 
-    # TODO: start actual work
-    print(response) # TODO: remove
-
     return _corsify_actual_response(jsonify(response))
 
 
@@ -55,15 +52,20 @@ def setJobMarkers():
     
     data = request.json
 
+    # print('got request of:', data) 
+
     # data object interface:
     # {
     #   jid : string,
-    #   selection : Array<{marker : string}>
+    #   selection : Array<{for : number, id : string}>
     # }
 
-    db_driver.setJobMarkers(data.jid, data.selection)
+    db_driver.setJobMarkers(data["jid"], data["selection"])
 
     response = {'status': 'ok'}
+
+    # TODO: start actual work (with a thread most likely?)
+    # magicWorkFunction(data)
 
     return _corsify_actual_response(jsonify(response))
 
@@ -75,12 +77,12 @@ def checkJob():
     print('got request to check job:', data)
 
     response = {
-        'status': 'searchPs'            # 3
+        'status': 'processing'          # 3
     }
-    response = {
-        'status': 'complete',           # 4
-        'results': ['5’GGATAGCCCAGAGAAATTTGGA3’', '5’CAT CTT GTA CCG TTG GAA CTT TAA T3’', 'GCCTCATTTGATT(A)20-biotin', 'thiol-(A)20TTTCAGATG', 'biotin-(A)20CATCTGAAA']
-    }
+    # response = {
+    #     'status': 'complete',           # 4
+    #     'results': ['5’GGATAGCCCAGAGAAATTTGGA3’', '5’CAT CTT GTA CCG TTG GAA CTT TAA T3’', 'GCCTCATTTGATT(A)20-biotin', 'thiol-(A)20TTTCAGATG', 'biotin-(A)20CATCTGAAA']
+    # }
     
     return _corsify_actual_response(jsonify(response))
 

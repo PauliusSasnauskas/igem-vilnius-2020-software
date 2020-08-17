@@ -105,6 +105,6 @@ class DatabaseDriver:
 	def setJobMarkers(self, jid, selection):
 		with self.conn.cursor() as cur:
 			for item in selection:
-				cur.execute("UPDATE markersresults SET selected = TRUE WHERE jid = %s AND embl_id = %s;", (jid, item,))
+				cur.execute("UPDATE markersresults SET selected = TRUE WHERE jid = %s AND strain_id = %s AND embl_id = %s;", (jid, item["for"], item["id"],))
 			self.conn.commit()
 		
