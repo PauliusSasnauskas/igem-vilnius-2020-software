@@ -59,8 +59,7 @@ export default function ProbeSolverIndex(props){
             body: JSON.stringify(request),
         };
         
-        // TODO: replace with actual api url
-        fetch("http://127.0.0.1:5000/api/createJob", requestParams)
+        fetch(textVals.apiUrl + "createJob", requestParams)
             .then((response) => response.json())
             .then((data) => {
                 if (data === undefined) return;
