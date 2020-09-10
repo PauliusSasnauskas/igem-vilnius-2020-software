@@ -45,6 +45,14 @@ body { // Representation (without color)
     .number {
         font-size: 3em;
         font-family: 'lato-medium';
+        margin-right: 16px;
+    }
+
+    div.flexColumn {
+        align-items: stretch;
+        div + div {
+            margin-top: 16px;
+        }
     }
 
     .container {
@@ -259,6 +267,7 @@ body { // Representation (without color)
         }
         span {
             margin-right: 12px;
+            white-space: nowrap;
         }
         input {
             @extend %insetInput;
@@ -294,7 +303,7 @@ body { // Representation (without color)
             }
         }
     }
-    .searchButton {
+    .submitButton {
         position: fixed;
         right: 0;
         width: 30vw;

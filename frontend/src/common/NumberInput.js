@@ -3,26 +3,17 @@ import React from 'react';
 export default function NumberInput(props){
 
     const changeCurrentValue = (e) => {
-        let value;
-        if (e.target.value === undefined || e.target.value === ""){
-            onChange(undefined);
-            return;
-        }
-        try {
-            value = parseInt(e.target.value);
-            if (isNaN(value)) return;
-        } catch (e) {
-            return;
-        }
-        onChange(value);
+        let _value = e.target.value;
+        if (!_value.match("^\\d*\\.?\\d*$")) return;
+        setParameter(parameterName, _value);
     };
 
-    const {label, value, onChange, ...other} = props;
+    const {label, value, parameterName, setParameter, ...other} = props;
 
     return (<div className="numberInput" {...other}>
         <label>
             <span>{label}</span>
-            <input type="number" value={String(value !== undefined ? value : "")} onChange={changeCurrentValue} />
+            <input type="text" value={value ?? ""} onChange={changeCurrentValue} />
         </label>
     </div>);
 }
