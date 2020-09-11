@@ -1,4 +1,5 @@
 import React from 'react';
+import InfoButton from './InfoButton'
 
 export default function NumberInput(props){
 
@@ -8,11 +9,12 @@ export default function NumberInput(props){
         setParameter(parameterName, _value);
     };
 
-    const {label, unit, value, parameterName, setParameter, ...other} = props;
+    const {label, unit, value, parameterName, setParameter, setPopupType, setIsOverlaying, ...other} = props;
 
     return (<div className="numberInput" {...other}>
         <label>
             <span>{label}</span>
+    <InfoButton paramType={parameterName} setPopupType={setPopupType} setIsOverlaying={setIsOverlaying}/>
             <input type="text" value={value ?? ""} onChange={changeCurrentValue} />
             <span>{unit}</span>
         </label>

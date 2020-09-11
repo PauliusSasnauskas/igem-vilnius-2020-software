@@ -1,10 +1,11 @@
 import React from 'react';
-import { Container, Column, Alert, Loader, NumberInput } from './common';
+import { Container, Column, Alert, Curtain, NumberInput} from './common';
 import textVals from './common/textVals';
 
 export default function LFAModelIndex(props){
     const [errorValue, setErrorValue] = React.useState("");
-    const [isLoading, setIsLoading] = React.useState(false);
+    const [isOverlaying, setIsOverlaying] = React.useState(false);
+    const [popupType, setPopupType] = React.useState("");
 
     const [parameters, setParameters] = React.useState({
         flowRate: undefined,
@@ -21,10 +22,10 @@ export default function LFAModelIndex(props){
     };
 
     const submit = () => {
-        if (isLoading) return;
+        if (isOverlaying) return;
         setErrorValue("");
-
-        setIsLoading(true);
+        setPopupType("loader")
+        setIsOverlaying(true);
 
         // send request
         const request = parameters;
@@ -50,7 +51,7 @@ export default function LFAModelIndex(props){
             .catch((reason) => {
                 console.log(reason);
                 setErrorValue(textVals.failedFetch);
-                setIsLoading(false);
+                setIsOverlaying(false);
             });
     };
 
@@ -58,7 +59,7 @@ export default function LFAModelIndex(props){
         {errorValue.trim().length === 0 ? undefined : (<Alert>
             {errorValue}
         </Alert>)}
-        <Loader visible={isLoading} />
+        <Curtain visible={isOverlaying} type={popupType} setIsOverlaying={setIsOverlaying}/>
         <Container>
             <Column>
                 <NumberInput
@@ -66,55 +67,69 @@ export default function LFAModelIndex(props){
                     unit="s/4cm"
                     parameterName="flowRate"
                     value={parameters.flowRate}
-                    setParameter={setParameter} />
+                    setParameter={setParameter}
+                    setPopupType={setPopupType}
+                    setIsOverlaying={setIsOverlaying} />
                 <NumberInput
                     label="Diffusion Coefficient"
                     unit=""
                     parameterName="diffusCoef"
                     value={parameters.diffusCoef}
-                    setParameter={setParameter} />
+                    setParameter={setParameter}
+                    setPopupType={setPopupType}
+                    setIsOverlaying={setIsOverlaying}  />
             </Column>
         </Container>
         <Container>
-            <Column style={{padding: "0 16px"}}>
+            <Column>
                 <NumberInput
                     label="Analyte concentration"
                     unit="μM"
                     parameterName="aCoef"
                     value={parameters.aCoef}
-                    setParameter={setParameter} />
+                    setParameter={setParameter}
+                    setPopupType={setPopupType}
+                    setIsOverlaying={setIsOverlaying}  />
                 <NumberInput
                     label="Detection probe concentration"
                     unit="μM"
                     parameterName="pCoef"
                     value={parameters.pCoef}
-                    setParameter={setParameter} />
+                    setParameter={setParameter}
+                    setPopupType={setPopupType}
+                    setIsOverlaying={setIsOverlaying}  />
                 <NumberInput
                     label="Test probe concentration"
                     unit="μM"
                     parameterName="rCoef"
                     value={parameters.rCoef}
-                    setParameter={setParameter} />
+                    setParameter={setParameter}
+                    setPopupType={setPopupType}
+                    setIsOverlaying={setIsOverlaying}  />
             </Column>
         </Container>
         <Container>
-            <Column style={{padding: "0 16px"}}>
+            <Column>
                 <NumberInput
                     label="Association rate"
                     unit="1/s"
                     parameterName="assocRate"
                     value={parameters.assocRate}
-                    setParameter={setParameter} />
+                    setParameter={setParameter}
+                    setPopupType={setPopupType}
+                    setIsOverlaying={setIsOverlaying}  />
                 <NumberInput
                     label="Dissociation rate"
                     unit="1/s"
                     parameterName="dissocRate"
                     value={parameters.dissocRate}
-                    setParameter={setParameter} />
+                    setParameter={setParameter}
+                    setPopupType={setPopupType}
+                    setIsOverlaying={setIsOverlaying}  />
             </Column>
         </Container>
         <Container>
-            <button disabled={isLoading} onClick={submit} className="submitButton"><span>Submit</span></button>
+            <button disabled={isOverlaying} onClick={submit} className="submitButton"><span>Submit</span></button>
         </Container>
     </>);
 };
