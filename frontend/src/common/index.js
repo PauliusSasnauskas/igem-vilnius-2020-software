@@ -1,12 +1,6 @@
-export { default as Container } from './Container';
-export { default as Switch } from './Switch';
-export { default as Label } from './Label';
-export { default as Number } from './Number';
-export { default as MultipleInput } from './MultipleInput';
-export { default as NumberInput } from './NumberInput';
-export { default as Checkbox } from './Checkbox';
-export { default as MultipleInputDropdownMinMax } from './MultipleInputDropdownMinMax';
-export { default as Column } from './Column';
-export { default as Row } from './Row';
 export { default as Alert } from './Alert';
+export { default as Column } from './Column';
+export { default as Container } from './Container';
+export { default as Label } from './Label';
 export { default as Loader } from './Loader';
+export { default as NumberInput } from './NumberInput';

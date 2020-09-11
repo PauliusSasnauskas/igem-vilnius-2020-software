@@ -1,9 +1,9 @@
 @import './common/values';
 
-$border-radius: 32px;
+$border-radius: 6px;
 
 button, input {
-    font-family: 'lato-light';
+    font-family: 'lato-regular';
 }
 
 body {
@@ -11,25 +11,13 @@ body {
     overflow-x: hidden;
 }
 
-%roundButton {
-    height: 28px;
-    border: 0;
-    width: 28px;
-    padding: 0;
-    border-radius: $border-radius;
-    font-size: 2em;
-    cursor: pointer;
-    outline: none;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-%insetInput {
+%customInput {
+    background-color: $white;
+    color: $black;
     height: 40px;
     border-radius: $border-radius;
-    border: unset;
+    border: 1px solid $light-gray;
     padding: 4px 10px;
     box-sizing: border-box;
     font-size: 1em;
@@ -41,560 +29,198 @@ body { // Representation (without color)
     justify-content: center;
     align-items: center;
     padding-bottom: 16px;
+}
 
-    .number {
-        font-size: 3em;
-        font-family: 'lato-medium';
-        margin-right: 16px;
-    }
-
-    div.flexColumn {
-        align-items: stretch;
-        div + div {
-            margin-top: 16px;
-        }
-    }
-
-    .container {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        padding: 32px;
-        margin: 16px 120px;
-        width: calc(max(40vw, 400px));
-        border-radius: $border-radius;
-        & > *:nth-child(2) {
-            flex-grow: 1;
-        }
-        &.warning {
-            position: -webkit-sticky;
-            position: sticky;
-            flex-direction: column;
-            justify-content: start;
-            align-items: start;
-            top: 20px;
-            justify-content: start;
-            background-color: $yellow;
-            z-index: 3;
-            p {
-                margin: 0;
-                & + p {
-                    margin-top: 12px;
-                }
-            }
-            &.red {
-                position: initial;
-                background-color: $red;
-            }
-        }
-    }
-    .label {
-        font-size: 1.5em;
-        text-align: start;
-        align-self: flex-start;
-    }
-    .modeSwitch {
-        border: unset;
+.introContainer {
+    width: 100vw;
+    height: 30vw;
+    background-color: $black;
+    &::before {
+        z-index: 3;
         position: absolute;
-        top: 0;
-        height: 140px;
-        border-radius: 0 0 $border-radius $border-radius;
-        cursor: pointer;
-        font-size: 1.5em;
-        width: 80px;
-    }
-    .docsButton {
-        position: absolute;
-        top: 156px;
-        font-size: 1.25em;
-        text-align: center;
-        width: 80px;
-    }
-    h1.title {
-        text-align: center;
-        font-size: 3.5em;
-        margin: 32px 0;
-    }
-    h1.title::before {
-        content: '';
-        display: inline-block;
-        width: 0.8em;
-        height: 0.8em;
-        margin-right: 12px;
-        background-position: bottom;
-        background-repeat: no-repeat;
-    }
-
-    .switch {
-        cursor: pointer;
-        font-size: 1.5em;
-        display: inline-flex;
-        flex-direction: row;
-        align-items: center;
-        input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-            margin: 0;
-            &:checked + .slider::before {
-                transform: translateX(48px);
-            }
-        }
-        span {
-            width: 100px;
-            transition: text-shadow 0.4s, color 0.4s;
-            &:first-child {
-                text-align: end;
-            }
-            &:last-child {
-                text-align: start;
-            }
-            &.checked {
-                color: $purple-blue;
-                @include glow_text($purple-blue);
-            }
-        }
-        .slider {
-            display: inline-block;
-            width: 96px;
-            height: 48px;
-            border-radius: 34px;
-            margin: 0 10px;
-            &::before {
-                display: inline-block;
-                content: "";
-                height: 36px;
-                width: 36px;
-                margin: 6px;
-                background-color: $purple-blue;
-                transition: transform 0.4s;
-                border-radius: 50%;
-            }
-            &::after {
-                content: '';
-                display: block;
-                width: 96px;
-            }
-        }
-    }
-    
-    .multipleInput {
-        width: 100%;
-        input {
-            width: 100%;
-            margin: 8px 0 16px;
-        }
-        & > button {
-            position: relative;
-            z-index: 2;
-            margin-top: -50px;
-            float: right;
-            margin-right: 8px;
-        }
-    }
-    
-    .multipleInput, .multipleInputDropdown {
-        input {
-            @extend %insetInput;
-        }
-        & > button, & > div > button {
-            @extend %roundButton;
-        }
-        span {
-            display: inline-flex;
-            align-items: center;
-            padding: 8px;
-            border-radius: $border-radius;
-            margin-bottom: 6px;
-            button {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                border: 1px solid;
-                border-radius: $border-radius;
-                margin-left: 6px;
-                font-size: 0.6em;
-                outline: none;
-                background-color: unset;
-                cursor: pointer;
-                width: 16px;
-                height: 16px;
-            }
-            & + span {
-                margin-left: 6px;
-            }
-        }
-    }
-    .multipleInputDropdown {
-        width: 100%;
-        input {
-            flex-grow: 1;
-            outline: unset;
-        }
-        div {
-            width: 100%;
-            margin: 8px 0 16px;
-            display: flex;
-            align-items: center;
-        }
-        button {
-            margin-left: 8px;
-        }
-    }
-    .buttonBase {
-        padding: 12px;
-        font-size: 1.5em;
-        border: 1px solid;
-        border-color: $purple-blue;
-        outline: none;
-        cursor: pointer;
-        border-radius: $border-radius;
-    }
-    .advancedButton {
-        @include shadow($purple-blue);
-        transition: 0.2s;
-        &.enabled {
-            background-color: $purple-blue;
-            color: $white;
-        }
-    }
-    .numberInput {
-        label {
-            display: flex;
-            align-items: baseline;
-            width: 100%;
-        }
-        span {
-            margin-right: 12px;
-            white-space: nowrap;
-        }
-        input {
-            @extend %insetInput;
-            flex-grow: 1;
-        }
-    }
-    .checkbox {
-        cursor: pointer;
-        span {
-            display: inline-flex;
-            align-items: center;
-            font-size: 1.2em;
-        }
-
-        input {
-            width: 0;
-            height: 0;
-            margin: 0;
-            padding: 0;
-            opacity: 0;
-
-            & + span::before {
-                display: inline-block;
-                content: '';
-                border-radius: $border-radius;
-                width: 24px;
-                height: 24px;
-                margin-right: 6px;
-                transition: 0.2s;
-            }
-            &:checked + span::before {
-                background-color: $purple-blue;
-            }
-        }
-    }
-    .submitButton {
-        position: fixed;
-        right: 0;
-        width: 30vw;
-        height: 30vw;
-        top: 50vh;
-        border-radius: 1000px;
-        padding-right: 7vw;
-        transform: translateY(-50%) translateX(12vw);
-        font-family: 'lato-heavy';
-        font-size: 3vw;
-        text-transform: uppercase;
-        cursor: pointer;
-        border: unset;
-        outline: unset;
-        color: $white;
-        background-color: $purple-blue;
-        z-index: 4;
-        & span {
-            padding: 0 4px 2px 6px;
-            transition: box-shadow 0.3s;
-            box-shadow: inset 0 0 0 darken($color: $purple-blue, $amount: 15);
-        }
-        &:hover span {
-            box-shadow: inset 0 -0.4em 0 darken($color: $purple-blue, $amount: 15);
-        }
-    }
-    hr {
-        min-width: 100%;
-        background-color: $purple-blue;
-        border: unset;
-        height: 2px;
-    }
-    .screenCurtain {
-        display: flex;
-        justify-content: center;
-        align-items: center;
         width: 100vw;
-        height: 100vh;
-        position: fixed;
-        z-index: 5;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        height: 30vw;
+        content: "";
         pointer-events: none;
-        background-color: rgba(0, 0, 0, 0);
-        transition: background-color 0.2s ease-in-out;
-        &.visible {
-            background-color: rgba(0, 0, 0, 0.2);
-            pointer-events: initial;
-        }
+        background-image: url(https://2020.igem.org/wiki/images/d/db/T--Vilnius-Lithuania--milk1.svg);
+        background-size: 103%;
+        background-position: bottom;
+        background-origin: border-box;
+        border-bottom: 2px solid #FAFAFC;
     }
-    .loader {
-        width: 96px;
-        height: 96px;
-        background-size: cover;
-        border-radius: $border-radius;
-        transform: scale(0);
-        transition: transform 0.2s ease-in-out;
-        &.visible {
-            transform: scale(1);
-        }
-    }
-    .resultRow {
-        width: 100%;
-    }
-    .resultRow::before {
-        display: inline-block;
-        content: '';
-        min-width: 30px;
-        min-height: 30px;
-        border-radius: 1000px;
-        background-color: red;
-        margin-right: 16px;
-        transition: background-color 0.5s;
-    }
-    .resultRow.active::before {
-        background-color: $purple-blue;
-
-    }
-    .selectResult {
-        border-radius: $border-radius;
-        overflow: hidden;
-        margin: 24px 0;
-        width: 100%;
-        cursor: pointer;
-
-        $padding: 20px;
-        $border: 3px;
-        
-        border: $border solid transparent;
-        transition: border 0.5s, box-shadow 0.5s;
-
-        &.active {
-            border: $border solid $purple-blue;
-            @include shadow($purple-blue)
-            // div:first-child {
-            //     padding: ($padding - $border) $padding $padding $padding;
-            // }
-            // div:last-child {
-            //     padding: $padding $padding ($padding - $border) $padding;
-            // }
-        }
-        
-        div {
-            padding: $padding;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            background-color: $purple-blue;
-            transition: padding 0.5s;
-            & > span { text-align: center; }
-            & > span:first-child { text-align: start; }
-            & > span:last-child { text-align: end; }
-            & > * {
-                flex-grow: 3;
+    h1 {
+        z-index: 3;
+        position: absolute;
+        font-size: 7vh;
+        top: 10vw;
+        left: 8vh;
+        text-transform: uppercase;
+        font-family: "montserrat-black";
+        color: $white;
+        margin: 0;
+        &:last-of-type {
+            @include outlined_text;
+            top: 12vw;
+            left: 6vh;
+            @media (min-aspect-ratio: 1/1){
+                top: 12vh;
+                left: 6vw;
             }
         }
-        .eval::before {
-            display: inline-block;
-            content: '';
-            border-radius: 1000px;
-            width: 16px;
-            height: 16px;
-            margin-right: 4px;
-            background-color: inherit;
+        @media (min-aspect-ratio: 1/1){
+            font-size: 7vw;
+            top: 10vh;
+            left: 8vw;
         }
-        .eval4::before { background-color: #49FF21; }
-        .eval3::before { background-color: #AEFF00; }
-        .eval2::before { background-color: #FFD800; }
-        .eval1::before { background-color: #FF7F00; }
-        .eval0::before { background-color: #FF3200; }
     }
 }
 
-body { // Dark mode
-    background-color: $dark-gray;
+div.flexColumn {
+    flex-grow: 1;
+    align-items: stretch;
+    div + div {
+        margin-top: 16px;
+    }
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 32px;
+    margin: 16px auto;
+    width: 70vw;
+    max-width: 550px;
+    border-radius: $border-radius;
+
+    /* offset-x | offset-y | blur-radius | spread-radius | color */
+    box-shadow: 0 5px 16px -4px $light-gray;
+    & > *:nth-child(2) {
+        flex-grow: 1;
+    }
+    &.warning {
+        position: -webkit-sticky;
+        position: sticky;
+        flex-direction: column;
+        justify-content: start;
+        align-items: start;
+        top: 20px;
+        justify-content: start;
+        background-color: $yellow;
+        z-index: 3;
+        p {
+            margin: 0;
+            & + p {
+                margin-top: 12px;
+            }
+        }
+        &.red {
+            position: initial;
+            background-color: $red;
+        }
+    }
+}
+.label {
+    font-size: 1.5em;
+    text-align: start;
+    align-self: flex-start;
+}
+
+.numberInput {
+    label {
+        display: flex;
+        align-items: baseline;
+        width: 100%;
+    }
+    span:first-of-type {
+        text-align: end;
+        margin-right: 12px;
+        white-space: nowrap;
+        width: 50%;
+    }
+    input {
+        width: 40%;
+        @extend %customInput;
+        flex-grow: 1;
+    }
+    span:last-of-type {
+        margin-left: 12px;
+        white-space: nowrap;
+        width: 20%;
+    }
+}
+.submitButton {
+    border: unset;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    &:hover {
+        transform: translateY(-2px);
+    }
+    align-self: center;
     color: $white;
-    .number {
-        @include outlined_text;
-        @include glow_text;
+    background-color: $purple-blue;
+    font-family: "lato-heavy";
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    padding: 8px 52px;
+    border-radius: 10px;
+    margin: 8px 0 12px;
+    box-shadow: 0 8px 20px -6px lighten($purple-blue, 0.7);
+    &:hover {
+        box-shadow: 0 (10px) 30px -10px lighten($purple-blue, 0.7);
     }
-    .container {
-        @include shadow($black);
-    }
-    .modeSwitch {
-        background-color: $white;
-        color: $black;
-        @include shadow($black);
-    }
-    .docsButton {
-        color: $white;
-    }
-    h1.title::before {
-        background-image: url('./assets/dna.svg');
-    }
-    .slider {
-        box-shadow: inset 0 0 8px $black;
-        &::before {
-            box-shadow: inset 0 0 8px $black;
-        }
-    }
-    .multipleInput span, .multipleInputDropdown span {
-        background-color: $white;
-        color: $black;
-        button {
-            border-color: $black;
-            color: $black;
-        }
-    }
-    %roundButton {
-        background-color: $purple-blue;
-        color: $white;
-        box-shadow: inset 0 0 8px $black;
-    }
-    %insetInput {
-        background-color: $dark-gray;
-        color: $white;
-        box-shadow: inset 0 0 8px $black;
-    }
-    .advancedButton {
-        background-color: $dark-gray;
-        color: $white;
-    }
-    .checkbox input + span::before {
-        box-shadow: inset 0 0 8px $black;
-    }
-    
-    .searchButton {
-        @include shadow($purple-blue);
-    }
-    .loader {
-        background-color: $dark-gray;
-        background-image: url(./assets/loadDark.gif);
-    }
-    .screenCurtain .loader {
-        @include shadow($black);
-    }
-    .selectResult {
-        @include shadow($black);
-        .title {
-            background-color: $dark-gray;
-        }
-    }
-    .resultRow::before {
-        background-color: $dark-gray;
-        box-shadow: inset 0 0 8px $black;
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+hr {
+    min-width: 100%;
+    background-color: $purple-blue;
+    border: unset;
+    height: 2px;
+}
+.screenCurtain {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    z-index: 5;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    background-color: rgba(0, 0, 0, 0);
+    transition: background-color 0.2s ease-in-out;
+    &.visible {
+        background-color: rgba(0, 0, 0, 0.2);
+        pointer-events: initial;
     }
 }
-
-body.light { // Light mode
+.loader {
+    width: 96px;
+    height: 96px;
+    background-size: cover;
+    border-radius: $border-radius;
+    transform: scale(0);
+    transition: transform 0.2s ease-in-out;
+    &.visible {
+        transform: scale(1);
+    }
+}
+body { // Light mode
     background-color: $white;
     color: $dark-gray;
-    .number {
-        @include outlined_text($black);
-        // @include glow_text(#BBBBBB);
-    }
-    .switch span.checked {
-        text-shadow: unset;
-    }
-    .container {
-        @include shadow($light-gray);
-    }
-    .modeSwitch {
-        background-color: $dark-gray;
-        color: $white;
-        @include shadow($light-gray);
-    }
-    .docsButton {
-        color: $black;
-    }
-    h1.title::before {
-        background-image: url('./assets/dna-b.svg');
-    }
-    .slider {
-        box-shadow: inset 0 0 8px $light-gray;
-        &::before {
-            box-shadow: inset 0 0 8px $white;
-        }
-    }
-    .multipleInput span {
-        background-color: $purple-blue;
-        color: $white;
-        button {
-            border-color: $white;
-            color: $white;
-        }
-    }
-    %roundButton {
-        background-color: $purple-blue;
-        color: $white;
-        box-shadow: unset; //inset 0 0 8px $white;
-    }
-    %insetInput {
-        background-color: $white;
-        color: $black;
-        box-shadow: inset 0 0 8px $light-gray;
-    }
-    .advancedButton {
-        box-shadow: unset;
-        background-color: $white;
-        color: $black;
-        &.enabled {
-            background-color: $purple-blue;
-            color: $white;
-        }
-    }
-    .checkbox input + span::before {
-        box-shadow: inset 0 0 8px adjust-color($light-gray, $lightness: -10);
-    }
+}
 
-    .searchButton {
-        box-shadow: unset;
-    }
-    
-    .loader {
-        background-color: $white;
-        background-image: url(./assets/loadLight.gif);
-    }
-    .screenCurtain .loader {
-        @include shadow($light-gray);
-    }
-    .selectResult {
-        @include shadow($light-gray);
-        .title {
-            background-color: $white;
-        }
-    }
-    .resultRow::before {
-        background-color: $white;
-        box-shadow: inset 0 0 8px $light-gray;
-    }
+.loader {
+    background-color: $white;
+    background-image: url(./assets/loadLight.gif);
+}
+.screenCurtain .loader {
+    @include shadow($light-gray);
 }

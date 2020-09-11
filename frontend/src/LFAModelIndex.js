@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Number, Column, Alert, Loader, NumberInput } from './common';
+import { Container, Column, Alert, Loader, NumberInput } from './common';
 import textVals from './common/textVals';
 
 export default function LFAModelIndex(props){
@@ -7,8 +7,8 @@ export default function LFAModelIndex(props){
     const [isLoading, setIsLoading] = React.useState(false);
 
     const [parameters, setParameters] = React.useState({
-        capillaryFlowRate: undefined,
-        diffusionCoefficient: undefined,
+        flowRate: undefined,
+        diffusCoef: undefined,
         aCoef: undefined,
         pCoef: undefined,
         rCoef: undefined,
@@ -27,8 +27,7 @@ export default function LFAModelIndex(props){
         setIsLoading(true);
 
         // send request
-        const request = {
-        };
+        const request = parameters;
         
         const requestParams = {
             method: 'POST',
@@ -59,57 +58,63 @@ export default function LFAModelIndex(props){
         {errorValue.trim().length === 0 ? undefined : (<Alert>
             {errorValue}
         </Alert>)}
-        {isLoading ? <Loader /> : undefined}
+        <Loader visible={isLoading} />
         <Container>
-            <Number number={1} />
             <Column>
                 <NumberInput
                     label="Capillary Flow Rate"
-                    parameterName="capillaryFlowRate"
-                    value={parameters.capillaryFlowRate}
+                    unit="s/4cm"
+                    parameterName="flowRate"
+                    value={parameters.flowRate}
                     setParameter={setParameter} />
                 <NumberInput
                     label="Diffusion Coefficient"
-                    parameterName="diffusionCoefficient"
-                    value={parameters.diffusionCoefficient}
+                    unit=""
+                    parameterName="diffusCoef"
+                    value={parameters.diffusCoef}
                     setParameter={setParameter} />
             </Column>
         </Container>
         <Container>
-            <Number number={2} />
             <Column style={{padding: "0 16px"}}>
                 <NumberInput
                     label="Analyte concentration"
+                    unit="μM"
                     parameterName="aCoef"
                     value={parameters.aCoef}
                     setParameter={setParameter} />
                 <NumberInput
-                    label="Au nanoparticle concentration"
+                    label="Detection probe concentration"
+                    unit="μM"
                     parameterName="pCoef"
                     value={parameters.pCoef}
                     setParameter={setParameter} />
                 <NumberInput
-                    label="Probe concentration"
+                    label="Test probe concentration"
+                    unit="μM"
                     parameterName="rCoef"
                     value={parameters.rCoef}
                     setParameter={setParameter} />
             </Column>
         </Container>
         <Container>
-            <Number number={3} />
             <Column style={{padding: "0 16px"}}>
                 <NumberInput
                     label="Association rate"
+                    unit="1/s"
                     parameterName="assocRate"
                     value={parameters.assocRate}
                     setParameter={setParameter} />
                 <NumberInput
                     label="Dissociation rate"
+                    unit="1/s"
                     parameterName="dissocRate"
                     value={parameters.dissocRate}
                     setParameter={setParameter} />
             </Column>
         </Container>
-        <button disabled={isLoading} onClick={submit} className="submitButton"><span>Submit</span></button>
+        <Container>
+            <button disabled={isLoading} onClick={submit} className="submitButton"><span>Submit</span></button>
+        </Container>
     </>);
 };

@@ -8,12 +8,13 @@ export default function NumberInput(props){
         setParameter(parameterName, _value);
     };
 
-    const {label, value, parameterName, setParameter, ...other} = props;
+    const {label, unit, value, parameterName, setParameter, ...other} = props;
 
     return (<div className="numberInput" {...other}>
         <label>
             <span>{label}</span>
             <input type="text" value={value ?? ""} onChange={changeCurrentValue} />
+            <span>{unit}</span>
         </label>
     </div>);
 }

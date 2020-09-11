@@ -1,9 +1,10 @@
 $black: #121212;
 $dark-gray: #222222;
+$gray: #333333;
 $dark-blue: #131F43;
 $main-blue: #2E64EC;
 $white: #FAFAFC;
-$light-gray: #DDDDDD;
+$light-gray: #ddd;
 $purple-blue: #6281EF;
 $yellow: #ffc43b;
 $red: #ff242b;
@@ -26,6 +27,16 @@ $red: #ff242b;
 @font-face {
     font-family: 'lato-heavy';
     src: url(../fonts/Lato-Heavy.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'montserrat-black';
+    src: url(../fonts/Montserrat-Black.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'montserrat-bold';
+    src: url(../fonts/Montserrat-Bold.ttf) format('truetype');
 }
 
 @mixin glow_text($color: $white) {
@@ -61,8 +72,9 @@ $scrollbarColor: #444444;
 body, html {
     margin: 0;
     padding: 0;
+    width: 100%;
 
-    font-family: 'lato-light';
+    font-family: 'lato-regular';
 }
 
 div.flexColumn {
