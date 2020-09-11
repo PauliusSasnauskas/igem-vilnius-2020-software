@@ -1,7 +1,0 @@
-#!/bin/bash
-
-set -ue;
-
-#--------- accessing BacDive ---------
-
-python3 ./bacdiveAccess.py "$@"

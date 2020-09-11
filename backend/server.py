@@ -22,8 +22,8 @@ def build_cors_preflight():
     return response
 
 # API urls
-@app.route('/api/createJob', methods=['POST', 'OPTIONS'])
-def createJob():
+@app.route('/api/calculate', methods=['POST', 'OPTIONS'])
+def calculate():
     if request.method == 'OPTIONS': return build_cors_preflight()
 
     data = request.json
@@ -31,59 +31,17 @@ def createJob():
     
     # data object interface:
     # {
-    #   isProbe : boolean,
-    #   strainIds : Array<string>,
-    #   taxIds : Array<number>,
-    #   excludeIntergenic : boolean?,
-    #   sequenceTypes : Array<{val : string, min : number, max : number}>?
-    # }
-
-    data.setdefault('excludeIntergenic', True)
-    data.setdefault('sequenceTypes', [{'val': '16s', 'min': 10, 'max': 1700}])
-    
-    response = db_driver.createQuery(data)
-
-    return _corsify_actual_response(jsonify(response))
-
-
-@app.route('/api/setJobMarkers', methods=['POST', 'OPTIONS'])
-def setJobMarkers():
-    if request.method == 'OPTIONS': return build_cors_preflight()
-    
-    data = request.json
-
-    # print('got request of:', data) 
-
-    # data object interface:
-    # {
-    #   jid : string,
-    #   selection : Array<{for : number, id : string}>
-    # }
-
-    db_driver.setJobMarkers(data["jid"], data["selection"])
-
-    response = {'status': 'ok'}
-
-    # TODO: start actual work (with a thread most likely?)
-    # magicWorkFunction(data)
-
-    return _corsify_actual_response(jsonify(response))
-
-@app.route('/api/checkJob', methods=['POST', 'OPTIONS'])
-def checkJob():
-    if request.method == 'OPTIONS': return build_cors_preflight()
-
-    data = request.json
-    print('got request to check job:', data)
-
-    response = {
-        'status': 'processing'          # 3
-    }
-    # response = {
-    #     'status': 'complete',           # 4
-    #     'results': ['5’GGATAGCCCAGAGAAATTTGGA3’', '5’CAT CTT GTA CCG TTG GAA CTT TAA T3’', 'GCCTCATTTGATT(A)20-biotin', 'thiol-(A)20TTTCAGATG', 'biotin-(A)20CATCTGAAA']
+    #   flowRate : number,
+    #   diffusCoef : number,
+    #   aCoef : number,
+    #   pCoef : number,
+    #   rCoef : number,
+    #   assocRate : number,
+    #   dissocRate : number,
     # }
     
+    response = callMagicModelFunction(data)
+
     return _corsify_actual_response(jsonify(response))
 
 # Serve static React app
