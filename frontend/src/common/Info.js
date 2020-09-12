@@ -5,7 +5,7 @@ export default function Info(props){
     const { visible, type, setIsOverlaying, ...other } = props;
 
     var title, desc = null;
-    if(visible){
+    if(visible && type !== "loader"){
         var info = DB.info;
         var kind = type.replace(' info', '');
         var infoText = info[kind];

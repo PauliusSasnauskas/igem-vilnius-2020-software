@@ -54,12 +54,18 @@ export default function LFAModelIndex(props){
                 setIsOverlaying(false);
             });
     };
+    const closeCurtain = () => {
+        if(isOverlaying){
+            setIsOverlaying(false);
+            console.log("clicked")
+        }
+    }
 
     return (<>
         {errorValue.trim().length === 0 ? undefined : (<Alert>
             {errorValue}
         </Alert>)}
-        <Curtain visible={isOverlaying} type={popupType} setIsOverlaying={setIsOverlaying}/>
+        <Curtain visible={isOverlaying} type={popupType} setIsOverlaying={setIsOverlaying} onClick={closeCurtain}/>
         <Container>
             <Column>
                 <NumberInput

@@ -223,12 +223,17 @@ hr {
             cursor: pointer;
         }
     }
-    .info.visible {
+    .info {
         width: 40%;
         height: 50%;
         background-color: #fafafc;
         padding: 20px;
         box-sizing: border-box;
+        transform: scale(0);
+        transition: transform 0.2s ease-in-out;
+        &.visible {
+            transform: scale(1);
+        }
         h1 {
             text-align: center;
         }
