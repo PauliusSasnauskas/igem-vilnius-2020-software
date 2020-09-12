@@ -1,19 +1,19 @@
 import React from 'react';
-var DB = require('../assets/db');
+import { default as info } from '../assets/db';
+
 
 export default function Info(props){
     const { visible, type, setIsOverlaying, ...other } = props;
 
-    var title, desc = null;
-    if(visible && type !== "loader"){
-        var info = DB.info;
-        var kind = type.replace(' info', '');
-        var infoText = info[kind];
+    let title, desc;
+    if (visible && type !== "loader"){
+        let kind = type.replace(' info', '');
+        let infoText = info[kind];
         title = infoText.title;
         desc = infoText.desc
     }
     const closePopup = () => {
-setIsOverlaying(false)
+        setIsOverlaying(false);
     };
     
     
