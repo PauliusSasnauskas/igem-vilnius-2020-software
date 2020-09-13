@@ -1,7 +1,10 @@
+import dropAnim from "./anim/drop.json";
+
 const info = {
     flowRate: {
         title: "Capillary Flow Rate",
         desc: "Capillary Flow Rate is blah blah blah",
+        anim: dropAnim,
     },
     diffusCoef: {
         title: "Diffusion Coefficient",
