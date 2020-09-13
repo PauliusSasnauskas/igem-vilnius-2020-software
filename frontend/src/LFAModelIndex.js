@@ -25,7 +25,7 @@ export default function LFAModelIndex(props){
     };
 
     const submit = () => {
-        if (setOpenInfoPopup !== "") return;
+        if (openInfoPopup !== "") return;
         setErrorValue("");
         setIsLoading(true);
 
@@ -131,7 +131,7 @@ export default function LFAModelIndex(props){
             </Column>
         </Container>
         <Container>
-            <button disabled={setOpenInfoPopup !== ""} onClick={submit} className="submitButton"><span>Submit</span></button>
+            <button disabled={openInfoPopup !== ""} onClick={submit} className="submitButton"><span>Submit</span></button>
         </Container>
     </>);
 };
