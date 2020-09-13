@@ -1,11 +1,14 @@
 import React from 'react';
 import { Container, Column, Alert, Curtain, NumberInput} from './common';
+import Loader from './common/Loader';
+import Info from './common/Info';
 import textVals from './common/textVals';
 
 export default function LFAModelIndex(props){
     const [errorValue, setErrorValue] = React.useState("");
-    const [isOverlaying, setIsOverlaying] = React.useState(false);
-    const [popupType, setPopupType] = React.useState("");
+    const [isLoading, setIsLoading] = React.useState(false);
+
+    const [openInfoPopup, setOpenInfoPopup] = React.useState("");
 
     const [parameters, setParameters] = React.useState({
         flowRate: undefined,
@@ -22,10 +25,9 @@ export default function LFAModelIndex(props){
     };
 
     const submit = () => {
-        if (isOverlaying) return;
+        if (setOpenInfoPopup !== "") return;
         setErrorValue("");
-        setPopupType("loader")
-        setIsOverlaying(true);
+        setIsLoading(true);
 
         // send request
         const request = parameters;
@@ -51,21 +53,22 @@ export default function LFAModelIndex(props){
             .catch((reason) => {
                 console.log(reason);
                 setErrorValue(textVals.failedFetch);
-                setIsOverlaying(false);
+                setIsLoading(false);
             });
     };
-    const closeCurtain = () => {
-        if(isOverlaying){
-            setIsOverlaying(false);
-            console.log("clicked")
-        }
-    }
 
     return (<>
         {errorValue.trim().length === 0 ? undefined : (<Alert>
             {errorValue}
         </Alert>)}
-        <Curtain visible={isOverlaying} type={popupType} setIsOverlaying={setIsOverlaying} onClick={closeCurtain}/>
+
+        <Curtain visible={openInfoPopup !== ""}>
+            <Info type={openInfoPopup} setOpenInfoPopup={setOpenInfoPopup}/>
+        </Curtain>
+
+        <Curtain visible={isLoading}>
+            <Loader visible={isLoading} />
+        </Curtain>
         <Container>
             <Column>
                 <NumberInput
@@ -74,16 +77,14 @@ export default function LFAModelIndex(props){
                     parameterName="flowRate"
                     value={parameters.flowRate}
                     setParameter={setParameter}
-                    setPopupType={setPopupType}
-                    setIsOverlaying={setIsOverlaying} />
+                    setOpenInfoPopup={setOpenInfoPopup} />
                 <NumberInput
                     label="Diffusion Coefficient"
                     unit=""
                     parameterName="diffusCoef"
                     value={parameters.diffusCoef}
                     setParameter={setParameter}
-                    setPopupType={setPopupType}
-                    setIsOverlaying={setIsOverlaying}  />
+                    setOpenInfoPopup={setOpenInfoPopup}  />
             </Column>
         </Container>
         <Container>
@@ -94,24 +95,21 @@ export default function LFAModelIndex(props){
                     parameterName="aCoef"
                     value={parameters.aCoef}
                     setParameter={setParameter}
-                    setPopupType={setPopupType}
-                    setIsOverlaying={setIsOverlaying}  />
+                    setOpenInfoPopup={setOpenInfoPopup} />
                 <NumberInput
                     label="Detection probe concentration"
                     unit="μM"
                     parameterName="pCoef"
                     value={parameters.pCoef}
                     setParameter={setParameter}
-                    setPopupType={setPopupType}
-                    setIsOverlaying={setIsOverlaying}  />
+                    setOpenInfoPopup={setOpenInfoPopup}  />
                 <NumberInput
                     label="Test probe concentration"
                     unit="μM"
                     parameterName="rCoef"
                     value={parameters.rCoef}
                     setParameter={setParameter}
-                    setPopupType={setPopupType}
-                    setIsOverlaying={setIsOverlaying}  />
+                    setOpenInfoPopup={setOpenInfoPopup}  />
             </Column>
         </Container>
         <Container>
@@ -122,20 +120,18 @@ export default function LFAModelIndex(props){
                     parameterName="assocRate"
                     value={parameters.assocRate}
                     setParameter={setParameter}
-                    setPopupType={setPopupType}
-                    setIsOverlaying={setIsOverlaying}  />
+                    setOpenInfoPopup={setOpenInfoPopup}  />
                 <NumberInput
                     label="Dissociation rate"
                     unit="1/s"
                     parameterName="dissocRate"
                     value={parameters.dissocRate}
                     setParameter={setParameter}
-                    setPopupType={setPopupType}
-                    setIsOverlaying={setIsOverlaying}  />
+                    setOpenInfoPopup={setOpenInfoPopup}  />
             </Column>
         </Container>
         <Container>
-            <button disabled={isOverlaying} onClick={submit} className="submitButton"><span>Submit</span></button>
+            <button disabled={setOpenInfoPopup !== ""} onClick={submit} className="submitButton"><span>Submit</span></button>
         </Container>
     </>);
 };
