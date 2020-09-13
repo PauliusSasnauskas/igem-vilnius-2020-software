@@ -1,10 +1,10 @@
-import dropAnim from "./anim/drop.json";
+import flowRate from "./anim/flowRate.json";
 
 const info = {
     flowRate: {
         title: "Capillary Flow Rate",
-        desc: "Capillary Flow Rate is blah blah blah",
-        anim: dropAnim,
+        desc: "Capillary Flow Rate is the rate at which the fluid passes through the nitrocellulose pores. Most commonly measured as time needed to flow through 4 cm (s/4cm)",
+        anim: flowRate,
     },
     diffusCoef: {
         title: "Diffusion Coefficient",
