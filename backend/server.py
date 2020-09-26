@@ -6,8 +6,6 @@ import os
 from flask import Flask, send_from_directory, request, jsonify, make_response
 from waitress import serve
 
-from databaseDriver import DatabaseDriver
-
 app = Flask(__name__, static_folder='public')
 
 def _corsify_actual_response(response):
@@ -27,7 +25,7 @@ def calculate():
     if request.method == 'OPTIONS': return build_cors_preflight()
 
     data = request.json
-    # print('got request of:', data) 
+    print('got request of:', data) 
     
     # data object interface:
     # {
@@ -40,8 +38,15 @@ def calculate():
     #   dissocRate : number,
     # }
     
-    response = callMagicModelFunction(data)
+    # TODO: implement magicModelFunction
+    # response = callMagicModelFunction(data)
+    response = {
+        "dist": 34,         # test line distance, in mm
+        "time": 27.4,       # time needed for the process (reaction time)
+        "samplevol": 3.41   # optimal volume of the sample (analyte?) to reach the sensitivity
+    }
 
+    print('sending response of:', response) 
     return _corsify_actual_response(jsonify(response))
 
 # Serve static React app
@@ -56,6 +61,5 @@ def sserve(path):
         return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
-    db_driver = DatabaseDriver()
     app.run(use_reloader=True, port=5000, threaded=True) # debug only
     # serve(app, host='0.0.0.0', port=8000) # production
