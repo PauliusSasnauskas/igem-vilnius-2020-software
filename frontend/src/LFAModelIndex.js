@@ -5,6 +5,8 @@ import Info from './common/Info';
 import textVals from './common/textVals';
 
 export default function LFAModelIndex(props){
+    const {setRequest, setData} = props;
+
     const [errorValue, setErrorValue] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(false);
 
@@ -12,7 +14,7 @@ export default function LFAModelIndex(props){
 
     const [parameters, setParameters] = React.useState({
         flowRate: undefined,
-        diffusCoef: undefined,
+        diffusCoef: "1.57",
         aCoef: undefined,
         pCoef: undefined,
         rCoef: undefined,
@@ -43,12 +45,12 @@ export default function LFAModelIndex(props){
             body: JSON.stringify(request),
         };
         
-        fetch(textVals.apiUrl + "", requestParams)
+        fetch(textVals.apiUrl + "calculate", requestParams)
             .then((response) => response.json())
             .then((data) => {
                 if (data === undefined) return;
-                data.request = request;
-                // setData(data);
+                setRequest(request);
+                setData(data);
             })
             .catch((reason) => {
                 console.log(reason);

@@ -156,7 +156,7 @@ div.flexColumn {
     }
 }
 
-.submitButton {
+.submitButton, .backButton {
     border: unset;
     -moz-user-select: none;
     -webkit-user-select: none;
@@ -208,13 +208,18 @@ hr {
     .info {
         display: flex;
         flex-direction: column;
-        max-width: 60%;
+        max-width: 550px;
+        margin: 20px;
         background-color: #fafafc;
         padding: 20px;
+        padding-bottom: 44px;
         box-sizing: border-box;
         transform: scale(0);
         transition: transform 0.2s ease-in-out;
         border-radius: $border-radius;
+        p {
+            margin: 4px 30px;
+        }
         span {
             align-self: flex-end;
             cursor: pointer;
@@ -228,15 +233,15 @@ hr {
             margin-top: 0;
             text-align: center;
         }
-        .react-bodymovin-container {
+        & > div {
             margin-top: 24px;
             align-self: center;
-            width: 300px;
+            width: 450px;
             height: 300px;
         }
     }
     &.visible {
-        background-color: rgba(0, 0, 0, 0.2);
+        background-color: rgba(0, 0, 0, 0.6);
         pointer-events: initial;
         .info {
             transform: scale(1);

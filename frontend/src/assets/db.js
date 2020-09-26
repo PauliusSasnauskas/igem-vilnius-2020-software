@@ -12,7 +12,7 @@ const info = {
     },
     aCoef: {
         title: "Analyte Concentration",
-        desc: "Analyte concentration is blah blah blah",
+        desc: "Analyte Concentration is the concentration of the substance in the drop of water applied to the sample pad.",
     },
     pCoef: {
         title: "Detection Probe Concentration",
