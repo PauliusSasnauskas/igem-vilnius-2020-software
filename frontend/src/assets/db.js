@@ -1,4 +1,7 @@
 import flowRate from "./anim/flowRate.json";
+import analyteConc from "./anim/analyteConc.json";
+import detectionConc from "./anim/detectionConc.json";
+import captureConc from "./anim/captureConc.json";
 
 const info = {
     flowRate: {
@@ -13,14 +16,17 @@ const info = {
     aCoef: {
         title: "Analyte Concentration",
         desc: "Analyte Concentration is the concentration of the substance in the drop of water applied to the sample pad.",
+        anim: analyteConc,
     },
     pCoef: {
         title: "Detection Probe Concentration",
         desc: "Detection Probe Concentration is blah blah blah",
+        anim: detectionConc,
     },
     rCoef: {
-        title: "Test Probe Concentration",
-        desc: "Test Probe Concentration is blah blah blah",
+        title: "Capture Probe Concentration",
+        desc: "Capture Probe Concentration is blah blah blah",
+        anim: captureConc,
     },
     assocRate: {
         title: "Association Rate",
