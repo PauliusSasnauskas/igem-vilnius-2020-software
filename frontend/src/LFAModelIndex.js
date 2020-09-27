@@ -106,7 +106,7 @@ export default function LFAModelIndex(props){
                     setParameter={setParameter}
                     setOpenInfoPopup={setOpenInfoPopup}  />
                 <NumberInput
-                    label="Test probe concentration"
+                    label="Capture probe concentration"
                     unit="μM"
                     parameterName="rCoef"
                     value={parameters.rCoef}

@@ -17,7 +17,7 @@ export default function LFAModelIndex(props){
             Diffusion Coefficient: {request.diffusCoef}<br/>
             Analyte concentration: {request.aCoef} μM<br/>
             Detection probe concentration: {request.pCoef} μM<br/>
-            Test probe concentration: {request.rCoef} μM<br/>
+            Capture probe concentration: {request.rCoef} μM<br/>
             Association rate: {request.assocRate} 1/s<br/>
             Dissociation rate: {request.dissocRate} 1/s<br/>
         </Container>
