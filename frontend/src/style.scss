@@ -57,6 +57,9 @@ body {
         font-family: "montserrat-black";
         color: $white;
         margin: 0;
+        span {
+            font-size: 6vh;
+        }
         &:last-of-type {
             @include outlined_text;
             top: 12vw;
@@ -94,6 +97,36 @@ div.flexColumn {
     border-radius: $border-radius;
     /* offset-x | offset-y | blur-radius | spread-radius | color */
     box-shadow: 0 5px 16px -4px $light-gray;
+    &#nonflex {
+        display: block;
+    }
+    h2 {
+        text-align: center;
+        color: #6281ef;
+        font-family: 'lato-heavy', sans-serif;
+    }
+    input {
+        &[type=search] {
+            padding: 10px;
+        }
+    }
+    ul {
+        list-style: none;
+        padding-inline-start: 0px;
+        li {
+            margin: 10px;
+            padding: 5px;
+            padding-left: 10px;
+            width: 50%;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            cursor: pointer;
+            &:hover {
+                transform: translateY(-2px);
+            }
+            transition: transform 0.3s;
+        }
+    }
     &>*:nth-child(2) {
         flex-grow: 1;
     }
@@ -130,7 +163,7 @@ div.flexColumn {
     display: flex;
     align-items: center;
     width: 100%;
-    & > span:first-of-type {
+    &>span:first-of-type {
         text-align: end;
         white-space: nowrap;
         width: 40%;
@@ -149,14 +182,15 @@ div.flexColumn {
         @extend %customInput;
         flex-grow: 1;
     }
-    & > span:last-of-type {
+    &>span:last-of-type {
         margin-left: 12px;
         white-space: nowrap;
         width: 20%;
     }
 }
 
-.submitButton, .backButton {
+.submitButton,
+.backButton {
     border: unset;
     -moz-user-select: none;
     -webkit-user-select: none;
@@ -233,7 +267,7 @@ hr {
             margin-top: 0;
             text-align: center;
         }
-        & > div {
+        &>div {
             margin-top: 24px;
             align-self: center;
             width: 450px;
@@ -247,7 +281,6 @@ hr {
             transform: scale(1);
         }
     }
-    
 }
 
 .loader {

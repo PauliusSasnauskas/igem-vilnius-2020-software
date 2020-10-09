@@ -21,8 +21,8 @@ function App() {
 
     return (<>
         <div className="introContainer">
-            <h1>LFA Model</h1>
-            <h1>LFA Model</h1>
+            <h1><span>on</span>Flow</h1>
+            <h1><span>on</span>Flow</h1>
         </div>
         {
             /* switch(windowState) */{
