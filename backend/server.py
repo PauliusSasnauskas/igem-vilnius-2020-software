@@ -5,6 +5,8 @@
 import os
 from flask import Flask, send_from_directory, request, jsonify, make_response
 from waitress import serve
+import lfa_test_line_location_function
+import lfa_time_volume_function
 
 app = Flask(__name__, static_folder='public')
 
@@ -37,13 +39,15 @@ def calculate():
     #   assocRate : number,
     #   dissocRate : number,
     # }
+
+    x_opt = lfa_test_line_location_function.lfa_test_line_location(data.get("aCoef"), data.get("pCoef"), data.get("rCoef"), data.get("diffusCoef"), 1e-12, data.get("assocRate"), data.get("dissocRate"))
+    print(x_opt)
+    t, volume = lfa_time_volume_function.lfa_time_volume(x_opt, data.get("aCoef"), data.get("pCoef"), data.get("rCoef"), data.get("diffusCoef"), 1e-12, data.get("assocRate"), data.get("dissocRate"))
     
-    # TODO: implement magicModelFunction
-    # response = callMagicModelFunction(data)
     response = {
-        "dist": 34,         # test line distance, in mm
-        "time": 27.4,       # time needed for the process (reaction time)
-        "samplevol": 3.41   # optimal volume of the sample (analyte?) to reach the sensitivity
+        "dist": x_opt.astype(float),    # test line distance, in mm
+        "time": t,                      # time needed for the process (reaction time)
+        "samplevol": volume             # optimal volume of the sample (analyte?) to reach the sensitivity
     }
 
     print('sending response of:', response) 
@@ -62,4 +66,4 @@ def sserve(path):
 
 if __name__ == '__main__':
     app.run(use_reloader=True, port=5000, threaded=True) # debug only
-    # serve(app, host='0.0.0.0', port=8000) # production
+    # serve(app, host='0.0.0.0', port=5000) # production

@@ -4,3 +4,5 @@ authorization.ini
 __pycache__/
 public/
 .vscode/
+lfa_diffusion_reduction/
+lfa_time_volume/
