@@ -2,7 +2,7 @@ import React from 'react';
 import Autocomplete from './Autocomplete';
 import textVals from './textVals';
 
-export default function NumberInput(props){
+export default function KoffiInput(props){
 
     const fetchData = async () => {
 
@@ -19,7 +19,15 @@ export default function NumberInput(props){
 	};
 
 
-    const {label, parameterName, setOpenInfoPopup, molType, setMolData, setMolType, ...other} = props;
+    const {label, parameterName, setRatesFromDb, setOpenInfoPopup, molType, setMolData, setMolType, ...other} = props;
+
+    // TODO: call this function when rates found
+    const setRates = () => {
+        setRatesFromDb({
+            assocRate: 1000000,
+            dissocRate: 0.001,
+        });
+    };
 
     return (<div className="koffiInput" {...other}>
         <span>{label}</span>

@@ -63,6 +63,11 @@ export default function LFAModelIndex(props) {
 			});
 	};
 
+	const setRatesFromDb = (rates) => {
+		setParameter("assocRate", rates.assocRate);
+		setParameter("dissocRate", rates.dissocRate);
+	};
+
 	return (<>
 		{errorValue.trim().length === 0 ? undefined : (<Alert>
 			{errorValue}
@@ -138,6 +143,7 @@ export default function LFAModelIndex(props) {
 				<KoffiInput
 					label="Get rates from database"
 					parameterName="koffiDb"
+					setRatesFromDb={setRatesFromDb}
 					molType={molType}
 					setMolData={setMolData}
 					setMolType={setMolType}
