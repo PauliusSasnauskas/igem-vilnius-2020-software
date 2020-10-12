@@ -36,5 +36,9 @@ const info = {
         title: "Dissociation Rate",
         desc: "Dissociation Rate is blah blah blah",
     },
+    koffiDb: {
+        title: "Rates from the Database",
+        desc: "Get rates from the koffidb.org database.",
+    }
 }
 export default info;
