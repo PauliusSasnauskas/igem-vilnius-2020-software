@@ -104,7 +104,7 @@ export class Autocomplete extends Component {
 		}
 
 		return (
-			<div class="searchBlock">
+			<div className="searchBlock">
 				<input
 					type="search"
 					onChange={onChange}
