@@ -97,6 +97,11 @@ div.flexColumn {
 	border-radius: $border-radius;
 	/* offset-x | offset-y | blur-radius | spread-radius | color */
 	box-shadow: 0 5px 16px -4px $light-gray;
+	h1 {
+		color: $black;
+		font-family: "lato-medium", sans-serif;
+		margin-top: 0;
+	}
 	h2 {
 		text-align: center;
 		color: #6281ef;
@@ -129,7 +134,7 @@ div.flexColumn {
 		justify-content: start;
 		align-items: start;
 		top: 20px;
-		justify-content: start;
+		justify-content: flex-start;
 		background-color: $yellow;
 		z-index: 3;
 		p {
@@ -151,7 +156,7 @@ div.flexColumn {
 	align-self: flex-start;
 }
 
-.numberInput, .koffiInput {
+%numberBox {
 	display: flex;
 	align-items: center;
 	width: 100%;
@@ -169,11 +174,24 @@ div.flexColumn {
 		color: #6281ef;
 		cursor: pointer;
 	}
-	& > input {
+	& > span:last-child, & > button:last-child {
+		margin-left: 12px;
+		white-space: nowrap;
+		width: 20%;
+	}
+	& > input, & > span.value {
 		width: 30%;
 		@extend %customInput;
 		flex-grow: 1;
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
 	}
+}
+
+.numberInput, .koffiInput {
+	@extend %numberBox;
 	.searchBlock {
 		width: 30%;
 		flex-grow: 1;
@@ -184,11 +202,6 @@ div.flexColumn {
 		input {
 			@extend %customInput;
 		}
-	}
-	& > span:last-child, & > button:last-child {
-		margin-left: 12px;
-		white-space: nowrap;
-		width: 20%;
 	}
 	& > button:last-child {
 		border: unset;
@@ -201,10 +214,22 @@ div.flexColumn {
 		border-radius: 10px;
 		box-shadow: 0 8px 20px -6px lighten($purple-blue, 0.7);
 		&:hover {
-			box-shadow: 0 (10px) 30px -10px lighten($purple-blue, 0.7);
+			box-shadow: 0 10px 30px -10px lighten($purple-blue, 0.7);
 			transform: translateY(-2px);
 		}
 		transition: box-shadow 0.3s, transform 0.3s;
+	}
+}
+
+.numberOutput {
+	@extend %numberBox;
+	& > span.value {
+		background-color: $lighter-gray;
+		margin-left: 0px;
+		border: unset;
+	}
+	& > span + span.value {
+		margin-left: 32px;
 	}
 }
 

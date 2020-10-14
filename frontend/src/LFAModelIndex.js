@@ -17,13 +17,13 @@ export default function LFAModelIndex(props) {
 	const [molType, setMolType] = React.useState([]);
 
 	const [parameters, setParameters] = React.useState({
-		flowRate: undefined,
-		diffusCoef: "1.57",
-		aCoef: undefined,
-		pCoef: undefined,
-		rCoef: undefined,
-		assocRate: undefined,
-		dissocRate: undefined,
+		flowRate: "180",
+		diffusCoef: "0.0000000001",
+		aCoef: "0.00000001",
+		pCoef: "0.00000001",
+		rCoef: "0.00000001",
+		assocRate: "1000000",
+		dissocRate: "0.001",
 	});
 
 	const setParameter = (parameter, value) => {
@@ -36,7 +36,11 @@ export default function LFAModelIndex(props) {
 		setIsLoading(true);
 
 		// send request
-		const request = parameters;
+		const request = {...parameters};
+
+		for (let item in request){
+			request[item] = parseFloat(request[item]);
+		}
 
 		const requestParams = {
 			method: 'POST',
@@ -49,18 +53,24 @@ export default function LFAModelIndex(props) {
 			body: JSON.stringify(request),
 		};
 
-		fetch(textVals.apiUrl + "calculate", requestParams)
-			.then((response) => response.json())
-			.then((data) => {
-				if (data === undefined) return;
-				setRequest(request);
-				setData(data);
-			})
-			.catch((reason) => {
-				console.log(reason);
-				setErrorValue(textVals.failedFetch);
-				setIsLoading(false);
-			});
+		let debug = true;
+		if (debug){
+			setRequest(request);
+			setData({time: 740, dist: 0.03457215, samplevol: 19.98});
+		}else{
+			fetch(textVals.apiUrl + "calculate", requestParams)
+				.then((response) => response.json())
+				.then((data) => {
+					if (data === undefined) return;
+					setRequest(request);
+					setData(data);
+				})
+				.catch((reason) => {
+					console.log(reason);
+					setErrorValue(textVals.failedFetch);
+					setIsLoading(false);
+				});
+		}
 	};
 
 	const setRatesFromDb = (rates) => {
