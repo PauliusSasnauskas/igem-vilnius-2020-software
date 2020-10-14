@@ -42,7 +42,8 @@ def calculate():
 
     x_opt = lfa_test_line_location_function.lfa_test_line_location(data.get("aCoef"), data.get("pCoef"), data.get("rCoef"), data.get("diffusCoef"), 1e-12, data.get("assocRate"), data.get("dissocRate"))
     print(x_opt)
-    t, volume = lfa_time_volume_function.lfa_time_volume(x_opt, data.get("aCoef"), data.get("pCoef"), data.get("rCoef"), data.get("diffusCoef"), 1e-12, data.get("assocRate"), data.get("dissocRate"))
+    print(x_opt.astype(float))
+    t, volume = lfa_time_volume_function.lfa_time_volume(x_opt.astype(float), data.get("aCoef"), data.get("pCoef"), data.get("rCoef"), data.get("diffusCoef"), 1e-12, data.get("assocRate"), data.get("dissocRate"))
     
     response = {
         "dist": x_opt.astype(float),    # test line distance, in mm
