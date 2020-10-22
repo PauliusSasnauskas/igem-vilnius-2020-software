@@ -1,8 +1,7 @@
 import React from 'react';
-import Autocomplete from './Autocomplete';
 import textVals from './textVals';
 
-export default function KoffiInput(props){
+export default function FetchKoffi(props){
 
     const fetchData = async () => {
 
@@ -16,7 +15,11 @@ export default function KoffiInput(props){
 			}));
 		});
 		
-	};
+    };
+    const initiateDatabaseSearch = ()=>{
+        setOpenInfoPopup(parameterName, molType);
+        fetchData()
+    }
 
 
     const {label, parameterName, setRatesFromDb, setOpenInfoPopup, molType, setMolData, setMolType, ...other} = props;
@@ -29,12 +32,7 @@ export default function KoffiInput(props){
         });
     };
 
-    return (<div className="koffiInput" {...other}>
-        <span>{label}</span>
-        <button onClick={() => setOpenInfoPopup(parameterName)} className="infoButton">
-            <span>?</span>
-        </button>
-        <Autocomplete suggestions={molType} />
-        <button onClick={fetchData}>Search</button>
+    return (<div className="fetchKoffi" {...other}>
+        <button onClick={initiateDatabaseSearch}>Search the database</button>
     </div>);
 }
