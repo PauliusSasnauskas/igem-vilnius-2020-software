@@ -107,23 +107,6 @@ div.flexColumn {
         color: #6281ef;
         font-family: "lato-heavy", sans-serif;
     }
-    ul {
-        list-style: none;
-        padding-inline-start: 0px;
-        li {
-            margin: 10px;
-            padding: 5px;
-            padding-left: 10px;
-            width: 50%;
-            background-color: rgba(0, 0, 0, 0.1);
-            border-radius: 20px;
-            cursor: pointer;
-            &:hover {
-                transform: translateY(-2px);
-            }
-            transition: transform 0.3s;
-        }
-    }
     &>*:nth-child(2) {
         flex-grow: 1;
     }
@@ -298,6 +281,25 @@ div.flexColumn {
         transform: scale(0);
         transition: transform 0.2s ease-in-out;
         border-radius: $border-radius;
+        &.koffiInfo {
+            ul {
+                list-style: none;
+                padding-inline-start: 0px;
+                li {
+                    margin: 10px;
+                    padding: 5px;
+                    padding-left: 10px;
+                    width: 50%;
+                    background-color: rgba(0, 0, 0, 0.1);
+                    border-radius: 20px;
+                    cursor: pointer;
+                    &:hover {
+                        transform: translateY(-2px);
+                    }
+                    transition: transform 0.3s;
+                }
+            }
+        }
         p {
             margin: 4px 30px;
         }

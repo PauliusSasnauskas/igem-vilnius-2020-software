@@ -1,120 +1,44 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 
-export class Autocomplete extends Component {
-	static propTypes = {
-		suggestions: PropTypes.instanceOf(Array)
-	};
-	static defaultProperty = {
-		suggestions: []
-	};
-	constructor(props) {
-		super(props);
-		this.state = {
-			activeSuggestion: 0,
-			filteredSuggestions: [],
-			showSuggestions: false,
-			userInput: ""
-		};
-	}
+export default function Autocomplete(props){
+    const { suggestions, selected, setSelected } = props;
 
-	onChange = e => {
-		const { suggestions } = this.props;
-		const userInput = e.currentTarget.value;
-		console.log(this.props)
+    const [userFilter, setUserFilter] = React.useState("");
 
-		const filteredSuggestions = suggestions.filter(
-			suggestion =>
-				suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
-		);
-
-		this.setState({
-			activeSuggestion: 0,
-			filteredSuggestions,
-			showSuggestions: true,
-			userInput: e.currentTarget.value
-		});
-	};
-
-	onClick = e => {
-		this.setState({
-			activeSuggestion: 0,
-			filteredSuggestions: [],
-			showSuggestions: false,
-			userInput: e.currentTarget.innerText
-		});
-	};
-	onKeyDown = e => {
-		const { activeSuggestion, filteredSuggestions } = this.state;
-
-		if (e.keyCode === 13) {
-			this.setState({
-				activeSuggestion: 0,
-				showSuggestions: false,
-				userInput: filteredSuggestions[activeSuggestion]
-			});
-		} else if (e.keyCode === 38) {
-			if (activeSuggestion === 0) {
-				return;
-			}
-
-			this.setState({ activeSuggestion: activeSuggestion - 1 });
-		} else if (e.keyCode === 40) {
-			if (activeSuggestion - 1 === filteredSuggestions.length) {
-				return;
-			}
-
-			this.setState({ activeSuggestion: activeSuggestion + 1 });
+    const filteredSuggestions = userFilter === "" ? [] : suggestions.filter(
+        (suggestion) => {
+			if (suggestion.partner_A === undefined || suggestion.partner_A === null) return false;
+			return suggestion.partner_A.toLowerCase().startsWith(userFilter.toLowerCase());
 		}
+    );
+
+    const changeUserFilter = (e) => {
+        setUserFilter(e.target.value);
+	};
+	
+	const clickSuggestion = (ind) => {
+		setSelected(ind);
 	};
 
-	render() {
-		const {
-			onChange,
-			onClick,
-			onKeyDown,
-			state: {
-				activeSuggestion,
-				filteredSuggestions,
-				showSuggestions,
-				userInput
+    return (
+        <div className="searchBlock">
+            <input
+                type="search"
+                onChange={changeUserFilter}
+                value={userFilter}
+            />
+            {filteredSuggestions.length <= 0 ? 
+                <div className="no-suggestions">
+                    <em>No suggestions</em>
+                </div>
+            : (<ul className="suggestions">
+				{filteredSuggestions.slice(0, 4).map((suggestion)=>(
+					<li key={suggestion.id} onClick={()=>clickSuggestion(suggestion.id)}>
+						{suggestion.partner_A}
+					</li>
+				))}
+			</ul>)
 			}
-		} = this;
-		let suggestionsListComponent;
-		if (showSuggestions && userInput) {
-			if (filteredSuggestions.length) {
-				suggestionsListComponent = (
-					<ul className="suggestions">
-						{filteredSuggestions.slice(0, 4).map((suggestion) => {
-							return (
-								<li key={suggestion} onClick={onClick}>
-									{suggestion}
-								</li>
-							);
-						})}
-					</ul>
-				);
-			} else {
-				suggestionsListComponent = (
-					<div className="no-suggestions">
-						<em>No suggestions</em>
-					</div>
-				);
-			}
-		}
-
-		return (
-			<div className="searchBlock">
-				<input
-					type="search"
-					onChange={onChange}
-					onKeyDown={onKeyDown}
-					value={userInput}
-				/>
-				{suggestionsListComponent}
-			</div>
-		);
-	}
+        </div>
+    );
 }
-
-export default Autocomplete;
