@@ -6,7 +6,7 @@ export default function KoffiInput(props){
 
     const fetchData = async () => {
 
-		fetch(textVals.koffiDb).then((result)=>{
+		fetch(textVals.apiUrl + "koffi").then((result)=>{
 			return result.json();
 		}).then((data)=>{
 			console.log(data);
