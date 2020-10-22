@@ -3,6 +3,8 @@
 #                  `python -m pip install waitress`
 
 import os
+import requests
+import json
 from flask import Flask, send_from_directory, request, jsonify, make_response
 from waitress import serve
 import lfa_test_line_location_function
@@ -52,6 +54,19 @@ def calculate():
     }
 
     print('sending response of:', response) 
+    return _corsify_actual_response(jsonify(response))
+
+
+koffiDbUrl = "http://koffidb.org/api/interactions/?format=json&page_size=2000&filters=%28koff%21%3Dnull%29%26%28kon%21%3Dnull%29"
+
+# API urls
+@app.route('/api/koffi', methods=['GET', 'OPTIONS'])
+def koffi():
+    if request.method == 'OPTIONS': return build_cors_preflight()
+
+    koffiData = requests.get(koffiDbUrl).content
+    response = json.loads(koffiData)
+
     return _corsify_actual_response(jsonify(response))
 
 # Serve static React app
