@@ -1,351 +1,358 @@
 @import "./common/values";
-
 $border-radius: 6px;
-button, input {
-	font-family: "lato-regular";
+button,
+input {
+    font-family: "lato-regular";
 }
 
 body {
-	overflow-y: scroll;
-	overflow-x: hidden;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 %customInput {
-	background-color: $white;
-	color: $black;
-	height: 40px;
-	border-radius: $border-radius;
-	border: 1px solid $light-gray;
-	padding: 4px 10px;
-	box-sizing: border-box;
-	font-size: 1em;
+    background-color: $white;
+    color: $black;
+    height: 40px;
+    border-radius: $border-radius;
+    border: 1px solid $light-gray;
+    padding: 4px 10px;
+    box-sizing: border-box;
+    font-size: 1em;
 }
 
 body {
-	// Representation (without color)
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	padding-bottom: 16px;
+    // Representation (without color)
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 16px;
 }
 
 .introContainer {
-	width: 100vw;
-	height: 30vw;
-	background-color: $black;
-	&::before {
-		z-index: 3;
-		position: absolute;
-		width: 100vw;
-		height: 30vw;
-		content: "";
-		pointer-events: none;
-		background-image: url(https://2020.igem.org/wiki/images/d/db/T--Vilnius-Lithuania--milk1.svg);
-		background-size: 103%;
-		background-position: bottom;
-		background-origin: border-box;
-		border-bottom: 2px solid #fafafc;
-	}
-	h1 {
-		z-index: 3;
-		position: absolute;
-		font-size: 7vh;
-		top: 10vw;
-		left: 8vh;
-		text-transform: uppercase;
-		font-family: "montserrat-black";
-		color: $white;
-		margin: 0;
-		span {
-			font-size: 6vh;
-		}
-		&:last-of-type {
-			@include outlined_text;
-			top: 12vw;
-			left: 6vh;
-			@media (min-aspect-ratio: 1/1) {
-				top: 12vh;
-				left: 6vw;
-			}
-		}
-		@media (min-aspect-ratio: 1/1) {
-			font-size: 7vw;
-			top: 10vh;
-			left: 8vw;
-		}
-	}
+    width: 100vw;
+    height: 30vw;
+    background-color: $black;
+    &::before {
+        z-index: 3;
+        position: absolute;
+        width: 100vw;
+        height: 30vw;
+        content: "";
+        pointer-events: none;
+        background-image: url(https://2020.igem.org/wiki/images/d/db/T--Vilnius-Lithuania--milk1.svg);
+        background-size: 103%;
+        background-position: bottom;
+        background-origin: border-box;
+        border-bottom: 2px solid #fafafc;
+    }
+    h1 {
+        z-index: 3;
+        position: absolute;
+        font-size: 7vh;
+        top: 10vw;
+        left: 8vh;
+        text-transform: uppercase;
+        font-family: "montserrat-black";
+        color: $white;
+        margin: 0;
+        span {
+            font-size: 6vh;
+        }
+        &:last-of-type {
+            @include outlined_text;
+            top: 12vw;
+            left: 6vh;
+            @media (min-aspect-ratio: 1/1) {
+                top: 12vh;
+                left: 6vw;
+            }
+        }
+        @media (min-aspect-ratio: 1/1) {
+            font-size: 7vw;
+            top: 10vh;
+            left: 8vw;
+        }
+    }
 }
 
 div.flexColumn {
-	flex-grow: 1;
-	align-items: stretch;
-	div + div {
-		margin-top: 16px;
-	}
+    flex-grow: 1;
+    align-items: stretch;
+    div+div {
+        margin-top: 16px;
+    }
 }
 
 .container {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	padding: 32px;
-	margin: 16px auto;
-	width: 70vw;
-	max-width: 550px;
-	border-radius: $border-radius;
-	/* offset-x | offset-y | blur-radius | spread-radius | color */
-	box-shadow: 0 5px 16px -4px $light-gray;
-	h1 {
-		color: $black;
-		font-family: "lato-medium", sans-serif;
-		margin-top: 0;
-	}
-	h2 {
-		text-align: center;
-		color: #6281ef;
-		font-family: "lato-heavy", sans-serif;
-	}
-	ul {
-		list-style: none;
-		padding-inline-start: 0px;
-		li {
-			margin: 10px;
-			padding: 5px;
-			padding-left: 10px;
-			width: 50%;
-			background-color: rgba(0, 0, 0, 0.1);
-			border-radius: 20px;
-			cursor: pointer;
-			&:hover {
-				transform: translateY(-2px);
-			}
-			transition: transform 0.3s;
-		}
-	}
-	& > *:nth-child(2) {
-		flex-grow: 1;
-	}
-	&.warning {
-		position: -webkit-sticky;
-		position: sticky;
-		flex-direction: column;
-		justify-content: start;
-		align-items: start;
-		top: 20px;
-		justify-content: flex-start;
-		background-color: $yellow;
-		z-index: 3;
-		p {
-			margin: 0;
-			& + p {
-				margin-top: 12px;
-			}
-		}
-		&.red {
-			position: initial;
-			background-color: $red;
-		}
-	}
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 32px;
+    margin: 16px auto;
+    width: 70vw;
+    max-width: 550px;
+    border-radius: $border-radius;
+    /* offset-x | offset-y | blur-radius | spread-radius | color */
+    box-shadow: 0 5px 16px -4px $light-gray;
+    h1 {
+        color: $black;
+        font-family: "lato-medium", sans-serif;
+        margin-top: 0;
+    }
+    h2 {
+        text-align: center;
+        color: #6281ef;
+        font-family: "lato-heavy", sans-serif;
+    }
+    ul {
+        list-style: none;
+        padding-inline-start: 0px;
+        li {
+            margin: 10px;
+            padding: 5px;
+            padding-left: 10px;
+            width: 50%;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            cursor: pointer;
+            &:hover {
+                transform: translateY(-2px);
+            }
+            transition: transform 0.3s;
+        }
+    }
+    &>*:nth-child(2) {
+        flex-grow: 1;
+    }
+    &.warning {
+        position: -webkit-sticky;
+        position: sticky;
+        flex-direction: column;
+        justify-content: start;
+        align-items: start;
+        top: 20px;
+        justify-content: flex-start;
+        background-color: $yellow;
+        z-index: 3;
+        p {
+            margin: 0;
+            &+p {
+                margin-top: 12px;
+            }
+        }
+        &.red {
+            position: initial;
+            background-color: $red;
+        }
+    }
 }
 
 .label {
-	font-size: 1.5em;
-	text-align: start;
-	align-self: flex-start;
+    font-size: 1.5em;
+    text-align: start;
+    align-self: flex-start;
 }
 
 %numberBox {
-	display: flex;
-	align-items: center;
-	width: 100%;
-	& > span:first-child {
-		text-align: end;
-		white-space: nowrap;
-		width: 40%;
-	}
-	.infoButton {
-		width: 20px;
-		margin: 0 6px;
-		border: none;
-		font-size: 15px;
-		background-color: transparent;
-		color: #6281ef;
-		cursor: pointer;
-	}
-	& > span:last-child, & > button:last-child {
-		margin-left: 12px;
-		white-space: nowrap;
-		width: 20%;
-	}
-	& > input, & > span.value {
-		width: 30%;
-		@extend %customInput;
-		flex-grow: 1;
-		display: flex;
-		flex-direction: row;
-		justify-content: flex-start;
-		align-items: center;
-	}
+    display: flex;
+    align-items: center;
+    width: 100%;
+    &>span:first-child {
+        text-align: end;
+        white-space: nowrap;
+        width: 40%;
+    }
+    .infoButton {
+        width: 20px;
+        margin: 0 6px;
+        border: none;
+        font-size: 15px;
+        background-color: transparent;
+        color: #6281ef;
+        cursor: pointer;
+    }
+    &>span:last-child,
+    &>button:last-child {
+        margin-left: 12px;
+        white-space: nowrap;
+        width: 20%;
+    }
+    &>input,
+    &>span.value {
+        width: 30%;
+        @extend %customInput;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+    }
 }
 
-.numberInput, .koffiInput {
-	@extend %numberBox;
-	.searchBlock {
-		width: 30%;
-		flex-grow: 1;
-		display: flex;
-		flex-direction: column;
-		justify-content: stretch;
-		align-items: stretch;
-		input {
-			@extend %customInput;
-		}
-	}
-	& > button:last-child {
-		border: unset;
-		color: $white;
-		font-family: "lato-heavy";
-		font-size: 1.3rem;
-		background-color: $purple-blue;
-		padding: 8px 20px;
-		cursor: pointer;
-		border-radius: 10px;
-		box-shadow: 0 8px 20px -6px lighten($purple-blue, 0.7);
-		&:hover {
-			box-shadow: 0 10px 30px -10px lighten($purple-blue, 0.7);
-			transform: translateY(-2px);
-		}
-		transition: box-shadow 0.3s, transform 0.3s;
-	}
+.numberInput {
+    @extend %numberBox;
+    .searchBlock {
+        width: 30%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
+        align-items: stretch;
+        input {
+            @extend %customInput;
+        }
+    }
+    &>button:last-child {
+        border: unset;
+        color: $white;
+        font-family: "lato-heavy";
+        font-size: 1.3rem;
+        background-color: $purple-blue;
+        padding: 8px 20px;
+        cursor: pointer;
+        border-radius: 10px;
+        box-shadow: 0 8px 20px -6px lighten($purple-blue, 0.7);
+        &:hover {
+            box-shadow: 0 10px 30px -10px lighten($purple-blue, 0.7);
+            transform: translateY(-2px);
+        }
+        transition: box-shadow 0.3s,
+        transform 0.3s;
+    }
 }
 
 .numberOutput {
-	@extend %numberBox;
-	& > span.value {
-		background-color: $lighter-gray;
-		margin-left: 0px;
-		border: unset;
-	}
-	& > span + span.value {
-		margin-left: 32px;
-	}
+    @extend %numberBox;
+    &>span.value {
+        background-color: $lighter-gray;
+        margin-left: 0px;
+        border: unset;
+    }
+    &>span+span.value {
+        margin-left: 32px;
+    }
 }
 
-.submitButton, .backButton {
-	border: unset;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	cursor: pointer;
-	align-self: center;
-	color: $white;
-	background-color: $purple-blue;
-	font-family: "lato-heavy";
-	font-size: 1.3rem;
-	text-transform: uppercase;
-	padding: 8px 52px;
-	border-radius: 10px;
-	margin: 8px 0 12px;
-	box-shadow: 0 8px 20px -6px lighten($purple-blue, 0.7);
-	&:hover {
-		box-shadow: 0 (10px) 30px -10px lighten($purple-blue, 0.7);
-		transform: translateY(-2px);
-	}
-	transition: box-shadow 0.3s, transform 0.3s;
+.submitButton,
+.backButton,
+.fetchKoffi button {
+    border: unset;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    align-self: center;
+    color: $white;
+    background-color: $purple-blue;
+    font-family: "lato-heavy";
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    padding: 8px 52px;
+    border-radius: 10px;
+    margin: 8px 0 12px;
+    box-shadow: 0 8px 20px -6px lighten($purple-blue, 0.7);
+    &:hover {
+        box-shadow: 0 (10px) 30px -10px lighten($purple-blue, 0.7);
+        transform: translateY(-2px);
+    }
+    transition: box-shadow 0.3s,
+    transform 0.3s;
 }
 
-hr {
-	min-width: 100%;
-	background-color: $purple-blue;
-	border: unset;
-	height: 2px;
+.fetchKoffi {
+    display: flex;
+    justify-content: center;
+    button {
+        font-size: 1em;
+    }
 }
 
 .screenCurtain {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100vw;
-	height: 100vh;
-	position: fixed;
-	z-index: 5;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	pointer-events: none;
-	background-color: rgba(0, 0, 0, 0);
-	transition: background-color 0.2s ease-in-out;
-	.info {
-		display: flex;
-		flex-direction: column;
-		max-width: 550px;
-		margin: 20px;
-		background-color: #fafafc;
-		padding: 20px;
-		padding-bottom: 44px;
-		box-sizing: border-box;
-		transform: scale(0);
-		transition: transform 0.2s ease-in-out;
-		border-radius: $border-radius;
-		p {
-			margin: 4px 30px;
-		}
-		span {
-			align-self: flex-end;
-			cursor: pointer;
-			width: 24px;
-			height: 24px;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
-		h1 {
-			margin-top: 0;
-			text-align: center;
-		}
-		& > div {
-			margin-top: 24px;
-			align-self: center;
-			width: 450px;
-			height: 300px;
-		}
-	}
-	&.visible {
-		background-color: rgba(0, 0, 0, 0.6);
-		pointer-events: initial;
-		.info {
-			transform: scale(1);
-		}
-	}
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    z-index: 5;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    background-color: rgba(0, 0, 0, 0);
+    transition: background-color 0.2s ease-in-out;
+    .info {
+        display: flex;
+        flex-direction: column;
+        max-width: 550px;
+        margin: 20px;
+        background-color: #fafafc;
+        padding: 20px;
+        padding-bottom: 44px;
+        box-sizing: border-box;
+        transform: scale(0);
+        transition: transform 0.2s ease-in-out;
+        border-radius: $border-radius;
+        p {
+            margin: 4px 30px;
+        }
+        span {
+            align-self: flex-end;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        h1 {
+            margin-top: 0;
+            text-align: center;
+        }
+        &>div {
+            margin-top: 24px;
+            align-self: center;
+            width: 450px;
+            height: 300px;
+        }
+    }
+    &.visible {
+        background-color: rgba(0, 0, 0, 0.6);
+        pointer-events: initial;
+        .info {
+            transform: scale(1);
+        }
+    }
 }
 
 .loader {
-	width: 96px;
-	height: 96px;
-	background-size: cover;
-	border-radius: $border-radius;
-	transform: scale(0);
-	transition: transform 0.2s ease-in-out;
-	&.visible {
-		transform: scale(1);
-	}
+    width: 96px;
+    height: 96px;
+    background-size: cover;
+    border-radius: $border-radius;
+    transform: scale(0);
+    transition: transform 0.2s ease-in-out;
+    &.visible {
+        transform: scale(1);
+    }
 }
 
 body {
-	// Light mode
-	background-color: $white;
-	color: $dark-gray;
+    // Light mode
+    background-color: $white;
+    color: $dark-gray;
 }
 
 .loader {
-	background-color: $white;
-	background-image: url(./assets/loadLight.gif);
+    background-color: $white;
+    background-image: url(./assets/loadLight.gif);
 }
 
 .screenCurtain .loader {
-	@include shadow($light-gray);
+    @include shadow($light-gray);
 }

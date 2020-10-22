@@ -3,7 +3,7 @@ import { Container, Column, Alert, Curtain, NumberInput } from './common';
 import Loader from './common/Loader';
 import Info from './common/Info';
 import textVals from './common/textVals';
-import KoffiInput from './common/KoffiInput';
+import FetchKoffi from './common/fetchKoffi';
 
 export default function LFAModelIndex(props) {
 	const { setRequest, setData } = props;
@@ -150,7 +150,7 @@ export default function LFAModelIndex(props) {
 					setParameter={setParameter}
 					setOpenInfoPopup={setOpenInfoPopup} />
 				<h2>OR</h2>	
-				<KoffiInput
+				<FetchKoffi
 					label="Get rates from database"
 					parameterName="koffiDb"
 					setRatesFromDb={setRatesFromDb}
