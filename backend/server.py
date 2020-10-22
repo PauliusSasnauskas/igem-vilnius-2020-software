@@ -38,14 +38,20 @@ def calculate():
     #   aCoef : number,
     #   pCoef : number,
     #   rCoef : number,
-    #   assocRate : number,
-    #   dissocRate : number,
+    #   assocRate1 : number,
+    #   dissocRate1 : number,
+    #   assocRate2 : number,
+    #   dissocRate2 : number,
+    #   assocRate3 : number,
+    #   dissocRate3 : number,
+    #   assocRate4 : number,
+    #   dissocRate4 : number,
     # }
 
-    x_opt = lfa_test_line_location_function.lfa_test_line_location(data.get("aCoef"), data.get("pCoef"), data.get("rCoef"), data.get("diffusCoef"), 1e-12, data.get("assocRate"), data.get("dissocRate"))
+    x_opt = lfa_test_line_location_function.lfa_test_line_location(data.get("aCoef"), data.get("pCoef"), data.get("rCoef"), data.get("diffusCoef"), 1e-12, data.get("assocRate1"), data.get("dissocRate1"))
     print(x_opt)
     print(x_opt.astype(float))
-    t, volume = lfa_time_volume_function.lfa_time_volume(x_opt.astype(float), data.get("aCoef"), data.get("pCoef"), data.get("rCoef"), data.get("diffusCoef"), 1e-12, data.get("assocRate"), data.get("dissocRate"))
+    t, volume = lfa_time_volume_function.lfa_time_volume(x_opt.astype(float), data.get("aCoef"), data.get("pCoef"), data.get("rCoef"), data.get("diffusCoef"), 1e-12, data.get("assocRate1"), data.get("dissocRate1"))
     
     response = {
         "dist": x_opt.astype(float),    # test line distance, in mm

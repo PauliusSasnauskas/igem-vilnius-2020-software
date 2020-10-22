@@ -3,7 +3,7 @@ import { Container, Column, Alert, Curtain, NumberInput } from './common';
 import Loader from './common/Loader';
 import Info from './common/Info';
 import textVals from './common/textVals';
-import FetchKoffi from './common/fetchKoffi';
+import KoffiDialog from './common/KoffiDialog';
 
 export default function LFAModelIndex(props) {
 	const { setRequest, setData } = props;
@@ -13,8 +13,7 @@ export default function LFAModelIndex(props) {
 
 	const [openInfoPopup, setOpenInfoPopup] = React.useState("");
 
-	const [molData, setMolData] = React.useState([]);
-	const [molType, setMolType] = React.useState([]);
+	const [openKoffiDialog, setOpenKoffiDialog] = React.useState(false);
 
 	const [parameters, setParameters] = React.useState({
 		flowRate: "180",
@@ -22,8 +21,14 @@ export default function LFAModelIndex(props) {
 		aCoef: "0.00000001",
 		pCoef: "0.00000001",
 		rCoef: "0.00000001",
-		assocRate: "1000000",
-		dissocRate: "0.001",
+		assocRate1: "1000000",
+		dissocRate1: "0.001",
+		assocRate2: "1000000",
+		dissocRate2: "0.001",
+		assocRate3: "1000000",
+		dissocRate3: "0.001",
+		assocRate4: "1000000",
+		dissocRate4: "0.001",
 	});
 
 	const setParameter = (parameter, value) => {
@@ -73,6 +78,10 @@ export default function LFAModelIndex(props) {
 		}
 	};
 
+	const forceOpenKoffiDialog = ()=>{
+		setOpenKoffiDialog(true);
+	}
+
 	const setRatesFromDb = (rates) => {
 		setParameter("assocRate", rates.assocRate);
 		setParameter("dissocRate", rates.dissocRate);
@@ -85,6 +94,15 @@ export default function LFAModelIndex(props) {
 
 		<Curtain visible={openInfoPopup !== ""}>
 			<Info type={openInfoPopup} setOpenInfoPopup={setOpenInfoPopup} />
+		</Curtain>
+
+		
+		<Curtain visible={openKoffiDialog}>
+			{openKoffiDialog ?
+				<KoffiDialog
+					setOpenKoffiDialog={setOpenKoffiDialog}
+					setRatesFromDb={setRatesFromDb} />
+			: null}
 		</Curtain>
 
 		<Curtain visible={isLoading}>
@@ -150,14 +168,9 @@ export default function LFAModelIndex(props) {
 					setParameter={setParameter}
 					setOpenInfoPopup={setOpenInfoPopup} />
 				<h2>OR</h2>	
-				<FetchKoffi
-					label="Get rates from database"
-					parameterName="koffiDb"
-					setRatesFromDb={setRatesFromDb}
-					molType={molType}
-					setMolData={setMolData}
-					setMolType={setMolType}
-					setOpenInfoPopup={setOpenInfoPopup}/>
+				<div className="fetchKoffi">
+					<button onClick={forceOpenKoffiDialog}>Search the database</button>
+				</div>
 			</Column>
 		</Container>
 		<Container>

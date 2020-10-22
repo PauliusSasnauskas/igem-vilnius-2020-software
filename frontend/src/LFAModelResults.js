@@ -72,7 +72,7 @@ export default function LFAModelIndex(props){
                     setOpenInfoPopup={setOpenInfoPopup} />
             </Column>
         </Container>
-        <Container style={{boxShadow: "0px 6px 15px 2px #6281EF", border: "4px solid #6281EF"}}>
+        <Container style={{boxShadow: "0px 6px 15px 2px #6281EF", border: "4px solid #6281EF", borderBottomWidth: "10px"}}>
             <Column>
                 <h1>Output</h1>
                 <NumberOutput
