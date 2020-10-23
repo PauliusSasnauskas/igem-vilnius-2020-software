@@ -1,28 +1,33 @@
 import React from 'react';
 
 export default function Autocomplete(props){
-    const { suggestions, selected, setSelected } = props;
+    const { suggestions, setSelected, childParam, disabled, filterCondition } = props;
+    const filterConditionF = (filterCondition === undefined) ? ()=>true : filterCondition;
 
     const [userFilter, setUserFilter] = React.useState("");
 
     const filteredSuggestions = userFilter === "" ? [] : suggestions.filter(
         (suggestion) => {
-			if (suggestion.partner_A === undefined || suggestion.partner_A === null) return false;
-			return suggestion.partner_A.toLowerCase().startsWith(userFilter.toLowerCase());
+            if (suggestion[childParam] === undefined || suggestion[childParam] === null) return false;
+            if (!filterConditionF(suggestion)) return false;
+			return suggestion[childParam].toLowerCase().startsWith(userFilter.toLowerCase());
 		}
-    );
+    ).map((suggestion)=>suggestion[childParam]) // get only name of partner
+    .filter((value, index, self)=>self.indexOf(value) === index); // filter out only unique
 
     const changeUserFilter = (e) => {
         setUserFilter(e.target.value);
 	};
 	
-	const clickSuggestion = (ind) => {
-		setSelected(ind);
+	const clickSuggestion = (name) => {
+        setSelected(name);
+        setUserFilter("");
 	};
 
     return (
         <div className="searchBlock">
             <input
+                disabled={disabled}
                 type="search"
                 onChange={changeUserFilter}
                 value={userFilter}
@@ -33,8 +38,8 @@ export default function Autocomplete(props){
                 </div>
             : (<ul className="suggestions">
 				{filteredSuggestions.slice(0, 4).map((suggestion)=>(
-					<li key={suggestion.id} onClick={()=>clickSuggestion(suggestion.id)}>
-						{suggestion.partner_A}
+					<li key={suggestion} onClick={()=>clickSuggestion(suggestion)}>
+						{suggestion}
 					</li>
 				))}
 			</ul>)

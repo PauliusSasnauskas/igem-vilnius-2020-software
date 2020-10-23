@@ -18,9 +18,9 @@ export default function LFAModelIndex(props) {
 	const [parameters, setParameters] = React.useState({
 		flowRate: "180",
 		diffusCoef: "0.0000000001",
-		aCoef: "0.00000001",
-		pCoef: "0.00000001",
-		rCoef: "0.00000001",
+		aCoef: "0.01",
+		pCoef: "0.01",
+		rCoef: "0.01",
 		assocRate1: "1000000",
 		dissocRate1: "0.001",
 		assocRate2: "1000000",
@@ -32,6 +32,7 @@ export default function LFAModelIndex(props) {
 	});
 
 	const setParameter = (parameter, value) => {
+		console.log("settingPar", parameter, value);
 		setParameters({ ...parameters, [parameter]: value })
 	};
 
@@ -58,7 +59,7 @@ export default function LFAModelIndex(props) {
 			body: JSON.stringify(request),
 		};
 
-		let debug = true;
+		let debug = false;
 		if (debug){
 			setRequest(request);
 			setData({time: 740, dist: 0.03457215, samplevol: 19.98});
@@ -83,8 +84,11 @@ export default function LFAModelIndex(props) {
 	}
 
 	const setRatesFromDb = (rates) => {
-		setParameter("assocRate", rates.assocRate);
-		setParameter("dissocRate", rates.dissocRate);
+		let newPars = {};
+		for (let rate in rates){
+			newPars = {...newPars, [rate]: rates[rate]};
+		}
+		setParameters({ ...parameters, ...newPars })
 	};
 
 	return (<>
@@ -154,17 +158,62 @@ export default function LFAModelIndex(props) {
 		<Container>
 			<Column>
 				<NumberInput
-					label="Association rate"
+					label="A+P Association rate"
 					unit="1/s"
-					parameterName="assocRate"
-					value={parameters.assocRate}
+					parameterName="assocRate1"
+					value={parameters.assocRate1}
 					setParameter={setParameter}
 					setOpenInfoPopup={setOpenInfoPopup} />
 				<NumberInput
-					label="Dissociation rate"
+					label="A+P Dissociation rate"
 					unit="1/s"
-					parameterName="dissocRate"
-					value={parameters.dissocRate}
+					parameterName="dissocRate1"
+					value={parameters.dissocRate1}
+					setParameter={setParameter}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<br /><br />
+				<NumberInput
+					label="AP+R Association rate"
+					unit="1/s"
+					parameterName="assocRate2"
+					value={parameters.assocRate2}
+					setParameter={setParameter}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberInput
+					label="AP+R Dissociation rate"
+					unit="1/s"
+					parameterName="dissocRate2"
+					value={parameters.dissocRate2}
+					setParameter={setParameter}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<br /><br />
+				<NumberInput
+					label="P+R Association rate"
+					unit="1/s"
+					parameterName="assocRate3"
+					value={parameters.assocRate3}
+					setParameter={setParameter}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberInput
+					label="P+R Dissociation rate"
+					unit="1/s"
+					parameterName="dissocRate3"
+					value={parameters.dissocRate3}
+					setParameter={setParameter}
+					setOpenInfoPopup={setOpenInfoPopup} />
+					<br /><br />
+				<NumberInput
+					label="A+R Association rate"
+					unit="1/s"
+					parameterName="assocRate4"
+					value={parameters.assocRate4}
+					setParameter={setParameter}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberInput
+					label="A+R Dissociation rate"
+					unit="1/s"
+					parameterName="dissocRate4"
+					value={parameters.dissocRate4}
 					setParameter={setParameter}
 					setOpenInfoPopup={setOpenInfoPopup} />
 				<h2>OR</h2>	

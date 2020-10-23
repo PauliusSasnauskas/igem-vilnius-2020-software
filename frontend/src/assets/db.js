@@ -28,12 +28,36 @@ const info = {
         desc: "Capture Probe Concentration is blah blah blah",
         anim: captureConc,
     },
-    assocRate: {
-        title: "Association Rate",
+    assocRate1: {
+        title: "Association Rate (A+P)",
         desc: "Association Rate is blah blah blah",
     },
-    dissocRate: {
-        title: "Dissociation Rate",
+    dissocRate1: {
+        title: "Dissociation Rate (A+P)",
+        desc: "Dissociation Rate is blah blah blah",
+    },
+    assocRate2: {
+        title: "Association Rate (AP+R)",
+        desc: "Association Rate is blah blah blah",
+    },
+    dissocRate2: {
+        title: "Dissociation Rate (AP+R)",
+        desc: "Dissociation Rate is blah blah blah",
+    },
+    assocRate3: {
+        title: "Association Rate (P+R)",
+        desc: "Association Rate is blah blah blah",
+    },
+    dissocRate3: {
+        title: "Dissociation Rate (P+R)",
+        desc: "Dissociation Rate is blah blah blah",
+    },
+    assocRate4: {
+        title: "Association Rate (A+R)",
+        desc: "Association Rate is blah blah blah",
+    },
+    dissocRate4: {
+        title: "Dissociation Rate (A+R)",
         desc: "Dissociation Rate is blah blah blah",
     },
     koffiDb: {

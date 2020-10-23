@@ -59,16 +59,52 @@ export default function LFAModelIndex(props){
                     parameterName="rCoef"
                     setOpenInfoPopup={setOpenInfoPopup} />
                 <NumberOutput
-                    label="Association rate"
+                    label="A+P Association rate"
                     unit="1/s"
-                    value={request.assocRate}
-                    parameterName="assocRate"
+                    value={request.assocRate1}
+                    parameterName="assocRate1"
                     setOpenInfoPopup={setOpenInfoPopup} />
                 <NumberOutput
-                    label="Dissociation rate"
+                    label="A+P Dissociation rate"
                     unit="1/s"
-                    value={request.dissocRate}
-                    parameterName="dissocRate"
+                    value={request.dissocRate1}
+                    parameterName="dissocRate1"
+                    setOpenInfoPopup={setOpenInfoPopup} />
+                <NumberOutput
+                    label="AP+R Association rate"
+                    unit="1/s"
+                    value={request.assocRate2}
+                    parameterName="assocRate2"
+                    setOpenInfoPopup={setOpenInfoPopup} />
+                <NumberOutput
+                    label="AP+R Dissociation rate"
+                    unit="1/s"
+                    value={request.dissocRate2}
+                    parameterName="dissocRate2"
+                    setOpenInfoPopup={setOpenInfoPopup} />
+                <NumberOutput
+                    label="P+R Association rate"
+                    unit="1/s"
+                    value={request.assocRate3}
+                    parameterName="assocRate3"
+                    setOpenInfoPopup={setOpenInfoPopup} />
+                <NumberOutput
+                    label="P+R Dissociation rate"
+                    unit="1/s"
+                    value={request.dissocRate3}
+                    parameterName="dissocRate3"
+                    setOpenInfoPopup={setOpenInfoPopup} />
+                <NumberOutput
+                    label="A+R Association rate"
+                    unit="1/s"
+                    value={request.assocRate4}
+                    parameterName="assocRate4"
+                    setOpenInfoPopup={setOpenInfoPopup} />
+                <NumberOutput
+                    label="A+R Dissociation rate"
+                    unit="1/s"
+                    value={request.dissocRate4}
+                    parameterName="dissocRate4"
                     setOpenInfoPopup={setOpenInfoPopup} />
             </Column>
         </Container>

@@ -303,7 +303,7 @@ div.flexColumn {
         p {
             margin: 4px 30px;
         }
-        span {
+        & > span {
             align-self: flex-end;
             cursor: pointer;
             width: 24px;
@@ -316,7 +316,7 @@ div.flexColumn {
             margin-top: 0;
             text-align: center;
         }
-        &>div {
+        &>div:not(.loader) {
             margin-top: 24px;
             align-self: center;
             width: 450px;
@@ -332,9 +332,17 @@ div.flexColumn {
     }
 }
 
-.loader {
+.koffiInfo {
+    .row {
+        display: flex;
+        flex-direction: row;
+    }
+}
+
+.loader, .koffiInfo .loader {
     width: 96px;
     height: 96px;
+    align-self: center;
     background-size: cover;
     border-radius: $border-radius;
     transform: scale(0);
