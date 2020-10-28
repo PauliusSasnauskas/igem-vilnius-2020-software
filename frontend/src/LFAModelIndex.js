@@ -16,11 +16,19 @@ export default function LFAModelIndex(props) {
 	const [openKoffiDialog, setOpenKoffiDialog] = React.useState(false);
 
 	const [parameters, setParameters] = React.useState({
-		flowRate: "180",
-		diffusCoef: "0.0000000001",
+		signalThreshold: "0.8",
+		diffusCoef: "0.00000000001",
+		probeDiffusCoef: "0.00000000001",
+		complexDiffusCoef: "0.00000000001",
 		aCoef: "0.01",
 		pCoef: "0.01",
 		rCoef: "0.01",
+		flowRate: "180",
+		initVelocity: "218.6",
+		velocityDecay: "0.00855",
+		length: "25",
+		width: "6",
+		thickness: "0.135",
 		assocRate1: "1000000",
 		dissocRate1: "0.001",
 		assocRate2: "1000000",
@@ -59,7 +67,7 @@ export default function LFAModelIndex(props) {
 			body: JSON.stringify(request),
 		};
 
-		let debug = false;
+		let debug = true;
 		if (debug){
 			setRequest(request);
 			setData({time: 740, dist: 0.03457215, samplevol: 19.98});
@@ -115,39 +123,66 @@ export default function LFAModelIndex(props) {
 		<Container>
 			<Column>
 				<NumberInput
+					label="Signal Threshold"
+					unit=""
+					parameterName="signalThreshold"
+					value={parameters.signalThreshold}
+					setParameter={setParameter}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberInput
 					label="Capillary Flow Rate"
 					unit="s/4cm"
 					parameterName="flowRate"
 					value={parameters.flowRate}
 					setParameter={setParameter}
 					setOpenInfoPopup={setOpenInfoPopup} />
+			</Column>
+		</Container>
+		<Container>
+			<Column>
+				<div style={{textAlign: "center", fontSize: "1.2rem", fontWeight: "bold"}}>Nitrocellulose Membrane Parameters</div>
 				<NumberInput
-					label="Diffusion Coefficient"
-					unit=""
-					parameterName="diffusCoef"
-					value={parameters.diffusCoef}
+					label="Length"
+					unit="mm"
+					parameterName="length"
+					value={parameters.length}
+					setParameter={setParameter}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberInput
+					label="Width"
+					unit="mm"
+					parameterName="width"
+					value={parameters.width}
+					setParameter={setParameter}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberInput
+					label="Thickness"
+					unit="mm"
+					parameterName="thickness"
+					value={parameters.thickness}
 					setParameter={setParameter}
 					setOpenInfoPopup={setOpenInfoPopup} />
 			</Column>
 		</Container>
 		<Container>
 			<Column>
+				<div style={{textAlign: "center", fontSize: "1.2rem", fontWeight: "bold"}}>Initial Concentrations</div>
 				<NumberInput
-					label="Analyte concentration"
+					label="Analyte"
 					unit="μM"
 					parameterName="aCoef"
 					value={parameters.aCoef}
 					setParameter={setParameter}
 					setOpenInfoPopup={setOpenInfoPopup} />
 				<NumberInput
-					label="Detection probe concentration"
+					label="Detection Probe"
 					unit="μM"
 					parameterName="pCoef"
 					value={parameters.pCoef}
 					setParameter={setParameter}
 					setOpenInfoPopup={setOpenInfoPopup} />
 				<NumberInput
-					label="Capture probe concentration"
+					label="Capture Probe"
 					unit="μM"
 					parameterName="rCoef"
 					value={parameters.rCoef}
@@ -155,8 +190,55 @@ export default function LFAModelIndex(props) {
 					setOpenInfoPopup={setOpenInfoPopup} />
 			</Column>
 		</Container>
+		<h2 style={{textAlign: "center", margin: "32px 0"}}>Optional Parameters</h2>
 		<Container>
 			<Column>
+				<div style={{textAlign: "center", fontSize: "1.2rem", fontWeight: "bold"}}>Capilary Flow</div>
+				<NumberInput
+					label="Initial Velocity"
+					unit="s/4cm"
+					parameterName="initVelocity"
+					value={parameters.initVelocity}
+					setParameter={setParameter}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberInput
+					label="Velocity Decay Rate"
+					unit="1/s"
+					parameterName="velocityDecay"
+					value={parameters.velocityDecay}
+					setParameter={setParameter}
+					setOpenInfoPopup={setOpenInfoPopup} />
+			</Column>
+		</Container>
+		<Container>
+			<Column>
+				<div style={{textAlign: "center", fontSize: "1.2rem", fontWeight: "bold"}}>Diffusion Coefficients</div>
+				<NumberInput
+					label="Analyte"
+					unit={<>m<sup>2</sup>/s</>}
+					parameterName="diffusCoef"
+					value={parameters.diffusCoef}
+					setParameter={setParameter}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberInput
+					label="Probe"
+					unit={<>m<sup>2</sup>/s</>}
+					parameterName="probeDiffusCoef"
+					value={parameters.probeDiffusCoef}
+					setParameter={setParameter}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberInput
+					label="Complex"
+					unit={<>m<sup>2</sup>/s</>}
+					parameterName="complexDiffusCoef"
+					value={parameters.complexDiffusCoef}
+					setParameter={setParameter}
+					setOpenInfoPopup={setOpenInfoPopup} />
+			</Column>
+		</Container>
+		<Container>
+			<Column>
+				<div style={{textAlign: "center", fontSize: "1.2rem", fontWeight: "bold"}}>Reaction Rates</div>
 				<NumberInput
 					label="A+P Association rate"
 					unit="1/s"

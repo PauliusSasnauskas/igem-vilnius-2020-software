@@ -15,7 +15,7 @@ const info = {
     },
     aCoef: {
         title: "Analyte Concentration",
-        desc: "Analyte Concentration is the concentration of the substance in the drop of water applied to the sample pad.",
+        desc: "Analyte Concentration is the concentration of the substance we want to detect. It is dissolved in the drop of water applied on to the sample pad.",
         anim: analyteConc,
     },
     pCoef: {

@@ -221,7 +221,8 @@ div.flexColumn {
 
 .submitButton,
 .backButton,
-.fetchKoffi button {
+.fetchKoffi button,
+.copyParameterButton {
     border: unset;
     -moz-user-select: none;
     -webkit-user-select: none;
@@ -282,6 +283,7 @@ div.flexColumn {
         transition: transform 0.2s ease-in-out;
         border-radius: $border-radius;
         &.koffiInfo {
+            padding-bottom: 24px;
             ul {
                 list-style: none;
                 padding-inline-start: 0px;
@@ -289,7 +291,6 @@ div.flexColumn {
                     margin: 10px;
                     padding: 5px;
                     padding-left: 10px;
-                    width: 50%;
                     background-color: rgba(0, 0, 0, 0.1);
                     border-radius: 20px;
                     cursor: pointer;
@@ -298,6 +299,41 @@ div.flexColumn {
                     }
                     transition: transform 0.3s;
                 }
+            }
+            .searchBlock {
+                display: flex;
+                flex-direction: column;
+                input {
+                    @extend %customInput;
+                }
+                .no-suggestions {
+                    align-self: center;
+                    padding: 4px;
+                }
+                .suggestions {
+                    margin-top: 0;
+                }
+            }
+            .row > span {
+                margin: 10px;
+            }
+            .coefficient {
+                & > span {
+                    font-weight: bold;
+                    margin-right: 8px;
+                    display: inline-block;
+                    width: 30%;
+                    padding: 4px 0;
+                }
+            }
+            .buttonRow {
+                display: flex;
+                justify-content: stretch;
+            }
+            .copyParameterButton {
+                margin: 8px 12px 12px;
+                padding: 4px 12px;
+                flex-grow: 1;
             }
         }
         p {
@@ -330,6 +366,10 @@ div.flexColumn {
             transform: scale(1);
         }
     }
+}
+
+sup {
+    font-size: 0.6em;
 }
 
 .koffiInfo {

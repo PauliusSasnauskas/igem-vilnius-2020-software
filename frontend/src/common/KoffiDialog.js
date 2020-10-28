@@ -78,14 +78,16 @@ export default function KoffiDialog(props){
                 </div>
                 <br />
                 {selectedItem !== undefined && selectedItem.length > 0 ? (<>
-                    <div className="coefficient">Association rate: {selectedItem[0].kon}</div>
-                    <div className="coefficient">Dissociation rate: {selectedItem[0].koff}</div>
+                    <div className="coefficient"><span>Association rate:</span>{selectedItem[0].kon}</div>
+                    <div className="coefficient"><span>Dissociation rate:</span>{selectedItem[0].koff}</div>
                     <br />
                     <b>Set this as:</b>
-                    <button onClick={setCoeff(1)}>A+P</button>
-                    <button onClick={setCoeff(2)}>AP+R</button>
-                    <button onClick={setCoeff(3)}>P+R</button>
-                    <button onClick={setCoeff(4)}>A+R</button>
+                    <div class="buttonRow">
+                        <button className="copyParameterButton" onClick={setCoeff(1)}>A+P</button>
+                        <button className="copyParameterButton" onClick={setCoeff(2)}>AP+R</button>
+                        <button className="copyParameterButton" onClick={setCoeff(3)}>P+R</button>
+                        <button className="copyParameterButton" onClick={setCoeff(4)}>A+R</button>
+                    </div>
                 </>) : null}
             </div>)
         :

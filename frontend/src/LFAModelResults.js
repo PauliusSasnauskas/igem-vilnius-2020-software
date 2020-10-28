@@ -120,8 +120,8 @@ export default function LFAModelIndex(props){
                     unit=""
                     value={processTimeMinutes + " min " + processTimeSeconds + " s"} />
                 <NumberOutput
-                    label="Optimal volume of the sample"
-                    unit="μl"
+                    label="Optimal amount of the sample"
+                    unit="μmol"
                     value={optimalValue} />
             </Column>
         </Container>
