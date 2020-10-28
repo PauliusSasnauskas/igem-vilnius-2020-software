@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container, Alert, Curtain, Info, Column } from './common';
 import NumberOutput from './common/NumberOutput';
 
@@ -14,6 +14,12 @@ export default function LFAModelIndex(props){
     const processTimeSeconds = response.time%60;
     const optimalValue = response.samplevol;
 
+    const outputRef = React.useRef(null);
+
+    useEffect(()=>{
+        window.scrollTo(0, outputRef.current.offsetTop);
+    }, [outputRef]);
+
     return (<>
         {errorValue.trim().length === 0 ? undefined : (<Alert>
             {errorValue}
@@ -23,94 +29,171 @@ export default function LFAModelIndex(props){
 			<Info type={openInfoPopup} setOpenInfoPopup={setOpenInfoPopup} />
 		</Curtain>
 
-        <Container>
-            <Column>
-                <h1>Input</h1>
-                
-                <NumberOutput
-                    label="Capillary Flow Rate"
-                    unit="s/4cm"
-                    value={request.flowRate}
-                    parameterName="flowRate"
-                    setOpenInfoPopup={setOpenInfoPopup} />
-                <NumberOutput
-                    label="Diffusion Coefficient"
-                    unit=""
-                    value={request.diffusCoef}
-                    parameterName="diffusCoef"
-                    setOpenInfoPopup={setOpenInfoPopup} />
-                <NumberOutput
-                    label="Analyte concentration"
-                    unit="μM"
-                    value={request.aCoef}
-                    parameterName="aCoef"
-                    setOpenInfoPopup={setOpenInfoPopup} />
-                <NumberOutput
-                    label="Detection probe concentration"
-                    unit="μM"
-                    value={request.pCoef}
-                    parameterName="pCoef"
-                    setOpenInfoPopup={setOpenInfoPopup} />
+        <h1>Input</h1>
 
-                <NumberOutput
-                    label="Capture probe concentration"
-                    unit="μM"
-                    value={request.rCoef}
-                    parameterName="rCoef"
-                    setOpenInfoPopup={setOpenInfoPopup} />
-                <NumberOutput
-                    label="A+P Association rate"
-                    unit="1/s"
-                    value={request.assocRate1}
-                    parameterName="assocRate1"
-                    setOpenInfoPopup={setOpenInfoPopup} />
-                <NumberOutput
-                    label="A+P Dissociation rate"
-                    unit="1/s"
-                    value={request.dissocRate1}
-                    parameterName="dissocRate1"
-                    setOpenInfoPopup={setOpenInfoPopup} />
-                <NumberOutput
-                    label="AP+R Association rate"
-                    unit="1/s"
-                    value={request.assocRate2}
-                    parameterName="assocRate2"
-                    setOpenInfoPopup={setOpenInfoPopup} />
-                <NumberOutput
-                    label="AP+R Dissociation rate"
-                    unit="1/s"
-                    value={request.dissocRate2}
-                    parameterName="dissocRate2"
-                    setOpenInfoPopup={setOpenInfoPopup} />
-                <NumberOutput
-                    label="P+R Association rate"
-                    unit="1/s"
-                    value={request.assocRate3}
-                    parameterName="assocRate3"
-                    setOpenInfoPopup={setOpenInfoPopup} />
-                <NumberOutput
-                    label="P+R Dissociation rate"
-                    unit="1/s"
-                    value={request.dissocRate3}
-                    parameterName="dissocRate3"
-                    setOpenInfoPopup={setOpenInfoPopup} />
-                <NumberOutput
-                    label="A+R Association rate"
-                    unit="1/s"
-                    value={request.assocRate4}
-                    parameterName="assocRate4"
-                    setOpenInfoPopup={setOpenInfoPopup} />
-                <NumberOutput
-                    label="A+R Dissociation rate"
-                    unit="1/s"
-                    value={request.dissocRate4}
-                    parameterName="dissocRate4"
-                    setOpenInfoPopup={setOpenInfoPopup} />
-            </Column>
-        </Container>
-        <Container style={{boxShadow: "0px 6px 15px 2px #6281EF", border: "4px solid #6281EF", borderBottomWidth: "10px"}}>
+        <Container>
+			<Column>
+				<NumberOutput
+					label="Signal Threshold"
+					unit=""
+					parameterName="signalThreshold"
+					value={request.signalThreshold}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberOutput
+					label="Capillary Flow Rate"
+					unit="s/4cm"
+					parameterName="flowRate"
+					value={request.flowRate}
+					setOpenInfoPopup={setOpenInfoPopup} />
+			</Column>
+		</Container>
+		<Container>
+			<Column>
+				<h3>Nitrocellulose Membrane Parameters</h3>
+				<NumberOutput
+					label="Length"
+					unit="mm"
+					parameterName="length"
+					value={request.length}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberOutput
+					label="Width"
+					unit="mm"
+					parameterName="width"
+					value={request.width}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberOutput
+					label="Thickness"
+					unit="mm"
+					parameterName="thickness"
+					value={request.thickness}
+					setOpenInfoPopup={setOpenInfoPopup} />
+			</Column>
+		</Container>
+		<Container>
+			<Column>
+				<h3>Initial Concentrations</h3>
+				<NumberOutput
+					label="Analyte"
+					unit="μM"
+					parameterName="aCoef"
+					value={request.aCoef}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberOutput
+					label="Detection Probe"
+					unit="μM"
+					parameterName="pCoef"
+					value={request.pCoef}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberOutput
+					label="Capture Probe"
+					unit="μM"
+					parameterName="rCoef"
+					value={request.rCoef}
+					setOpenInfoPopup={setOpenInfoPopup} />
+			</Column>
+		</Container>
+		<h2>Optional Parameters</h2>
+		<Container>
+			<Column>
+				<h3>Capilary Flow</h3>
+				<NumberOutput
+					label="Initial Velocity"
+					unit="s/4cm"
+					parameterName="initVelocity"
+					value={request.initVelocity}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberOutput
+					label="Velocity Decay Rate"
+					unit="1/s"
+					parameterName="velocityDecay"
+					value={request.velocityDecay}
+					setOpenInfoPopup={setOpenInfoPopup} />
+			</Column>
+		</Container>
+		<Container>
+			<Column>
+				<h3>Diffusion Coefficients</h3>
+				<NumberOutput
+					label="Analyte"
+					unit={<>m<sup>2</sup>/s</>}
+					parameterName="diffusCoef"
+					value={request.diffusCoef}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberOutput
+					label="Probe"
+					unit={<>m<sup>2</sup>/s</>}
+					parameterName="probeDiffusCoef"
+					value={request.probeDiffusCoef}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberOutput
+					label="Complex"
+					unit={<>m<sup>2</sup>/s</>}
+					parameterName="complexDiffusCoef"
+					value={request.complexDiffusCoef}
+					setOpenInfoPopup={setOpenInfoPopup} />
+			</Column>
+		</Container>
+		<Container>
+			<Column>
+				<h3>Reaction Rates</h3>
+				<NumberOutput
+					label="A+P Association rate"
+					unit="1/s"
+					parameterName="assocRate1"
+					value={request.assocRate1}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberOutput
+					label="A+P Dissociation rate"
+					unit="1/s"
+					parameterName="dissocRate1"
+					value={request.dissocRate1}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<br /><br />
+				<NumberOutput
+					label="AP+R Association rate"
+					unit="1/s"
+					parameterName="assocRate2"
+					value={request.assocRate2}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberOutput
+					label="AP+R Dissociation rate"
+					unit="1/s"
+					parameterName="dissocRate2"
+					value={request.dissocRate2}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<br /><br />
+				<NumberOutput
+					label="P+R Association rate"
+					unit="1/s"
+					parameterName="assocRate3"
+					value={request.assocRate3}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberOutput
+					label="P+R Dissociation rate"
+					unit="1/s"
+					parameterName="dissocRate3"
+					value={request.dissocRate3}
+					setOpenInfoPopup={setOpenInfoPopup} />
+					<br /><br />
+				<NumberOutput
+					label="A+R Association rate"
+					unit="1/s"
+					parameterName="assocRate4"
+					value={request.assocRate4}
+					setOpenInfoPopup={setOpenInfoPopup} />
+				<NumberOutput
+					label="A+R Dissociation rate"
+					unit="1/s"
+					parameterName="dissocRate4"
+					value={request.dissocRate4}
+					setOpenInfoPopup={setOpenInfoPopup} />
+			</Column>
+		</Container>
+
+        <Container className="output">
             <Column>
-                <h1>Output</h1>
+                <h1 ref={outputRef}>Output</h1>
                 <NumberOutput
                     label="Test line distance"
                     unit="cm"

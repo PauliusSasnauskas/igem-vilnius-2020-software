@@ -17,18 +17,18 @@ export default function LFAModelIndex(props) {
 
 	const [parameters, setParameters] = React.useState({
 		signalThreshold: "0.8",
-		diffusCoef: "0.00000000001",
-		probeDiffusCoef: "0.00000000001",
-		complexDiffusCoef: "0.00000000001",
-		aCoef: "0.01",
-		pCoef: "0.01",
-		rCoef: "0.01",
 		flowRate: "180",
-		initVelocity: "218.6",
-		velocityDecay: "0.00855",
 		length: "25",
 		width: "6",
 		thickness: "0.135",
+		aCoef: "0.01",
+		pCoef: "0.01",
+		rCoef: "0.01",
+		initVelocity: "218.6",
+		velocityDecay: "0.00855",
+		diffusCoef: "0.00000000001",
+		probeDiffusCoef: "0.00000000001",
+		complexDiffusCoef: "0.00000000001",
 		assocRate1: "1000000",
 		dissocRate1: "0.001",
 		assocRate2: "1000000",
@@ -69,6 +69,7 @@ export default function LFAModelIndex(props) {
 
 		let debug = true;
 		if (debug){
+			console.log("would send", requestParams);
 			setRequest(request);
 			setData({time: 740, dist: 0.03457215, samplevol: 19.98});
 		}else{
@@ -140,7 +141,7 @@ export default function LFAModelIndex(props) {
 		</Container>
 		<Container>
 			<Column>
-				<div style={{textAlign: "center", fontSize: "1.2rem", fontWeight: "bold"}}>Nitrocellulose Membrane Parameters</div>
+				<h3>Nitrocellulose Membrane Parameters</h3>
 				<NumberInput
 					label="Length"
 					unit="mm"
@@ -166,7 +167,7 @@ export default function LFAModelIndex(props) {
 		</Container>
 		<Container>
 			<Column>
-				<div style={{textAlign: "center", fontSize: "1.2rem", fontWeight: "bold"}}>Initial Concentrations</div>
+				<h3>Initial Concentrations</h3>
 				<NumberInput
 					label="Analyte"
 					unit="μM"
@@ -190,10 +191,10 @@ export default function LFAModelIndex(props) {
 					setOpenInfoPopup={setOpenInfoPopup} />
 			</Column>
 		</Container>
-		<h2 style={{textAlign: "center", margin: "32px 0"}}>Optional Parameters</h2>
+		<h2>Optional Parameters</h2>
 		<Container>
 			<Column>
-				<div style={{textAlign: "center", fontSize: "1.2rem", fontWeight: "bold"}}>Capilary Flow</div>
+				<h3>Capilary Flow</h3>
 				<NumberInput
 					label="Initial Velocity"
 					unit="s/4cm"
@@ -212,7 +213,7 @@ export default function LFAModelIndex(props) {
 		</Container>
 		<Container>
 			<Column>
-				<div style={{textAlign: "center", fontSize: "1.2rem", fontWeight: "bold"}}>Diffusion Coefficients</div>
+				<h3>Diffusion Coefficients</h3>
 				<NumberInput
 					label="Analyte"
 					unit={<>m<sup>2</sup>/s</>}
@@ -238,7 +239,7 @@ export default function LFAModelIndex(props) {
 		</Container>
 		<Container>
 			<Column>
-				<div style={{textAlign: "center", fontSize: "1.2rem", fontWeight: "bold"}}>Reaction Rates</div>
+				<h3>Reaction Rates</h3>
 				<NumberInput
 					label="A+P Association rate"
 					unit="1/s"
