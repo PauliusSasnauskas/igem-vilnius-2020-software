@@ -262,6 +262,9 @@ h3 {
     }
     transition: box-shadow 0.3s,
     transform 0.3s;
+    &.optionalButton {
+        padding: 8px 24px;
+    }
 }
 
 .fetchKoffi {
@@ -422,4 +425,17 @@ body {
 
 .screenCurtain .loader {
     @include shadow($light-gray);
+}
+
+a.aboutLink {
+    margin-top: 48px;
+    margin-bottom: 32px;
+    display: block;
+    font-size: 15px;
+    text-align: center;
+    color: #6281ef;
+    text-decoration: none;
+    &:hover {
+        text-decoration: underline;
+    }
 }

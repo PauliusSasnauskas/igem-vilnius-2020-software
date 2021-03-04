@@ -1,28 +1,45 @@
 from __future__ import print_function
 import matplotlib.pyplot as plt
-# from vedo.dolfin import plot, ProgressBar
+from vedo.dolfin import plot, ProgressBar
 from vedo import *
 import numpy as np
 from dolfin import *
 from mshr import *
 
-def lfa_test_line_location(A0 = 1e-8,
-                           P0 = 1e-8,
-                           R0 = 1e-8,
-                           D_A = 1e-10,
-                           D_P = 1e-12,
+
+# analyte conc should be lower than gold nano particles
+# put as further as u can to obtain best sygnal
+# recomendation of A0 is smaller 10 times than P0
+
+# if A is less than P - could happen anything
+# if A much bigger than P test line jis very close to the beggingin
+
+#simuliacja susidaužo jei lygios koncentracijos
+
+# jei didziule konc siulys deti labai labai arti kas nera optimalu todel geriau konc mazinti
+set_log_level(40)
+debug = False
+
+def lfa_test_line_location(A0 = 25e-9, #1.3e-8
+                           P0 = 11.4e-9, #2.28e-8
+                           D_A = 2.6073971259391082e-11, #1e-10
+                           D_P = 1.507422684843226e-11, #1e-12,
+                           D_PA = 1.1843944324646026e-11,
                            ka1 = 1e6,
                            kd1 = 1e-3,
-                           ka2 = 1e6,
-                           kd2 = 1e-3,
-                           ka3 = 1e6,
-                           kd3 = 1e-3,
-                           ka4 = 1e6,
-                           kd4 = 1e-3):
+                           U = 2.22e-4,
+                           T = 1800,
+                           num_steps = 600,
+                           L = 0.025,
+                           C = 0.000183,
+                           r = 0.00855,
+                           width = 0.006, # meters
+                           PA_coef = 0.8):
+
 
     # Time stepping
-    T = 600.0           # final time
-    num_steps = 600     # number of time steps 500
+    #T = 1800.0           # final time
+    #num_steps = 1800     # number of time steps 500
     dt = T / num_steps  # time step size
 
     # System parameters, constants
@@ -47,9 +64,8 @@ def lfa_test_line_location(A0 = 1e-8,
          # dissociation rate (1/Ms)
 
 
-    L = 0.041      # juostelės ilgis
-    xL1 = L/2      # R ribos
-    xL2 = 3*L/4    # R ribos
+    #L = 0.041      # juostelės ilgis
+
 
 
     def quadratic(opt):
@@ -68,16 +84,13 @@ def lfa_test_line_location(A0 = 1e-8,
             else:
                 return PA1*opt
         else:
-            return print("fun")
+            print("Critical error")
+            return 0
 
 
-    PA_eq = quadratic(0.8)
+    PA_eq = quadratic(PA_coef)
     max_PA = 0
     x_opt = 0
-
-
-    #xL1 = 0.03
-    #xL2 = 0.035
 
 
     # Create mesh
@@ -115,34 +128,29 @@ def lfa_test_line_location(A0 = 1e-8,
 
     A0 = Constant(A0)
     P0 = Constant(P0)
-    R0 = Constant(R0)
 
     ka1 = Constant(ka1)
     kd1 = Constant(kd1)
-    ka2 = Constant(ka2)
-    kd2 = Constant(kd2)
-    ka3 = Constant(ka3)
-    kd3 = Constant(kd3)
-    ka4 = Constant(ka4)
-    kd4 = Constant(kd4)
 
     D_A = Constant(D_A)
     D_P = Constant(D_P)
 
 
     L = Constant(L)
-    # 2e-3 fuild velocity, obtained from experimental data (m/s or ~0.2mm/s) 20s/4cm
-    U = Constant((2e-4, 0))
+    # 2e-4 fuild velocity, obtained from experimental data (m/s or ~0.2mm/s) 20s/4cm
+    U = Constant((U, 0))
 
-    xL1 = Constant(xL1)
-    xL2 = Constant(xL2)
+    C = Constant(C)
+    r = Constant(r)
+
+    U = Expression(('C*exp(-r*t)', '0'), degree=2, C=C, r=r, t=0)
 
 
     # Define boundray conditions
 
-    u_D_A1 = Expression('(T-t)>0 ? A0 : 0', degree=0, t=0, T=1000, A0=A0)
+    u_D_A1 = Expression('(T-t)>0 ? A0 : 0', degree=0, t=0, T=T, A0=A0)
     #u_D_PA1 = Expression('0', degree=0)
-    u_D_P1 = Expression('(T-t)>0 ? P0 : 0', degree=0, t=0, T=1000, P0=P0)
+    u_D_P1 = Expression('(T-t)>0 ? P0 : 0', degree=0, t=0, T=T, P0=P0)
 
     #u_D_A1 = Expression('A0', degree=0, A0=A0)
     #u_D_PA1 = Expression('3e-16', degree=0)
@@ -167,7 +175,7 @@ def lfa_test_line_location(A0 = 1e-8,
 
 
     F = ((u_A - u_nA) / k)*v_A*dx + D_A*dot(grad(u_A), grad(v_A))*dx + dot(U, grad(u_A))*v_A*dx \
-        + ((u_PA - u_nPA) / k)*v_PA*dx + D_P*dot(grad(u_PA), grad(v_PA))*dx + dot(U, grad(u_PA))*v_PA*dx \
+        + ((u_PA - u_nPA) / k)*v_PA*dx + D_PA*dot(grad(u_PA), grad(v_PA))*dx + dot(U, grad(u_PA))*v_PA*dx \
         + ((u_P - u_nP) / k)*v_P*dx + D_P*dot(grad(u_P), grad(v_P))*dx + dot(U, grad(u_P))*v_P*dx \
         - (-F_PA*v_A*dx + F_PA*v_PA*dx - F_PA*v_P*dx)
 
@@ -189,9 +197,11 @@ def lfa_test_line_location(A0 = 1e-8,
 
     for n in pb.range():
 
+        print(str(round(t/T*100, 1)) + "%")
         # Update boundaries
         u_D_A1.t = t
         u_D_P1.t = t
+        U.t = t
 
         # Update current time
         t += dt
@@ -213,16 +223,18 @@ def lfa_test_line_location(A0 = 1e-8,
         u_n.assign(u)
 
         img = load("lfa_diffusion_reduction/u_PA000000.vtu")
-        p1, p2 = (0, 0.003, 0), (0.041, 0.003, 0)
+        p1, p2 = (0, 0.003, 0), (L, 0.003, 0)
         pl = probeLine(img, p1, p2, res=5000).lineWidth(4)
         xvals = pl.points()[:, 0]
         yvals = pl.getPointArray()
         max_PA = max(yvals)
-        print(PA_eq)
-        print(max_PA)
+        if debug:
+            print(PA_eq)
+            print(max_PA)
+            print("")
 
         if max_PA >= PA_eq:
-            print("hey hey hey, stop it!")
+            print("PA complex concentration reached equilibrium, terminating simulation.")
             x_opt = xvals[yvals.argmax()]
             #x_opt
             return x_opt
@@ -252,3 +264,21 @@ def lfa_test_line_location(A0 = 1e-8,
 
     # Hold plot
     # interactive()
+if __name__ == '__main__':
+    print(lfa_test_line_location(PA_coef=0.9))
+
+# A0 = 1e-8, #1.3e-8
+# P0 = 1e-8, #2.28e-8
+# D_A = 1e-11, #1e-10
+# D_P = 1e-11, #1e-12,
+# D_PA = 1e-11,
+# ka1 = 1e6,
+# kd1 = 1e-3,
+# U = 2e-4,
+# T = 1800,
+# num_steps = 600,
+# L = 0.025,
+# C = 0.000183,
+# r = 0.00855,
+# width = 0.006, # meters
+# PA_coef = 0.8

@@ -1,24 +1,20 @@
-"""
-Amazing software for amazing people <3
-"""
-
 from __future__ import print_function
 import matplotlib.pyplot as plt
-# from vedo.dolfin import plot, ProgressBar
+from vedo.dolfin import plot, ProgressBar
 from vedo import *
 import numpy as np
 from dolfin import *
 from mshr import *
-# print(__doc__)
 
 
-
-def lfa_time_volume(xL1 = 0.0205,
-                    A0 = 1e-8,
-                    P0 = 1e-8,
-                    R0 = 1e-8,
-                    D_A = 1e-10,
-                    D_P = 1e-12,
+set_log_level(40)
+def lfa_time_volume(xL1 = 0.01064,
+                    A0 = 25e-9,
+                    P0 = 11.4e-9,
+                    R0 = 8.61e-6, #1.7e-8 8.61e-6
+                    D_A = 2.6073971259391082e-11,
+                    D_P = 1.507422684843226e-11,
+                    D_PA = 1.1843944324646026e-11,
                     ka1 = 1e6,
                     kd1 = 1e-3,
                     ka2 = 1e6,
@@ -26,11 +22,20 @@ def lfa_time_volume(xL1 = 0.0205,
                     ka3 = 1e6,
                     kd3 = 1e-3,
                     ka4 = 1e6,
-                    kd4 = 1e-3):
-    xL1 = xL1
+                    kd4 = 1e-3,
+                    L = 0.025,
+                    T = 1800,
+                    num_steps = 60,
+                    U = 2.22e-4,
+                    thickness = 0.000135,
+                    width = 0.0006,
+                    RA_const = 0,
+                    C = 0.000183,
+                    r = 0.00855):
+
     # Time stepping
-    T = 1200.0            # final time
-    num_steps = 600    # number of time steps 500
+    #T = 1800.0            # final time
+    #num_steps = 60    # number of time steps T/200 optimum num_steps
     dt = T / num_steps  # time step size
 
     # System parameters, constants
@@ -55,7 +60,7 @@ def lfa_time_volume(xL1 = 0.0205,
     # dissociation rate (1/Ms)
 
 
-    L = 0.041      # juostelės ilgis
+    #L = 0.041      # juostelės ilgis
     #xL1 = L/2      # R ribos
     #xL2 = 3*L/4    # R ribos
     xL2 = xL1+0.004
@@ -64,8 +69,11 @@ def lfa_time_volume(xL1 = 0.0205,
     #xL2 = 0.034276 + 0.003
 
     RPA_signal = 0.8 * R0
-    thickness = 0.000135
-    velocity = 2e-4
+
+    #thickness = 0.000135
+    #width = 0.0005
+    velocity = U
+    test_line_location = xL1
 
 
     #xL1 = 0.034276
@@ -139,12 +147,18 @@ def lfa_time_volume(xL1 = 0.0205,
     xL1 = Constant(xL1)
     xL2 = Constant(xL2)
 
+    RA_const = Constant(RA_const)
+
+    C = Constant(C)
+    r = Constant(r)
+
+    U = Expression(('C*exp(-r*t)', '0'), degree=2, C=C, r=r, t=0)
 
     # Define boundray conditions
 
-    u_D_A1 = Expression('(T-t)>0 ? A0 : 0', degree=0, t=0, T=1200, A0=A0)
+    u_D_A1 = Expression('(T-t)>0 ? A0 : 0', degree=0, t=0, T=1800, A0=A0)
     #u_D_PA1 = Expression('0', degree=0)
-    u_D_P1 = Expression('(T-t)>0 ? P0 : 0', degree=0, t=0, T=1200, P0=P0)
+    u_D_P1 = Expression('(T-t)>0 ? P0 : 0', degree=0, t=0, T=1800, P0=P0)
 
     u_D_PA1 = Constant(0.0)
 
@@ -173,11 +187,12 @@ def lfa_time_volume(xL1 = 0.0205,
     F_PA = ka1*u_A*u_P - kd1*u_PA
 
 
-    F_RA = ka2*u_A*u_R - kd2*u_RA - ka4*u_RA*u_P + kd4*u_RPA
+    F_RA = RA_const*(ka2*u_A*u_R - kd2*u_RA - ka4*u_RA*u_P + kd4*u_RPA)
     F1_RPA = ka3*u_PA*u_R - kd3*u_RPA
-    F2_RPA = ka4*u_RA*u_P - kd4*u_RPA
+    F2_RPA = RA_const*(ka4*u_RA*u_P - kd4*u_RPA)
     F_RPA = F1_RPA+F2_RPA
 
+    # F1_RPA padauginti is kokio nors n, kuris reiškia kiek plaukeliu turi analite ten kur PA lygtis tik ten
 
     F = ((u_A - u_nA) / k)*v_A*dx + D_A*dot(grad(u_A), grad(v_A))*dx + dot(U, grad(u_A))*v_A*dx \
         + ((u_PA - u_nPA) / k)*v_PA*dx + D_P*dot(grad(u_PA), grad(v_PA))*dx + dot(U, grad(u_PA))*v_PA*dx \
@@ -214,13 +229,16 @@ def lfa_time_volume(xL1 = 0.0205,
 
     #average_concentrations = []
 
+    time_points = []
+    RPA_concentrations = []
 
     for n in pb.range():
-
+        print(str(round(t/T*100, 1)) + "%")
         # Update boundaries
         u_D_A1.t = t
         #u_D_PA1.t = t
         u_D_P1.t = t
+        U.t = t
 
         # Update current time
         t += dt
@@ -257,25 +275,27 @@ def lfa_time_volume(xL1 = 0.0205,
         #average_concentration = sum(yvals) / len(yvals)
         # average_concentrations.append(average_concentration)
         max_concentration = max(yvals)
-        volume = t*thickness*velocity*1000000
+        
 
-        print(max_concentration)
-        print(t)
-        print(volume)
+        time_points.append(t)
+        RPA_concentrations.append(max_concentration)
 
-        if max_concentration >= RPA_signal:
-            print("hey hey hey, stop it!")
+        #print(max_concentration)
+        #print(t)
+        #print(volume)
+
+        #if max_concentration >= RPA_signal:
+            #print("hey hey hey, stop it!")
             #print(max_concentration)
             #print(t)
             #print(volume)
-            return t,volume
+            #return t,volume
             #x_opt = xvals[yvals.argmax()]
             # print(x_opt)
             #break
 
         # pb.print(t)
     #plot()
-    return 0, 0
 
     # Update progress bar
     #Progress('Time-stepping', t / T)
@@ -286,3 +306,35 @@ def lfa_time_volume(xL1 = 0.0205,
 
     # Hold plot
     # interactive()
+    RPA_opt = 0.9 * max(RPA_concentrations)
+    index_opt = min(range(len(RPA_concentrations)), key=lambda i: abs(RPA_concentrations[i]- RPA_opt))
+    test_to_test_line = test_line_location/velocity
+    volume = (time_points[index_opt]-test_to_test_line)*thickness*width*velocity*1000000000
+
+    return index_opt, RPA_opt, RPA_concentrations[index_opt], time_points[index_opt], volume
+if __name__ == '__main__':
+    print(lfa_time_volume(
+                xL1 = 0.012425,
+                A0 = 1e-8,
+                P0 = 1e-8,
+                R0 = 1e-8,
+                D_A = 1e-11,
+                D_P = 1e-11,
+                D_PA = 1e-11,
+                ka1 = 1e6,
+                kd1 = 1e-3,
+                ka2 = 1e6,
+                kd2 = 1e-3,
+                ka3 = 1e6,
+                kd3 = 1e-3,
+                ka4 = 1e6,
+                kd4 = 1e-3,
+                L = 0.025,
+                T = 1800,
+                num_steps = 60,
+                U = 2e-4,
+                thickness = 0.000135,
+                width = 0.0006,
+                RA_const = 0,
+                C = 0.000183,
+                r = 0.00855))

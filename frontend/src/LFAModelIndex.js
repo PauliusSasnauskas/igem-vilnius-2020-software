@@ -15,6 +15,8 @@ export default function LFAModelIndex(props) {
 
 	const [openKoffiDialog, setOpenKoffiDialog] = React.useState(false);
 
+	const [openOptionalParameters, setOpenOptionalParameters] = React.useState(false);
+
 	const [parameters, setParameters] = React.useState({
 		signalThreshold: "0.8",
 		flowRate: "180",
@@ -67,12 +69,13 @@ export default function LFAModelIndex(props) {
 			body: JSON.stringify(request),
 		};
 
-		let debug = true;
+		let debug = false;
 		if (debug){
 			console.log("would send", requestParams);
 			setRequest(request);
 			setData({time: 740, dist: 0.03457215, samplevol: 19.98});
 		}else{
+			// console.log("would send", requestParams);
 			fetch(textVals.apiUrl + "calculate", requestParams)
 				.then((response) => response.json())
 				.then((data) => {
@@ -191,122 +194,127 @@ export default function LFAModelIndex(props) {
 					setOpenInfoPopup={setOpenInfoPopup} />
 			</Column>
 		</Container>
-		<h2>Optional Parameters</h2>
-		<Container>
-			<Column>
-				<h3>Capilary Flow</h3>
-				<NumberInput
-					label="Initial Velocity"
-					unit="s/4cm"
-					parameterName="initVelocity"
-					value={parameters.initVelocity}
-					setParameter={setParameter}
-					setOpenInfoPopup={setOpenInfoPopup} />
-				<NumberInput
-					label="Velocity Decay Rate"
-					unit="1/s"
-					parameterName="velocityDecay"
-					value={parameters.velocityDecay}
-					setParameter={setParameter}
-					setOpenInfoPopup={setOpenInfoPopup} />
-			</Column>
-		</Container>
-		<Container>
-			<Column>
-				<h3>Diffusion Coefficients</h3>
-				<NumberInput
-					label="Analyte"
-					unit={<>m<sup>2</sup>/s</>}
-					parameterName="diffusCoef"
-					value={parameters.diffusCoef}
-					setParameter={setParameter}
-					setOpenInfoPopup={setOpenInfoPopup} />
-				<NumberInput
-					label="Probe"
-					unit={<>m<sup>2</sup>/s</>}
-					parameterName="probeDiffusCoef"
-					value={parameters.probeDiffusCoef}
-					setParameter={setParameter}
-					setOpenInfoPopup={setOpenInfoPopup} />
-				<NumberInput
-					label="Complex"
-					unit={<>m<sup>2</sup>/s</>}
-					parameterName="complexDiffusCoef"
-					value={parameters.complexDiffusCoef}
-					setParameter={setParameter}
-					setOpenInfoPopup={setOpenInfoPopup} />
-			</Column>
-		</Container>
-		<Container>
-			<Column>
-				<h3>Reaction Rates</h3>
-				<NumberInput
-					label="A+P Association rate"
-					unit="1/s"
-					parameterName="assocRate1"
-					value={parameters.assocRate1}
-					setParameter={setParameter}
-					setOpenInfoPopup={setOpenInfoPopup} />
-				<NumberInput
-					label="A+P Dissociation rate"
-					unit="1/s"
-					parameterName="dissocRate1"
-					value={parameters.dissocRate1}
-					setParameter={setParameter}
-					setOpenInfoPopup={setOpenInfoPopup} />
-				<br /><br />
-				<NumberInput
-					label="AP+R Association rate"
-					unit="1/s"
-					parameterName="assocRate2"
-					value={parameters.assocRate2}
-					setParameter={setParameter}
-					setOpenInfoPopup={setOpenInfoPopup} />
-				<NumberInput
-					label="AP+R Dissociation rate"
-					unit="1/s"
-					parameterName="dissocRate2"
-					value={parameters.dissocRate2}
-					setParameter={setParameter}
-					setOpenInfoPopup={setOpenInfoPopup} />
-				<br /><br />
-				<NumberInput
-					label="P+R Association rate"
-					unit="1/s"
-					parameterName="assocRate3"
-					value={parameters.assocRate3}
-					setParameter={setParameter}
-					setOpenInfoPopup={setOpenInfoPopup} />
-				<NumberInput
-					label="P+R Dissociation rate"
-					unit="1/s"
-					parameterName="dissocRate3"
-					value={parameters.dissocRate3}
-					setParameter={setParameter}
-					setOpenInfoPopup={setOpenInfoPopup} />
+		{!openOptionalParameters ? (
+			<Container><button onClick={()=>setOpenOptionalParameters(true)} className="submitButton optionalButton">Optional Parameters</button></Container>
+		) : (<>
+			<h2>Optional Parameters</h2>
+			<Container>
+				<Column>
+					<h3>Capilary Flow</h3>
+					<NumberInput
+						label="Initial Velocity"
+						unit="s/4cm"
+						parameterName="initVelocity"
+						value={parameters.initVelocity}
+						setParameter={setParameter}
+						setOpenInfoPopup={setOpenInfoPopup} />
+					<NumberInput
+						label="Velocity Decay Rate"
+						unit="1/s"
+						parameterName="velocityDecay"
+						value={parameters.velocityDecay}
+						setParameter={setParameter}
+						setOpenInfoPopup={setOpenInfoPopup} />
+				</Column>
+			</Container>
+			<Container>
+				<Column>
+					<h3>Diffusion Coefficients</h3>
+					<NumberInput
+						label="Analyte"
+						unit="m²/s"
+						parameterName="diffusCoef"
+						value={parameters.diffusCoef}
+						setParameter={setParameter}
+						setOpenInfoPopup={setOpenInfoPopup} />
+					<NumberInput
+						label="Probe"
+						unit="m²/s"
+						parameterName="probeDiffusCoef"
+						value={parameters.probeDiffusCoef}
+						setParameter={setParameter}
+						setOpenInfoPopup={setOpenInfoPopup} />
+					<NumberInput
+						label="Complex"
+						unit="m²/s"
+						parameterName="complexDiffusCoef"
+						value={parameters.complexDiffusCoef}
+						setParameter={setParameter}
+						setOpenInfoPopup={setOpenInfoPopup} />
+				</Column>
+			</Container>
+			<Container>
+				<Column>
+					<h3>Reaction Rates</h3>
+					<NumberInput
+						label="A+P Association rate"
+						unit="1/s"
+						parameterName="assocRate1"
+						value={parameters.assocRate1}
+						setParameter={setParameter}
+						setOpenInfoPopup={setOpenInfoPopup} />
+					<NumberInput
+						label="A+P Dissociation rate"
+						unit="1/s"
+						parameterName="dissocRate1"
+						value={parameters.dissocRate1}
+						setParameter={setParameter}
+						setOpenInfoPopup={setOpenInfoPopup} />
 					<br /><br />
-				<NumberInput
-					label="A+R Association rate"
-					unit="1/s"
-					parameterName="assocRate4"
-					value={parameters.assocRate4}
-					setParameter={setParameter}
-					setOpenInfoPopup={setOpenInfoPopup} />
-				<NumberInput
-					label="A+R Dissociation rate"
-					unit="1/s"
-					parameterName="dissocRate4"
-					value={parameters.dissocRate4}
-					setParameter={setParameter}
-					setOpenInfoPopup={setOpenInfoPopup} />
-				<h2>OR</h2>	
-				<div className="fetchKoffi">
-					<button onClick={forceOpenKoffiDialog}>Search the database</button>
-				</div>
-			</Column>
-		</Container>
+					<NumberInput
+						label="AP+R Association rate"
+						unit="1/s"
+						parameterName="assocRate2"
+						value={parameters.assocRate2}
+						setParameter={setParameter}
+						setOpenInfoPopup={setOpenInfoPopup} />
+					<NumberInput
+						label="AP+R Dissociation rate"
+						unit="1/s"
+						parameterName="dissocRate2"
+						value={parameters.dissocRate2}
+						setParameter={setParameter}
+						setOpenInfoPopup={setOpenInfoPopup} />
+					<br /><br />
+					<NumberInput
+						label="P+R Association rate"
+						unit="1/s"
+						parameterName="assocRate3"
+						value={parameters.assocRate3}
+						setParameter={setParameter}
+						setOpenInfoPopup={setOpenInfoPopup} />
+					<NumberInput
+						label="P+R Dissociation rate"
+						unit="1/s"
+						parameterName="dissocRate3"
+						value={parameters.dissocRate3}
+						setParameter={setParameter}
+						setOpenInfoPopup={setOpenInfoPopup} />
+						<br /><br />
+					<NumberInput
+						label="A+R Association rate"
+						unit="1/s"
+						parameterName="assocRate4"
+						value={parameters.assocRate4}
+						setParameter={setParameter}
+						setOpenInfoPopup={setOpenInfoPopup} />
+					<NumberInput
+						label="A+R Dissociation rate"
+						unit="1/s"
+						parameterName="dissocRate4"
+						value={parameters.dissocRate4}
+						setParameter={setParameter}
+						setOpenInfoPopup={setOpenInfoPopup} />
+					<h2>OR</h2>	
+					<div className="fetchKoffi">
+						<button onClick={forceOpenKoffiDialog}>Search the database</button>
+					</div>
+				</Column>
+			</Container>
+		</>)}
 		<Container>
 			<button disabled={openInfoPopup !== ""} onClick={submit} className="submitButton"><span>Submit</span></button>
 		</Container>
+		<a className="aboutLink" rel="noopener noreferrer" target="_blank" href="https://2020.igem.org/Team:Vilnius-Lithuania/Software">About this software</a>
 	</>);
 };
